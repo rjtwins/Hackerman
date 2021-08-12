@@ -3,18 +3,14 @@ using Game.Core.Endpoints;
 using Game.Core.FileSystem;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game.Core.Console
 {
-    
     public class LocalSystem
     {
         public Bouncer Bouncer = new Bouncer();
-        Dictionary<string, Endpoint[]> SavedBounceLists = new Dictionary<string, Endpoint[]>();
-        Dictionary<string, Program> SavedPrograms = new Dictionary<string, Program>();
+        private Dictionary<string, Endpoint[]> SavedBounceLists = new Dictionary<string, Endpoint[]>();
+        private Dictionary<string, Program> SavedPrograms = new Dictionary<string, Program>();
 
         internal void SaveCurrentBounceListsAs(string commandBody)
         {
@@ -23,8 +19,7 @@ namespace Game.Core.Console
 
         internal Endpoint[] LoadBounceList(string commandBody)
         {
-            
-            if(SavedBounceLists.TryGetValue(commandBody, out Endpoint[] bounceList))
+            if (SavedBounceLists.TryGetValue(commandBody, out Endpoint[] bounceList))
             {
                 return bounceList;
             }
@@ -44,7 +39,6 @@ namespace Game.Core.Console
             }
             SavedBounceLists.Remove(commandBody);
             return true;
-
         }
     }
 }

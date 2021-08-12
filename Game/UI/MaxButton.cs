@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Game.UI
 {
-    class MaxButton : Button
+    internal class MaxButton : Button
     {
         private const string MaxText = "◇";
         private const string WindowFyText = "◈";
         private TextBlock ButtonText;
+
         public MaxButton()
         {
             this.Click += MaxButton_Click;

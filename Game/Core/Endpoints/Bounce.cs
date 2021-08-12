@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Game.Core.Endpoints
 {
     public class Bounce
     {
         public List<Endpoint> BounceList { private set; get; } = new List<Endpoint>();
+
         public void AddBounce(Endpoint endpoint)
         {
             if (BounceList.Contains(endpoint))
@@ -17,6 +14,7 @@ namespace Game.Core.Endpoints
             }
             this.BounceList.Add(endpoint);
         }
+
         public void RemoveBounce(Endpoint endpoint)
         {
             if (!this.BounceList.Contains(endpoint))
@@ -42,19 +40,19 @@ namespace Game.Core.Endpoints
             Endpoint too;
             Endpoint current = null;
 
-            if(BounceList.Count <= 1)
+            if (BounceList.Count <= 1)
             {
                 return false;
             }
 
-            if(BounceList.Count == 2)
+            if (BounceList.Count == 2)
             {
                 Global.Console.ConnectToFrom(BounceList[0], BounceList[1]);
                 Global.EndPointMap.DisplayConnection();
                 return true;
             }
 
-            for (int i = 1; i < BounceList.Count-1; i++)
+            for (int i = 1; i < BounceList.Count - 1; i++)
             {
                 from = BounceList[i - 1];
                 too = BounceList[i + 1];

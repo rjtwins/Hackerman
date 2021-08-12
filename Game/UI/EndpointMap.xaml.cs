@@ -1,20 +1,14 @@
 ﻿using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Brushes = System.Windows.Media.Brushes;
+using Point = System.Windows.Point;
 
 namespace Game.UI
 {
@@ -34,7 +28,7 @@ namespace Game.UI
         {
             InitializeComponent();
             map.Children.Add(Polyline);
-            Polyline.Stroke = Brushes.Red;
+            Polyline.Stroke = System.Windows.Media.Brushes.Red;
         }
 
         public void DisplayEndpoints()
@@ -45,25 +39,15 @@ namespace Game.UI
                 //img.RenderSize = new Size(16, 16);
                 //img.Source = new BitmapImage(new Uri(@"C:\Users\J.Vedder Desktop\source\repos\EventSystemTesting\UI\Icons\server.png"));
 
-                StackPanel btnPanel = new StackPanel
-                {
-                    Orientation = Orientation.Horizontal,
-                    Height = 6,
-                    Width = 6
-                };
-                TextBlock txt = new TextBlock();
-                //txt.Text = e.name;
-                btnPanel.Children.Add(txt);
-
                 Button btn = new Button();
                 btn.Click += EndpointClick;
                 btn.Background = Brushes.Yellow;
-
+                btn.BorderThickness = new Thickness(0);
+                btn.BorderBrush = Brushes.Transparent;
                 if (e.IsLocalEndpoint)
                 {
                     btn.Background = Brushes.Red;
                 }
-                btn.Content = btnPanel;
                 btn.Tag = e.Id;
                 int x = e.x;
                 int y = e.y;
@@ -110,7 +94,7 @@ namespace Game.UI
         {
             this.Polyline.Points.Clear();
             this.PointDict.Clear();
-            if(Global.StartEndPoint == null)
+            if (Global.StartEndPoint == null)
             {
                 return;
             }
@@ -118,9 +102,9 @@ namespace Game.UI
             Button from = GuidButtonDict[Global.StartEndPoint.Id];
             PointDict[Global.StartEndPoint.Id] = new Point(Canvas.GetLeft(from), Canvas.GetTop(from));
             Polyline.Points.Add(PointDict[Global.StartEndPoint.Id]);
-            
+
             Button too = null;
-            foreach(Endpoint e in Global.Bounce.BounceList)
+            foreach (Endpoint e in Global.Bounce.BounceList)
             {
                 too = GuidButtonDict[e.Id];
                 PointDict[e.Id] = new Point(Canvas.GetLeft(too), Canvas.GetTop(too));
@@ -163,12 +147,11 @@ namespace Game.UI
                 b = (Button)map.Children[i];
                 Guid id = (Guid)b.Tag;
 
-
                 (int x, int y) = GetRelativeCoordinates(DrawnEndpointsDict[id]);
                 Canvas.SetLeft(b, x);
                 Canvas.SetTop(b, y);
-                ((StackPanel)b.Content).Height = GetRelativeSize();
-                ((StackPanel)b.Content).Width = GetRelativeSize();
+                b.Height = GetRelativeSize();
+                b.Width = GetRelativeSize();
 
                 if (PointDict.ContainsKey(id))
                 {

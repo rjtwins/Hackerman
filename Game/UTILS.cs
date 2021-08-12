@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game
 {
@@ -38,22 +33,26 @@ namespace Game
             {
                 case AccessLevel.USER:
                     return "USER";
+
                 case AccessLevel.ADMIN:
                     return "ADMIN";
+
                 case AccessLevel.ROOT:
                     return "ROOT";
+
                 default:
                     throw new Exception("AccessLeve outside of bounds!");
             }
         }
     }
+
     public enum AccessLevel
     {
         USER = 1,
         ADMIN = 2,
         ROOT = 3
     }
-    
+
     public enum LogType
     {
         CONNECTION_ATTEMPT = 1,

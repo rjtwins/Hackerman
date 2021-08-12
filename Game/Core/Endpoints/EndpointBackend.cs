@@ -1,5 +1,4 @@
-﻿using Game.Core.Console;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -14,7 +13,6 @@ namespace Game.Core.Endpoints
         public bool IsLocalEndpoint { protected set; get; } = false;
         public List<LogItem> SystemLog = new List<LogItem>();
         public List<LogItem> ConnectionLog = new List<LogItem>();
-
 
         protected Dictionary<string, AccessLevel> UsernamePasswordDict = new Dictionary<string, AccessLevel>();
         public AccessLevel AccessLevel { protected set; get; } = AccessLevel.USER;

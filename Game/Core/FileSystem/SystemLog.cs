@@ -8,7 +8,6 @@ namespace Game.Core.FileSystem
 
         public SystemLog() : base("syslog.log", false)
         {
-
         }
 
         public List<string> GetSystemLog()

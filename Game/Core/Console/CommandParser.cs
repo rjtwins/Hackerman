@@ -52,7 +52,6 @@ namespace Game.Core.Console
             //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
             //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
             //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
-
         }
 
         private void MakeConnection(string obj)
@@ -77,7 +76,7 @@ namespace Game.Core.Console
 
         public void ParseCommand(string command, string prefix)
         {
-            if(command == "exit")
+            if (command == "exit")
             {
                 CommandDictionary["exit"](command);
                 return;
@@ -105,7 +104,7 @@ namespace Game.Core.Console
             string commandType = splitCommand[0];
             string commandBody = string.Empty;
             //If we have more then 3 sections we have need to add the other two together again.
-            if(splitCommand.Count == 2)
+            if (splitCommand.Count == 2)
             {
                 commandBody = splitCommand[1];
             }
@@ -169,8 +168,8 @@ namespace Game.Core.Console
                 this.GivingPassword = false;
                 this.ConsoleContent.ConsolePrefix = "LOGIN USERNAME:";
             }
-
         }
+
         private void List(string obj)
         {
             ConsoleContent.ConsoleOutput.Add(AttachedSystem.ListFromCurrentFolder());
@@ -200,7 +199,6 @@ namespace Game.Core.Console
 
         private void RunProgram(string commmandBody)
         {
-
         }
 
         private void Concatenate(string commandBody)
@@ -231,7 +229,7 @@ namespace Game.Core.Console
             ConsoleContent.ConsoleOutput.Add(result);
         }
 
-        public void AttachSystem(Endpoint from , Endpoint too)
+        public void AttachSystem(Endpoint from, Endpoint too)
         {
             this.ConnectingFrom = from;
             this.AttachedSystem = too;

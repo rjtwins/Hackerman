@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Core.Events
 {
     public class EventTicker
     {
         //Main ticker
-        Timer MainTimer;
+        private Timer MainTimer;
+
         public int GameSpeed { private set; get; } = 1;
 
         //Amount of time the ticker was called.
@@ -19,6 +16,7 @@ namespace Core.Events
 
         //Dictionaries for all events past present and future.
         public SortedDictionary<int, List<Guid>> TimeIDListDict = new SortedDictionary<int, List<Guid>>();
+
         public Dictionary<Guid, Event> IDEventDict = new Dictionary<Guid, Event>();
 
         public EventTicker()
@@ -31,13 +29,13 @@ namespace Core.Events
         public void ChangeSpeed(int level)
         {
             this.GameSpeed = level;
-            int interval = 1000/(level * 4);
+            int interval = 1000 / (level * 4);
             MainTimer.Change(interval, interval);
         }
 
         public void RegisterEvent(Event e)
         {
-            if(e.StartTime < EventTicker.invokeCount)
+            if (e.StartTime < EventTicker.invokeCount)
             {
                 throw new Exception("Event cannot be registered as its start time is before the current time.");
             }
@@ -45,7 +43,7 @@ namespace Core.Events
             {
                 TimeIDListDict[e.StartTime] = new List<Guid>();
             }
-            if(TimeIDListDict[e.StartTime] == null)
+            if (TimeIDListDict[e.StartTime] == null)
             {
                 TimeIDListDict[e.StartTime] = new List<Guid>();
             }
@@ -79,8 +77,8 @@ namespace Core.Events
                 return;
             }
             List<Guid> EventIDsToHandle = TimeIDListDict[invokeCount];
-            
-            foreach(Guid id in EventIDsToHandle)
+
+            foreach (Guid id in EventIDsToHandle)
             {
                 TryStartEvent(id);
             }
@@ -92,7 +90,6 @@ namespace Core.Events
             try
             {
                 e = IDEventDict[id];
-
             }
             catch (KeyNotFoundException ex)
             {

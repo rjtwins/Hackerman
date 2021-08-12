@@ -10,51 +10,50 @@
 
         <!-- MoveThumb Template -->
         <ControlTemplate x:Key="MoveThumbTemplate" TargetType="{x:Type s:MoveThumb}">
-            <Rectangle Fill="Transparent"/>
+            <Rectangle Fill="Transparent" />
         </ControlTemplate>
 
         <ControlTemplate x:Key="MinTemplate" TargetType="{x:Type s:MinButton}">
-            <TextBlock Grid.Column="0" Text="-" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" FontWeight="Normal"/>
+            <TextBlock Grid.Column="0" Text="-" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" FontWeight="Normal" />
         </ControlTemplate>
 
         <ControlTemplate x:Key="MaxTemplate" TargetType="{x:Type s:MaxButton}">
-            <TextBlock Grid.Column="0" Text="&#10697;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" FontWeight="Normal"/>
+            <TextBlock Grid.Column="0" Text="&#10697;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" FontWeight="Normal" />
         </ControlTemplate>
 
         <!-- ResizeDecorator Template -->
         <ControlTemplate x:Key="ResizeDecoratorTemplate" TargetType="{x:Type Control}">
             <Grid>
                 <s:ResizeThumb Height="3" Cursor="SizeNS" Margin="0 -4 0 0"
-                       VerticalAlignment="Top" HorizontalAlignment="Stretch" Opacity="0"/>
+                       VerticalAlignment="Top" HorizontalAlignment="Stretch" Opacity="0" />
                 <s:ResizeThumb Width="3" Cursor="SizeWE" Margin="-4 0 0 0"
-                       VerticalAlignment="Stretch" HorizontalAlignment="Left" Opacity="0"/>
+                       VerticalAlignment="Stretch" HorizontalAlignment="Left" Opacity="0" />
                 <s:ResizeThumb Width="3" Cursor="SizeWE" Margin="0 0 -4 0"
-                       VerticalAlignment="Stretch" HorizontalAlignment="Right" Opacity="0"/>
+                       VerticalAlignment="Stretch" HorizontalAlignment="Right" Opacity="0" />
                 <s:ResizeThumb Height="3" Cursor="SizeNS" Margin="0 0 0 -4"
-                       VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Opacity="0"/>
+                       VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Opacity="0" />
                 <s:ResizeThumb Width="7" Height="7" Cursor="SizeNWSE" Margin="-6,-6,0,0"
-                       VerticalAlignment="Top" HorizontalAlignment="Left" Background="{x:Null}" Foreground="{x:Null}" Opacity="0" Visibility="Visible"/>
+                       VerticalAlignment="Top" HorizontalAlignment="Left" Background="{x:Null}" Foreground="{x:Null}" Opacity="0" Visibility="Visible" />
                 <s:ResizeThumb Width="7" Height="7" Cursor="SizeNESW" Margin="0 -6 -6 0"
-                       VerticalAlignment="Top" HorizontalAlignment="Right" Opacity="0"/>
+                       VerticalAlignment="Top" HorizontalAlignment="Right" Opacity="0" />
                 <s:ResizeThumb Width="7" Height="7" Cursor="SizeNESW" Margin="-6 0 0 -6"
-                       VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0"/>
+                       VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0" />
                 <s:ResizeThumb Width="7" Height="7" Cursor="SizeNWSE" Margin="0 0 -6 -6"
-                       VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0"/>
+                       VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0" />
             </Grid>
         </ControlTemplate>
 
         <!-- Designer Item Template-->
         <ControlTemplate x:Key="DesignerItemTemplate" TargetType="ContentControl">
             <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                <Control Template="{StaticResource ResizeDecoratorTemplate}"/>
-                <ContentPresenter Content="{TemplateBinding ContentControl.Content}"/>
+                <Control Template="{StaticResource ResizeDecoratorTemplate}" />
+                <ContentPresenter Content="{TemplateBinding ContentControl.Content}" />
             </Grid>
         </ControlTemplate>
-
     </Window.Resources>
 
     <Canvas x:Name="MainCanvas">
-        <ContentControl 
+        <ContentControl
             x:Name="MapControl"
             Width="130"
             MinWidth="0"
@@ -62,7 +61,7 @@
             MinHeight="0"
             Canvas.Top="150"
             Canvas.Left="470"
-            Template="{StaticResource DesignerItemTemplate}" 
+            Template="{StaticResource DesignerItemTemplate}"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             Padding="0,0,0,0" UseLayoutRounding="True"
             RenderTransformOrigin="0.5,0.5">
@@ -73,8 +72,7 @@
                                     <DoubleAnimation
                                         Storyboard.TargetName="LocalControl"
                                         Storyboard.TargetProperty="(ContentControl.Height)"
-                                        To="20" Duration="0:0:0.5" AutoReverse="False"
-                                        />
+                                        To="20" Duration="0:0:0.5" AutoReverse="False" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -87,7 +85,7 @@
             <Border BorderBrush="Black" Padding="0,0,0,0" Margin="1,1,1,1" SnapsToDevicePixels="True" ClipToBounds="True" BorderThickness="1,1,1,1">
                 <Grid Loaded="Grid_Loaded">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -107,11 +105,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Bounce Map" Panel.ZIndex="-1"/>
-                                    <s:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll"/>
+                                    <TextBlock Grid.Column="0" Text="Bounce Map" Panel.ZIndex="-1" />
+                                    <s:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
                                     <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,-2,0,0">
                                         <s:MinButton>
-                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                                         </s:MinButton>
                                         <s:MaxButton>
                                         </s:MaxButton>
@@ -120,12 +118,12 @@
                             </Border>
                         </Grid>
                     </Grid>
-                    <Frame Grid.Row="1" Grid.Column="1" x:Name="MapFrame" NavigationUIVisibility="Automatic"/>
+                    <Frame Grid.Row="1" Grid.Column="1" x:Name="MapFrame" NavigationUIVisibility="Automatic" />
                 </Grid>
             </Border>
         </ContentControl>
 
-        <ContentControl 
+        <ContentControl
             x:Name="ConsoleControl"
             Width="130"
             MinWidth="0"
@@ -133,7 +131,7 @@
             MinHeight="0"
             Canvas.Top="50"
             Canvas.Left="50"
-            Template="{StaticResource DesignerItemTemplate}" 
+            Template="{StaticResource DesignerItemTemplate}"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             Padding="0,0,0,0" UseLayoutRounding="True"
             RenderTransformOrigin="0.5,0.5">
@@ -144,8 +142,7 @@
                                     <DoubleAnimation
                                         Storyboard.TargetName="LocalControl"
                                         Storyboard.TargetProperty="(ContentControl.Height)"
-                                        To="20" Duration="0:0:0.5" AutoReverse="False"
-                                        />
+                                        To="20" Duration="0:0:0.5" AutoReverse="False" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -156,7 +153,7 @@
             <Border BorderBrush="Black" Padding="0,0,0,0" Margin="1,1,1,1" SnapsToDevicePixels="True" ClipToBounds="True" BorderThickness="1,1,1,1">
                 <Grid Loaded="Grid_Loaded">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -177,11 +174,11 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <Border />
-                                    <TextBlock Grid.Column="0" Text="Terminal" Panel.ZIndex="-1"/>
-                                    <s:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll"/>
+                                    <TextBlock Grid.Column="0" Text="Terminal" Panel.ZIndex="-1" />
+                                    <s:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
                                     <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,-2,0,0">
                                         <s:MinButton>
-                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                                         </s:MinButton>
                                         <s:MaxButton>
                                         </s:MaxButton>
@@ -190,7 +187,7 @@
                             </Border>
                         </Grid>
                     </Grid>
-                    <Frame Grid.Row="1" Grid.Column="1" x:Name="ConsoleFrame" NavigationUIVisibility="Automatic"/>
+                    <Frame Grid.Row="1" Grid.Column="1" x:Name="ConsoleFrame" NavigationUIVisibility="Automatic" />
                 </Grid>
             </Border>
         </ContentControl>

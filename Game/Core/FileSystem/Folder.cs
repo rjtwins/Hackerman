@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Game.Core.FileSystem
 {
@@ -37,7 +33,7 @@ namespace Game.Core.FileSystem
 
         public override string ToString()
         {
-            if(Parent == this)
+            if (Parent == this)
             {
                 return @"root:";
             }

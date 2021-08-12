@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Game.Core.Console;
-using System.Diagnostics;
 
 namespace Game.Core.FileSystem
 {
     public class FileSystem : Folder
     {
         public AccessLevel UserAccessLevel = AccessLevel.USER;
-        
+
         public Folder CurrentFolder;
 
         public SystemLog SystemLog;
@@ -26,6 +22,7 @@ namespace Game.Core.FileSystem
             this.AllFolders.Add(this);
             GenerateStandardFolderStructure();
         }
+
         private void GenerateStandardFolderStructure()
         {
             SystemLog = new SystemLog();
@@ -59,12 +56,15 @@ namespace Game.Core.FileSystem
                 case AccessLevel.USER:
                     this.CurrentFolder = GetFolderFromPath(@"root\users");
                     break;
+
                 case AccessLevel.ADMIN:
                     this.CurrentFolder = GetFolderFromPath(@"root\users\admin");
                     break;
+
                 case AccessLevel.ROOT:
                     this.CurrentFolder = GetFolderFromPath(@"root");
                     break;
+
                 default:
                     break;
             }
@@ -104,11 +104,11 @@ namespace Game.Core.FileSystem
         internal string ListFromCurrentFolder()
         {
             List<string> folderFileList = new List<string>();
-            foreach(string f in CurrentFolder.Folders.Keys)
+            foreach (string f in CurrentFolder.Folders.Keys)
             {
                 folderFileList.Add(f.GetHashCode().ToString() + "\t" + "<DIR>" + "\t\t" + f);
             }
-            foreach(string f in CurrentFolder.Programs.Keys)
+            foreach (string f in CurrentFolder.Programs.Keys)
             {
                 folderFileList.Add(f.GetHashCode().ToString() + "\t" + "<FILE>" + "\t\t" + f);
             }
@@ -134,10 +134,10 @@ namespace Game.Core.FileSystem
             Folder NewFolder = null;
             List<string> folders = path.Split('\\').ToList<string>();
             folders.RemoveAt(0); // rmove root, we are root;
-            foreach(string folder in folders)
+            foreach (string folder in folders)
             {
                 if (F.Folders.TryGetValue(folder, out Folder _F))
-                { 
+                {
                     F = _F;
                     continue;
                 }
@@ -167,7 +167,6 @@ namespace Game.Core.FileSystem
                 }
                 F.Folders[folder] = new Folder(F, folder);
             }
-
         }
 
         public Folder GetFolderFromPath(string path)
@@ -192,12 +191,12 @@ namespace Game.Core.FileSystem
 
         public Folder GetFolderFromPath(string path, Folder start)
         {
-            if(start.ParentFileSystem != this)
+            if (start.ParentFileSystem != this)
             {
                 throw new Exception("A folder from a different filesystem was passed this should never happen!");
             }
 
-            if(path == "..")
+            if (path == "..")
             {
                 return CurrentFolder.Parent;
             }
@@ -210,7 +209,7 @@ namespace Game.Core.FileSystem
                 {
                     throw new Exception("The system cannot find the path specified to.");
                 }
-                F = F.Folders[FString];            
+                F = F.Folders[FString];
             }
             return F;
         }

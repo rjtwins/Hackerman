@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-
-//Internal
-using Game.Core.Endpoints;
+﻿//Internal
 using Core.Events;
-using Game;
 using Game.Core.Console;
+using Game.Core.Endpoints;
+using System.Windows;
 
 namespace Game
 {
@@ -20,7 +11,6 @@ namespace Game
     /// </summary>
     public partial class App : Application
     {
-
         protected override void OnStartup(StartupEventArgs e)
         {
             //declaring globals
@@ -38,9 +28,6 @@ namespace Game
             TestEvent ev = new TestEvent();
             ev.SetStartInterval(4);
             Global.EventTicker.RegisterEvent(ev);
-
-
-
         }
 
         public void OnMapReady()

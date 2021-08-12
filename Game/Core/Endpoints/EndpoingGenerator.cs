@@ -1,10 +1,6 @@
 ﻿using Game.Properties;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game.Core.Endpoints
 {
@@ -13,7 +9,7 @@ namespace Game.Core.Endpoints
         public static int XMax = 3950;
         public static int YMax = 1616;
         public static int EndpointBaseSize = 6;
-        int[,] EndpointCoordinates;
+        private int[,] EndpointCoordinates;
         private Random Rand = new Random();
 
         /// <summary>
@@ -52,7 +48,7 @@ namespace Game.Core.Endpoints
 
         public List<Endpoint> GenerateEndpoints(int number)
         {
-            this.EndpointCoordinates = UTILS.getBoolBitmap(20,Resources.WorldMapDensity);
+            this.EndpointCoordinates = UTILS.getBoolBitmap(20, Resources.WorldMapDensity);
             List<Endpoint> EndpointList = new List<Endpoint>();
             for (int i = 0; i < number; i++)
             {
@@ -69,14 +65,13 @@ namespace Game.Core.Endpoints
             int d = 100;
             int x = Rand.Next(0, XMax);
             int y = Rand.Next(0, YMax);
-            
+
             //water check
-            if(EndpointCoordinates[x,y] == 0)
+            if (EndpointCoordinates[x, y] == 0)
             {
                 //var range = EndpointCoordinates[new Range(x-5, x+5), new Range(y-5, y+5)];
                 return GenerateCoordinate();
             }
-
 
             ////Proximity check
             //bool reject = false;

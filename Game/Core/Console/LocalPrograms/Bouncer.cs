@@ -1,9 +1,6 @@
 ﻿using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game.Core.Console.LocalPrograms
 {
@@ -15,6 +12,7 @@ namespace Game.Core.Console.LocalPrograms
         {
             FillCommands();
         }
+
         public void FillCommands()
         {
             this.CommandDictionary["LOAD"] = LoadBounceList;
@@ -58,7 +56,6 @@ namespace Game.Core.Console.LocalPrograms
             }
             catch (Exception ex)
             {
-
                 return ex.Message;
             }
 
@@ -86,7 +83,7 @@ namespace Game.Core.Console.LocalPrograms
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="command"></param>
         /// <returns>string result</returns>
@@ -135,6 +132,7 @@ namespace Game.Core.Console.LocalPrograms
             Global.LocalSystem.SaveCurrentBounceListsAs(commandBody);
             return "SAVED: " + commandBody;
         }
+
         private string LoadBounceList(string commandBody)
         {
             Endpoint[] bounceLict = Global.LocalSystem.LoadBounceList(commandBody);

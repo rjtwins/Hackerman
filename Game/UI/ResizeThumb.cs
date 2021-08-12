@@ -15,8 +15,8 @@ namespace Game.UI
         private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             Control designerItem = this.DataContext as Control;
-            
-            if(e != null)
+
+            if (e != null)
             {
                 e.Handled = true;
             }
@@ -36,11 +36,13 @@ namespace Game.UI
                     deltaVertical = Math.Min(-e.VerticalChange, designerItem.ActualHeight - designerItem.MinHeight);
                     designerItem.Height -= deltaVertical;
                     break;
+
                 case VerticalAlignment.Top:
                     deltaVertical = Math.Min(e.VerticalChange, designerItem.ActualHeight - designerItem.MinHeight);
                     Canvas.SetTop(designerItem, Canvas.GetTop(designerItem) + deltaVertical);
                     designerItem.Height -= deltaVertical;
                     break;
+
                 default:
                     break;
             }
@@ -52,10 +54,12 @@ namespace Game.UI
                     Canvas.SetLeft(designerItem, Canvas.GetLeft(designerItem) + deltaHorizontal);
                     designerItem.Width -= deltaHorizontal;
                     break;
+
                 case HorizontalAlignment.Right:
                     deltaHorizontal = Math.Min(-e.HorizontalChange, designerItem.ActualWidth - designerItem.MinWidth);
                     designerItem.Width -= deltaHorizontal;
                     break;
+
                 default:
                     break;
             }
