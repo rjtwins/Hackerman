@@ -11,9 +11,8 @@ namespace Game.UI
 {
     class MaxButton : Button
     {
-        private bool Maxed = false;
-        private const string MaxText = "◻";
-        private const string WindowFyText = "⧉";
+        private const string MaxText = "◇";
+        private const string WindowFyText = "◈";
         private TextBlock ButtonText;
         public MaxButton()
         {
@@ -33,6 +32,7 @@ namespace Game.UI
             {
                 return;
             }
+            bool Maxed = (bool)ContextedControl.Resources["Maxed"];
 
             if (Maxed)
             {
@@ -52,6 +52,8 @@ namespace Game.UI
             {
                 return;
             }
+            bool Maxed = (bool)ContextedControl.Resources["Maxed"];
+
             if (!Maxed)
             {
                 ContextedControl.Width = Global.MainWindow.MainCanvas.ActualWidth;
@@ -61,9 +63,8 @@ namespace Game.UI
                 Canvas.SetTop(ContextedControl, 0);
 
                 Maxed = true;
-                return;
             }
-            if (Maxed)
+            else if (Maxed)
             {
                 ContextedControl.Width = 400;
                 ContextedControl.Height = 400;
@@ -71,9 +72,8 @@ namespace Game.UI
                 Canvas.SetTop(ContextedControl, 200);
                 this.ButtonText.Text = MaxText;
                 Maxed = false;
-                return;
             }
-            
+            ContextedControl.Resources["Maxed"] = Maxed;
         }
     }
 }

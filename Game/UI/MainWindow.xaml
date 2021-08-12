@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Game" xmlns:s="clr-namespace:Game.UI"
+        xmlns:local="clr-namespace:Game" xmlns:s="clr-namespace:Game.UI" xmlns:Sys="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800" WindowState="Normal" WindowStyle="SingleBorderWindow" Visibility="Visible" ShowInTaskbar="False">
     <Window.Resources>
@@ -79,6 +79,11 @@
                             </BeginStoryboard>
                         </EventTrigger>
                     </ContentControl.Triggers>-->
+
+            <ContentControl.Resources>
+                <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
+            </ContentControl.Resources>
+            
             <Border BorderBrush="Black" Padding="0,0,0,0" Margin="1,1,1,1" SnapsToDevicePixels="True" ClipToBounds="True" BorderThickness="1,1,1,1">
                 <Grid Loaded="Grid_Loaded">
                     <Grid.ColumnDefinitions>
@@ -145,6 +150,9 @@
                             </BeginStoryboard>
                         </EventTrigger>
                     </ContentControl.Triggers>-->
+            <ContentControl.Resources>
+                <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
+            </ContentControl.Resources>
             <Border BorderBrush="Black" Padding="0,0,0,0" Margin="1,1,1,1" SnapsToDevicePixels="True" ClipToBounds="True" BorderThickness="1,1,1,1">
                 <Grid Loaded="Grid_Loaded">
                     <Grid.ColumnDefinitions>
