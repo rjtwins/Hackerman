@@ -79,12 +79,13 @@ namespace Game.Core.Endpoints
         internal string CurrentPath()
         {
             string result = FileSystem.CurrentFolder.ToString();
-            if (result == "root:")
+            result = result.Remove(0, 4);
+            if (result == ":")
             {
-                result = @"root:\";
+                result = @":\";
             }
 
-            return CurrentUsername + @"@" + result;
+            return CurrentUsername + @"@" + this.IPAddress + result;
         }
 
         internal string ListFromCurrentFolder()

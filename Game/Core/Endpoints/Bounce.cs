@@ -50,6 +50,7 @@ namespace Game.Core.Endpoints
             if(BounceList.Count == 2)
             {
                 Global.Console.ConnectToFrom(BounceList[0], BounceList[1]);
+                Global.EndPointMap.DisplayConnection();
                 return true;
             }
 
@@ -61,6 +62,7 @@ namespace Game.Core.Endpoints
                 current.BounceTo(from, too);
             }
             Global.Console.ConnectToFrom(BounceList[BounceList.Count - 1], current);
+            Global.EndPointMap.DisplayConnection();
             return true;
         }
     }

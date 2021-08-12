@@ -52,7 +52,7 @@ namespace Game.UI
                     Width = 6
                 };
                 TextBlock txt = new TextBlock();
-                txt.Text = e.name;
+                //txt.Text = e.name;
                 btnPanel.Children.Add(txt);
 
                 Button btn = new Button();
@@ -106,7 +106,7 @@ namespace Game.UI
             DrawBouncePath();
         }
 
-        private void DrawBouncePath()
+        public void DrawBouncePath()
         {
             this.Polyline.Points.Clear();
             this.PointDict.Clear();
@@ -180,12 +180,8 @@ namespace Game.UI
             DrawBouncePath();
         }
 
-        private void MakeConnection()
+        public void DisplayConnection()
         {
-            if (!Global.Bounce.MakeConnection())
-            {
-                return;
-            }
             this.Polyline.StrokeDashArray = new DoubleCollection(new double[] { 2, 3, 2 });
             DisableEndpointButtons();
             Button last = this.GuidButtonDict[
@@ -227,11 +223,6 @@ namespace Game.UI
             this.Polyline.StrokeDashArray = new DoubleCollection();
             EnableEndpointButtons();
             DrawBouncePath();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            MakeConnection();
         }
     }
 }

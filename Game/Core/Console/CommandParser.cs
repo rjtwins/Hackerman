@@ -23,6 +23,7 @@ namespace Game.Core.Console
             this.ConsoleContent = c;
             //this.AttachSystem(new Endpoint());
             FillCommandDictionary();
+            FillLocalCommandDictionary();
         }
 
         private void FillCommandDictionary()
@@ -44,12 +45,24 @@ namespace Game.Core.Console
 
         private void FillLocalCommandDictionary()
         {
-            LocalCommandDictionary["connect"] = this.TryConnectToAdress;
+            LocalCommandDictionary["connect"] = this.MakeConnection;
+            LocalCommandDictionary["bounce"] = this.ParseBounceCommand;
+            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
+            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
+            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
+            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
+            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
+
         }
 
-        private void TryConnectToAdress(string obj)
+        private void MakeConnection(string obj)
         {
-            throw new NotImplementedException();
+            Global.Bounce.MakeConnection();
+        }
+
+        private void ParseBounceCommand(string commandBody)
+        {
+            ConsoleContent.ConsoleOutput.Add(Global.LocalSystem.Bouncer.ParseCommand(commandBody));
         }
 
         private void Download(string commandBody)
@@ -87,7 +100,6 @@ namespace Game.Core.Console
                 return;
             }
 
-
             //split at space
             List<string> splitCommand = new List<string>(command.Split(' '));
             string commandType = splitCommand[0];
@@ -97,9 +109,9 @@ namespace Game.Core.Console
             {
                 commandBody = splitCommand[1];
             }
-            else if (splitCommand.Count >= 3)
+            else if (splitCommand.Count > 2)
             {
-                commandBody = string.Join(' ', splitCommand.GetRange(1, splitCommand.Count - 2));
+                commandBody = string.Join(' ', splitCommand.GetRange(1, splitCommand.Count - 1));
             }
 
             if (this.AttachedSystem == null)

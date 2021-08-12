@@ -11,6 +11,7 @@ using System.Windows;
 using Game.Core.Endpoints;
 using Core.Events;
 using Game;
+using Game.Core.Console;
 
 namespace Game
 {
@@ -29,6 +30,7 @@ namespace Game
             Global.Console = new UI.Console();
             Global.EndPointMap = new UI.EndpointMap();
             Global.Bounce = new Bounce();
+            Global.LocalSystem = new LocalSystem();
 
             //TODO move non UI game flow to other class
             base.OnStartup(e);

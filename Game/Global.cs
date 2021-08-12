@@ -1,4 +1,5 @@
 ﻿using Core.Events;
+using Game.Core.Console;
 using Game.Core.Endpoints;
 using Game.UI;
 using System;
@@ -20,5 +21,6 @@ namespace Game
         public static Bounce Bounce;
         public static Endpoint StartEndPoint;
         public static List<Endpoint> AllEndpoints = new();
+        public static LocalSystem LocalSystem;
     }
 }
