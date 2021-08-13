@@ -18,12 +18,13 @@ namespace Core.Events
         public static int invokeCount { private set; get; }
 
         //Dictionaries for all events past present and future.
-        public SortedDictionary<int, List<Guid>> TimeIDListDict = new SortedDictionary<int, List<Guid>>();
+        public SortedList<DateTime, Guid> EventQueue = new SortedList<DateTime, Guid>();
 
         public Dictionary<Guid, Event> IDEventDict = new Dictionary<Guid, Event>();
 
         private Dictionary<int, double> GameSpeedDict = new Dictionary<int, double>();
 
+        private List<Event> EventsToHandle = new List<Event>();
         public EventTicker()
         {
             // timer callback has been reached.
@@ -59,19 +60,11 @@ namespace Core.Events
 
         public void RegisterEvent(Event e)
         {
-            if (e.StartTime < EventTicker.invokeCount)
+            if (e.StartTime < Global.GameTime)
             {
                 throw new Exception("Event cannot be registered as its start time is before the current time.");
             }
-            if (!TimeIDListDict.ContainsKey(e.StartTime))
-            {
-                TimeIDListDict[e.StartTime] = new List<Guid>();
-            }
-            if (TimeIDListDict[e.StartTime] == null)
-            {
-                TimeIDListDict[e.StartTime] = new List<Guid>();
-            }
-            this.TimeIDListDict[e.StartTime].Add(e.Id);
+            this.EventQueue.Add(e.StartTime, e.Id);
             this.IDEventDict[e.Id] = e;
         }
 
@@ -104,32 +97,33 @@ namespace Core.Events
 
         private void HandleEvents()
         {
-            if (!TimeIDListDict.ContainsKey(invokeCount))
+            EventsToHandle.Clear();
+            Event e;
+            for (int i = 0; i < EventQueue.Count; i++)
             {
-                //No events to do return;
-                return;
+                Guid EventId = EventQueue[EventQueue.Keys[i]];
+                if (!IDEventDict.TryGetValue(EventId, out e))
+                {
+                    throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
+                }
+                if(!(e.StartTime <= Global.GameTime))
+                {
+                    break;
+                }
+                EventsToHandle.Add(e);
             }
-            List<Guid> EventIDsToHandle = TimeIDListDict[invokeCount];
 
-            foreach (Guid id in EventIDsToHandle)
+            
+
+            foreach (Event eventToHandle in EventsToHandle)
             {
-                TryStartEvent(id);
+                TryStartEvent(eventToHandle);
             }
         }
 
-        private void TryStartEvent(Guid id)
+        private void TryStartEvent(Event eventToHandle)
         {
-            Event e = null;
-            try
-            {
-                e = IDEventDict[id];
-            }
-            catch (KeyNotFoundException ex)
-            {
-                Logger.ErrorLog("EventKey not found", "KeyName: " + id.ToString());
-                return;
-            }
-            e.StartEvent();
+            eventToHandle.StartEvent();
         }
     }
 }
