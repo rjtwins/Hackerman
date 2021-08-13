@@ -14,8 +14,8 @@ namespace Game.UI
         {
             this.Click += MaxButton_Click;
             Global.MainWindow.MainCanvas.SizeChanged += MainCanvas_SizeChanged;
-            this.BorderBrush = Brushes.Transparent;
-            this.Background = Brushes.Transparent;
+            //this.BorderBrush = Brushes.Transparent;
+            //this.Background = Brushes.Transparent;
             ButtonText = new TextBlock();
             ButtonText.Text = MaxText;
             this.AddChild(ButtonText);

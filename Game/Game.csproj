@@ -14,16 +14,32 @@
     <Authors>RJ</Authors>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Fonts\clacon.ttf" />
+    <None Remove="Fonts\Nintendo-DS-BIOS.ttf" />
+    <None Remove="Fonts\PixelOperator.ttf" />
+    <None Remove="Fonts\VideoTerminalScreen.ttf" />
+    <None Remove="Icons\win98_icons\console_prompt.ico" />
+    <None Remove="Icons\win98_icons\world_star.ico" />
     <None Remove="Icons\WorldMapDensity.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Fonts\clacon.ttf" />
+    <Resource Include="Fonts\Nintendo-DS-BIOS.ttf" />
+    <Resource Include="Fonts\PixelOperator.ttf" />
+    <Resource Include="Fonts\VideoTerminalScreen.ttf" />
     <Resource Include="Icons\server.png" />
+    <Resource Include="Icons\win98_icons\console_prompt.ico" />
+    <Resource Include="Icons\win98_icons\world_star.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icons\WorldMapDensity.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\WorldMap.png" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Elysium.Theme" Version="2.0.4" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.2.237901">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -46,7 +62,11 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
+	<!--<ItemGroup>
+		<Resource Include="Fonts\PixelOperator.ttf" />
+	</ItemGroup>-->
+
+	<ItemGroup>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

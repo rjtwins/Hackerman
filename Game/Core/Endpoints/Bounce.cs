@@ -33,23 +33,25 @@ namespace Game.Core.Endpoints
             }
             BounceList.Add(endpoint);
         }
-
-        internal bool MakeConnection()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Endpoint from, Endpoint too, bool succes</returns>
+        internal (Endpoint, Endpoint, bool) MakeConnection()
         {
-            Endpoint from;
-            Endpoint too;
+            Endpoint from = null;
+            Endpoint too = null;
             Endpoint current = null;
 
             if (BounceList.Count <= 1)
             {
-                return false;
+                return (null, null, false);
             }
 
             if (BounceList.Count == 2)
             {
-                Global.Console.ConnectToFrom(BounceList[0], BounceList[1]);
                 Global.EndPointMap.DisplayConnection();
-                return true;
+                return (BounceList[0], BounceList[1], true);
             }
 
             for (int i = 1; i < BounceList.Count - 1; i++)
@@ -59,9 +61,9 @@ namespace Game.Core.Endpoints
                 current = BounceList[i];
                 current.BounceTo(from, too);
             }
-            Global.Console.ConnectToFrom(BounceList[BounceList.Count - 1], current);
             Global.EndPointMap.DisplayConnection();
-            return true;
+            return (from, too, true);
         }
+
     }
 }

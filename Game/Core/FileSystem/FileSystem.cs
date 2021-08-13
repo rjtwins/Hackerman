@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Core.Endpoints;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,12 +11,14 @@ namespace Game.Core.FileSystem
 
         public Folder CurrentFolder;
 
-        public SystemLog SystemLog;
+        public ConnectionLog SystemLog;
+        public EndpointBackend ParrentEndpoint { protected set; get; }
         public List<Program> SystemPrograms { private set; get; } = new List<Program>();
         public List<Folder> AllFolders { protected set; get; } = new List<Folder>();
 
-        public FileSystem() : base("root")
+        public FileSystem(EndpointBackend endpoint) : base("root")
         {
+            this.ParrentEndpoint = endpoint;
             this.Parent = this;
             this.CurrentFolder = this;
             this.ParentFileSystem = this;
@@ -25,7 +28,7 @@ namespace Game.Core.FileSystem
 
         private void GenerateStandardFolderStructure()
         {
-            SystemLog = new SystemLog();
+            SystemLog = new ConnectionLog();
             AccessLevel = AccessLevel.ROOT;
             MakeFolderFromPath(@"root\system").AccessLevel = AccessLevel.ROOT;
             MakeFolderFromPath(@"root\system\logs").AccessLevel = AccessLevel.ROOT; ;

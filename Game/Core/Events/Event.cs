@@ -30,10 +30,10 @@ namespace Core.Events
             this.Interval = EventTicker.invokeCount - TimeInTicks;
         }
 
-        public virtual void SetStartInterval(int IntervalInTicks)
+        public virtual void SetStartInterval(int IntervalInMinutes)
         {
-            this.Interval = IntervalInTicks;
-            this.StartTime = EventTicker.invokeCount + IntervalInTicks;
+            this.Interval = IntervalInMinutes * 16;
+            this.StartTime = EventTicker.invokeCount + Interval;
         }
     }
 }

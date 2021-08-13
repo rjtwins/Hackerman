@@ -61,6 +61,7 @@ namespace Game
         FILE_EDITED = 4,
         FILE_COPIED = 5,
         FILE_DELETED = 6,
-        FILE_RUN = 7
+        FILE_RUN = 7,
+        CONNECTION_ROUTED = 8
     }
 }

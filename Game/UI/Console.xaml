@@ -7,12 +7,11 @@
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Console">
-    <Grid>
+    <Grid Background="Black" Name="mypanel">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" Name="row0"/>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" Name="Scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Hidden">
+        <ScrollViewer Grid.Row="0" Name="Scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Hidden" FontFamily="Consolas" FontSize="14">
             <ScrollViewer.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
             </ScrollViewer.Resources>
@@ -20,19 +19,25 @@
                 <ItemsControl ItemsSource="{Binding ConsoleOutput, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=.}" Foreground="White" FontFamily="Consolas" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+                            <TextBlock Text="{Binding Path=.}" Foreground="White" 
+                                       FontSize="20" TextWrapping="Wrap" TextTrimming="WordEllipsis"
+                                       FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                <Grid Grid.Row="1" OpacityMask="Black" Background="Black" Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="5,0,4,0" Grid.Column="0" Text="{Binding ConsolePrefix, Mode=TwoWay}" Background="Black" Foreground="White"
+                               FontSize="20" UseLayoutRounding="True" OpacityMask="Black"
+                               FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS"/>
+                    <TextBox Grid.Column="1" BorderThickness="0" BorderBrush="#00000000" Text="{Binding ConsoleInput, Mode=TwoWay}" Background="Black" Foreground="White" 
+                             Name="InputBlock" SelectionBrush="#00000000" SelectionTextBrush="#00000000" PreviewKeyDown="InputBlock_PreviewKeyDown" Opacity="1"
+                             FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20"/>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
-        <Grid Grid.Row="1" OpacityMask="Black" Background="Black" Margin="0,5,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Margin="5,0,4,0" Grid.Column="0" Text="{Binding ConsolePrefix, Mode=TwoWay}" Background="Black" Foreground="White" FontFamily="Consolas" UseLayoutRounding="True" OpacityMask="Black" />
-            <TextBox Grid.Column="1" BorderThickness="0" BorderBrush="#00000000" Text="{Binding ConsoleInput, Mode=TwoWay}" Background="Black" Foreground="White" FontFamily="Consolas" Name="InputBlock" SelectionBrush="#00000000" SelectionTextBrush="#00000000" PreviewKeyDown="InputBlock_PreviewKeyDown" Opacity="1" />
-        </Grid>
     </Grid>
 </Page>

@@ -2,7 +2,9 @@
 using Game.Core.Console;
 using Game.Core.Endpoints;
 using Game.UI;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Game
 {
@@ -18,5 +20,7 @@ namespace Game
         public static Endpoint StartEndPoint;
         public static List<Endpoint> AllEndpoints = new();
         public static LocalSystem LocalSystem;
+        public static DateTime GameTime;
+        public static bool GamePaused;
     }
 }

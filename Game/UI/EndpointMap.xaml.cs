@@ -76,7 +76,6 @@ namespace Game.UI
             Debug.WriteLine("Drawing:" + (Guid)(sender as Button).Tag);
             Guid id = (Guid)(sender as Button).Tag;
 
-            //TODO make this a global list for when we wanna hide points you can bounce to by other means then by clicking on the map.
             if (!DrawnEndpointsDict.ContainsKey(id))
             {
                 throw new Exception("Clicked endpoint is not rendered on the map? How was it clicked?");

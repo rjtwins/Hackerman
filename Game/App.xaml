@@ -1,7 +1,18 @@
 ﻿<Application x:Class="Game.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="pack://application:,,,/UI/MainWindow.xaml">
+             StartupUri="pack://application:,,,/UI/MainWindow.xaml" Startup="StartupHandler">
     <Application.Resources>
+        <!--<ResourceDictionary>
+            
+            <ResourceDictionary.MergedDictionaries>
+                
+                <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml"/>
+                
+            </ResourceDictionary.MergedDictionaries>
+            
+        </ResourceDictionary>-->
+
+        <FontFamily x:Key="PixelOperator">pack://application:,,,/Fonts/#PixelOperator</FontFamily>
     </Application.Resources>
 </Application>

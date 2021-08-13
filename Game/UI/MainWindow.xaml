@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Game" xmlns:s="clr-namespace:Game.UI" xmlns:Sys="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800" WindowState="Normal" WindowStyle="SingleBorderWindow" Visibility="Visible" ShowInTaskbar="False">
+        Title="MainWindow" Height="600" Width="800" WindowState="Normal" WindowStyle="SingleBorderWindow" Visibility="Visible" ShowInTaskbar="False" Background="#FF30363D" Foreground="#FFD6DFE9">
     <Window.Resources>
 
         <!-- MoveThumb Template -->
@@ -52,20 +52,42 @@
         </ControlTemplate>
     </Window.Resources>
 
-    <Canvas x:Name="MainCanvas">
-        <ContentControl
+    <Grid Background="#FF232930">
+        <Grid.ColumnDefinitions>
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#FF3A434B">
+            <TextBlock x:Name="GameTimeTextBlock" Text="dd-mm-yyyy"/>
+            <TextBlock x:Name="GameSpeedTextBlock" Text="1" Margin="5,0,5,0"/>
+            <Button Name="DecreaseGameSpeedButton" Click="DecreaseGameSpeedButton_Click" HorizontalAlignment="Center" VerticalAlignment="Stretch" >
+                <TextBlock Text="&lt;&lt;"/>
+            </Button>
+            <Button Name="PauseGameButton" Click="PauseGameButton_Click" HorizontalAlignment="Center">
+                <TextBlock Text="="/>
+            </Button>
+            <Button Name="IncreaseGameSpeedButton" Click="IncreaseGameSpeedButton_Click" HorizontalAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFD6DFE9">
+                <TextBlock Text="&gt;&gt;"/>
+            </Button>
+        </StackPanel>
+        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="#FF2E2E2E">
+
+            <ContentControl
             x:Name="MapControl"
-            Width="130"
+            Width="400"
             MinWidth="0"
-            Height="130"
+            Height="200"
             MinHeight="0"
             Canvas.Top="150"
-            Canvas.Left="470"
+            Canvas.Left="150"
             Template="{StaticResource DesignerItemTemplate}"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5">
-            <!--<ContentControl.Triggers>
+            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver">
+                <!--<ContentControl.Triggers>
                         <EventTrigger RoutedEvent="ContentControl.Loaded">
                             <BeginStoryboard>
                                 <Storyboard>
@@ -77,65 +99,87 @@
                             </BeginStoryboard>
                         </EventTrigger>
                     </ContentControl.Triggers>-->
-
-            <ContentControl.Resources>
-                <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
-            </ContentControl.Resources>
-
-            <Border BorderBrush="Black" Padding="0,0,0,0" Margin="1,1,1,1" SnapsToDevicePixels="True" ClipToBounds="True" BorderThickness="1,1,1,1">
-                <Grid Loaded="Grid_Loaded">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid>
+                <ContentControl.Resources>
+                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
+                </ContentControl.Resources>
+                <Border BorderBrush="Silver" Padding="0,0,0,0" Margin="2,2,2,2" BorderThickness="4,4,4,4">
+                    <Grid Loaded="Grid_Loaded" Background="Silver">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Grid Grid.Row="1">
-                            <!-- Detail controls here -->
-                            <Border Grid.Row="0" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">
-                                <Grid DataContext="{Binding ElementName=MapControl}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Bounce Map" Panel.ZIndex="-1" />
-                                    <s:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,-2,0,0">
-                                        <s:MinButton>
-                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                                        </s:MinButton>
-                                        <s:MaxButton>
-                                        </s:MaxButton>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </Grid>
-                    </Grid>
-                    <Frame Grid.Row="1" Grid.Column="1" x:Name="MapFrame" NavigationUIVisibility="Automatic" />
-                </Grid>
-            </Border>
-        </ContentControl>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,0.5" StartPoint="0.1,0.1">
+                                    <GradientStop Color="#FF02076A"/>
+                                    <GradientStop Color="#FF195689" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="1">
+                                <!-- Detail controls here -->
+                                <Border Grid.Row="0">
+                                    <Grid DataContext="{Binding ElementName=MapControl}" Height="21">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Grid.Column="0" Source="/Icons/win98_icons/world_star.ico"
+                                               Stretch="UniformToFill" Margin="2,2,3,0" 
+                                               ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                                               Panel.ZIndex="11" VerticalAlignment="Center" 
+                                               HorizontalAlignment="Center" Height="21" Width="21" />
+                                        
+                                        <TextBlock Grid.Column="1" Text="BOUNCE" Panel.ZIndex="-1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="18" FontWeight="Bold" FontStyle="Normal" TextDecorations="{x:Null}" LineHeight="Auto" TextAlignment="Justify" Padding="0,0,0,2" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" >
+                                            <TextBlock.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform ScaleX="1" ScaleY="0.85"/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform/>
+                                                    <TranslateTransform/>
+                                                </TransformGroup>
+                                            </TextBlock.RenderTransform>
+                                        </TextBlock>
+                                        <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
 
-        <ContentControl
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                            <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
+                                                <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
+                                            </s:MinButton>
+                                            <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
+                                            </s:MaxButton>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                        <Frame Grid.Row="1" Grid.Column="1" x:Name="MapFrame" NavigationUIVisibility="Automatic" />
+                    </Grid>
+                </Border>
+            </ContentControl>
+            
+            
+            <ContentControl
             x:Name="ConsoleControl"
-            Width="130"
+            Width="400"
             MinWidth="0"
-            Height="130"
+            Height="200"
             MinHeight="0"
             Canvas.Top="50"
             Canvas.Left="50"
             Template="{StaticResource DesignerItemTemplate}"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5">
-            <!--<ContentControl.Triggers>
+            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver">
+                <!--<ContentControl.Triggers>
                         <EventTrigger RoutedEvent="ContentControl.Loaded">
                             <BeginStoryboard>
                                 <Storyboard>
@@ -147,49 +191,70 @@
                             </BeginStoryboard>
                         </EventTrigger>
                     </ContentControl.Triggers>-->
-            <ContentControl.Resources>
-                <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
-            </ContentControl.Resources>
-            <Border BorderBrush="Black" Padding="0,0,0,0" Margin="1,1,1,1" SnapsToDevicePixels="True" ClipToBounds="True" BorderThickness="1,1,1,1">
-                <Grid Loaded="Grid_Loaded">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid>
+                <ContentControl.Resources>
+                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
+                </ContentControl.Resources>
+                <Border BorderBrush="Silver" Padding="0,0,0,0" Margin="2,2,2,2" BorderThickness="4,4,4,4">
+                    <Grid Loaded="Grid_Loaded" Background="Silver">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Grid Grid.Row="1">
-                            <!-- Detail controls here -->
-                            <Border Grid.Row="0" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">
-                                <Grid DataContext="{Binding ElementName=ConsoleControl}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Border />
-                                    <TextBlock Grid.Column="0" Text="Terminal" Panel.ZIndex="-1" />
-                                    <s:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,-2,0,0">
-                                        <s:MinButton>
-                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                                        </s:MinButton>
-                                        <s:MaxButton>
-                                        </s:MaxButton>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,0.5" StartPoint="0.1,0.1">
+                                    <GradientStop Color="#FF02076A"/>
+                                    <GradientStop Color="#FF195689" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="1">
+                                <!-- Detail controls here -->
+                                <Border Grid.Row="0">
+                                    <Grid DataContext="{Binding ElementName=ConsoleControl}" Height="21">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Grid.Column="0" Source="/Icons/win98_icons/console_prompt.ico" Stretch="UniformToFill" Margin="2,2,3,0" ScrollViewer.VerticalScrollBarVisibility="Disabled" Panel.ZIndex="10" VerticalAlignment="Center" HorizontalAlignment="Center" Height="21" Width="21" />
+                                        <TextBlock Grid.Column="1" Text="TrackON-Terminal" Panel.ZIndex="-1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="18" FontWeight="Bold" FontStyle="Normal" TextDecorations="{x:Null}" LineHeight="Auto" TextAlignment="Justify" Padding="0,0,0,2" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" >
+                                            <TextBlock.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform ScaleX="1" ScaleY="0.85"/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform/>
+                                                    <TranslateTransform/>
+                                                </TransformGroup>
+                                            </TextBlock.RenderTransform>
+                                        </TextBlock>
+                                        <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
+
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                            <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
+                                                <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
+                                            </s:MinButton>
+                                            <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
+                                            </s:MaxButton>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </Grid>
+                        <Frame Grid.Row="1" Grid.Column="1" x:Name="ConsoleFrame" NavigationUIVisibility="Automatic" />
                     </Grid>
-                    <Frame Grid.Row="1" Grid.Column="1" x:Name="ConsoleFrame" NavigationUIVisibility="Automatic" />
-                </Grid>
-            </Border>
-        </ContentControl>
-    </Canvas>
+                </Border>
+            </ContentControl>
+            
+            
+        </Canvas>
+    </Grid>
+
 </Window>

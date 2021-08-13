@@ -3,6 +3,7 @@ using Core.Events;
 using Game.Core.Console;
 using Game.Core.Endpoints;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Game
 {
@@ -28,6 +29,12 @@ namespace Game
             TestEvent ev = new TestEvent();
             ev.SetStartInterval(4);
             Global.EventTicker.RegisterEvent(ev);
+        }
+
+       
+        private void StartupHandler(object sender, System.Windows.StartupEventArgs e)
+        {
+            //Elysium.Manager.Apply(this, Elysium.Theme.Dark);
         }
 
         public void OnMapReady()

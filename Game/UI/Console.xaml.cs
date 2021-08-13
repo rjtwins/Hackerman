@@ -41,11 +41,6 @@ namespace Game.UI
         {
         }
 
-        public void ConnectToFrom(Endpoint too, Endpoint from)
-        {
-            this.CommandParser.AttachSystem(from, too);
-        }
-
         private void InputBlock_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -67,8 +62,8 @@ namespace Game.UI
         {
             if (e.Key == Key.Up)
             {
-                Debug.WriteLine(e.Key);
-                Debug.WriteLine(historyIndex);
+                //Debug.WriteLine(e.Key);
+                //Debug.WriteLine(historyIndex);
 
                 if (ConsoleContent.History.Count == 0)
                 {

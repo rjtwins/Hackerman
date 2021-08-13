@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace Game.Core.Console
 {
+    //TODO: Fix issue where console parser is not recognizing local command anymore?
     public class CommandParser
     {
         private ConsoleContent ConsoleContent;
@@ -56,12 +57,18 @@ namespace Game.Core.Console
 
         private void MakeConnection(string obj)
         {
-            Global.Bounce.MakeConnection();
+            (Endpoint from, Endpoint too, bool Succes) =  Global.Bounce.MakeConnection();
+            if (!Succes)
+            {
+                return;
+            }
+            AttachSystem(from, too);
         }
 
         private void ParseBounceCommand(string commandBody)
         {
             ConsoleContent.ConsoleOutput.Add(Global.LocalSystem.Bouncer.ParseCommand(commandBody));
+
         }
 
         private void Download(string commandBody)
@@ -108,31 +115,31 @@ namespace Game.Core.Console
             {
                 commandBody = splitCommand[1];
             }
+
             else if (splitCommand.Count > 2)
             {
                 commandBody = string.Join(' ', splitCommand.GetRange(1, splitCommand.Count - 1));
             }
 
-            if (this.AttachedSystem == null)
+            if (this.AttachedSystem == null && LocalCommandDictionary.ContainsKey(commandType))
             {
-                if (!LocalCommandDictionary.ContainsKey(commandType))
-                {
-                    ConsoleContent.ConsoleOutput.Add("\"" + command + "\"" + " is not recognized as an internal or external command or operable program.\n");
-                    ConsoleContent.ConsoleOutput.Add("If you are trying to execute a remote command, please make sure you are connected to a remote machine first.\n");
-                    return;
-                }
                 LocalCommandDictionary[commandType](commandBody);
                 return;
             }
 
             //we are not connected to anything
-            if (!CommandDictionary.ContainsKey(commandType))
+            if (CommandDictionary.ContainsKey(commandType))
             {
-                ConsoleContent.ConsoleOutput.Add("\"" + command + "\"" + " is not recognized as an internal or external command or operable program.\n");
+                CommandDictionary[commandType](commandBody);
+                return; 
+            }
+
+            ConsoleContent.ConsoleOutput.Add("\"" + command + "\"" + " is not recognized as an internal or external command or operable program.\n");
+            if (this.AttachedSystem == null)
+            {
+                ConsoleContent.ConsoleOutput.Add("If you are trying to execute a remote command, please make sure you are connected to a remote machine first.\n");
                 return;
             }
-            CommandDictionary[commandType](commandBody);
-            return;
         }
 
         private void HandleUsername(string command)
@@ -178,8 +185,11 @@ namespace Game.Core.Console
         //TODO: fix error when running exit command when not connected to a system
         private void ExitConsole(string obj)
         {
-            AttachedSystem.Discconect();
-            ConsoleContent.ConsoleOutput.Add("Disconnected\n");
+            if(AttachedSystem != null)
+            {
+                AttachedSystem.Discconect();
+                ConsoleContent.ConsoleOutput.Add("Disconnected\n");
+            }
             ConsoleContent.ConsolePrefix = "";
             this.GivingUsername = false;
             this.GivingPassword = false;
@@ -234,7 +244,7 @@ namespace Game.Core.Console
             this.ConnectingFrom = from;
             this.AttachedSystem = too;
             this.GivingUsername = true;
-            this.ConsoleContent.ConsoleOutput.Add("Connected to: " + "TODO" + "\nPlease input username and password.");
+            this.ConsoleContent.ConsoleOutput.Add("Connected to: " + too.IPAddress + "\nPlease input username and password.\n");
             this.ConsoleContent.ConsolePrefix = "LOGIN USERNAME:";
         }
 

@@ -47,17 +47,26 @@ namespace Game.Core.Endpoints
             new Random(Id.GetHashCode()).NextBytes(data);
             data[0] |= 1;
             iPAddress = new IPAddress(data);
-            this.FileSystem = new FileSystem.FileSystem();
+            this.FileSystem = new FileSystem.FileSystem(this);
         }
 
         internal void BounceTo(Endpoint from, Endpoint too)
         {
+            if(from == null || too == null)
+            {
+                return;
+            }
             LogConnectionRouted(from, too);
         }
 
         private void LogConnectionRouted(Endpoint from, Endpoint too)
         {
-            //throw new NotImplementedException();
+            this.ConnectionLog.Add(new LogItem
+            {
+                From = from,
+                Too = too,
+                LogType = LogType.CONNECTION_ROUTED
+            });
         }
 
         internal void Discconect()
@@ -71,7 +80,11 @@ namespace Game.Core.Endpoints
 
         private void LogDisconnected()
         {
-            //throw new NotImplementedException();
+            this.ConnectionLog.Add(new LogItem
+            {
+                From = this.ConnectedFrom,
+                LogType = LogType.CONNECTION_ROUTED
+            });
         }
 
         internal string CurrentPath()
@@ -112,7 +125,7 @@ namespace Game.Core.Endpoints
                 throw new Exception("Attempted to connect to endpoint from a null adrress this should not be possible.");
             }
 
-            LoggConnectionAttempt(from);
+            LoggConnectionAttempt(username, from);
 
             try
             {
@@ -126,28 +139,44 @@ namespace Game.Core.Endpoints
             }
             catch (KeyNotFoundException)
             {
-                LoggConnectionFailed(from);
+                LoggConnectionFailed(username, from);
                 throw new Exception("Username password combination not found.");
             }
         }
 
-        private void LoggConnectionFailed(Endpoint from)
+        private void LoggConnectionFailed(string username, Endpoint from)
         {
-            //throw new NotImplementedException();
+            this.ConnectionLog.Add(new LogItem
+            {
+                From = from,
+                LogType = LogType.CONNECTION_FAILED,
+                userName = username
+            });
         }
 
         private void LoggConnectionSucces(string username, Endpoint from)
         {
-            //throw new NotImplementedException();
+            this.ConnectionLog.Add(new LogItem
+            {
+                From = from,
+                LogType = LogType.CONNECTION_SUCCES,
+                userName = username
+            });
         }
 
-        private void LoggConnectionAttempt(Endpoint from)
+        private void LoggConnectionAttempt(string username, Endpoint from)
         {
-            //throw new NotImplementedException();
+            this.ConnectionLog.Add(new LogItem
+            {
+                From = from,
+                LogType = LogType.CONNECTION_ATTEMPT,
+                userName = username
+            });
         }
 
         public void Restart()
         {
+
         }
     }
 }
