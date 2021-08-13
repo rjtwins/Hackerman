@@ -37,7 +37,6 @@ namespace Game.UI
             {
                 //Do nothing
             }
-          
         }
 
         private void DecreaseGameSpeedButton_Click(object sender, RoutedEventArgs e)

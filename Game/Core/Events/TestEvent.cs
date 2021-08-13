@@ -6,10 +6,10 @@
         {
         }
 
-        public override void StartEvent()
+        public override object[] StartEvent()
         {
             base.Name = "TestEvent";
-            base.StartEvent();
+            return base.StartEvent();
         }
     }
 }
