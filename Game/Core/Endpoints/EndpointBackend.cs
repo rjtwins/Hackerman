@@ -83,7 +83,7 @@ namespace Game.Core.Endpoints
             this.ConnectionLog.Add(new LogItem
             {
                 From = this.ConnectedFrom,
-                LogType = LogType.CONNECTION_ROUTED
+                LogType = LogType.CONNECTION_DISCONNECTED
             });
         }
 
@@ -131,7 +131,7 @@ namespace Game.Core.Endpoints
             {
                 this.AccessLevel = UsernamePasswordDict[username + password];
                 FileSystem.ConnectTo(this.AccessLevel);
-                LoggConnectionSucces(username, from);
+                LoggConnectionSucces(username, from, this.AccessLevel);
                 CurrentUsername = username;
                 CurrentPassword = password;
                 this.ConnectedFrom = from;
@@ -154,14 +154,15 @@ namespace Game.Core.Endpoints
             });
         }
 
-        private void LoggConnectionSucces(string username, Endpoint from)
+        private void LoggConnectionSucces(string username, Endpoint from, AccessLevel accessLevel)
         {
             this.ConnectionLog.Add(new LogItem
             {
                 From = from,
                 LogType = LogType.CONNECTION_SUCCES,
-                userName = username
-            });
+                userName = username,
+                AccessLevel = accessLevel
+            }) ;
         }
 
         private void LoggConnectionAttempt(string username, Endpoint from)

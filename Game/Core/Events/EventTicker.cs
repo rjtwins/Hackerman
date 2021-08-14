@@ -106,17 +106,17 @@ namespace Core.Events
                 {
                     throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
                 }
-                if(!(e.StartTime <= Global.GameTime))
+                if(e.StartTime > Global.GameTime)
                 {
                     break;
                 }
                 EventsToHandle.Add(e);
             }
 
-            
-
             foreach (Event eventToHandle in EventsToHandle)
             {
+                Debug.WriteLine(eventToHandle.Name);
+                EventQueue.Remove(eventToHandle.StartTime);
                 TryStartEvent(eventToHandle);
             }
         }

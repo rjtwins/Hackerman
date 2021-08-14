@@ -33,16 +33,16 @@ namespace Game.Core.FileSystem
                 switch (item.LogType)
                 {
                     case LogType.CONNECTION_ATTEMPT:
-                        result += "LOGIN ATTEMPT: " + item.From.IPAddress;
+                        result += "LOGIN ATTEMPT:\t" + item.From.IPAddress;
                         break;
                     case LogType.CONNECTION_FAILED:
-                        result += "FAILED AUTHENTICAION: " + item.From.IPAddress;
+                        result += "FAILED AUTHENTICAION:\t" + item.From.IPAddress;
                         break;
                     case LogType.CONNECTION_SUCCES:
-                        result += "CONNECTION SUCCESFULL: " + item.From.IPAddress + "LOGGED IN AS: " + acceslevel;
+                        result += "CONNECTION SUCCESFULL:\t" + item.From.IPAddress + "\tLOGGED IN AS:\t" + acceslevel;
                         break;
                     case LogType.CONNECTION_ROUTED:
-                        result += "ROUTED: " + item.From.IPAddress + " : " + item.Too.IPAddress;
+                        result += "ROUTED:\t" + item.From.IPAddress + " : " + item.Too.IPAddress;
                         break;
                     default:
                         break;

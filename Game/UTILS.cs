@@ -62,6 +62,7 @@ namespace Game
         FILE_COPIED = 5,
         FILE_DELETED = 6,
         FILE_RUN = 7,
-        CONNECTION_ROUTED = 8
+        CONNECTION_ROUTED = 8,
+        CONNECTION_DISCONNECTED = 9
     }
 }
