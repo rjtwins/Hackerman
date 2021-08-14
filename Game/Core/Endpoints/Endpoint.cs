@@ -8,7 +8,7 @@
         public int y = 0;
         private string IconType = "";
         public string name = "*";
-        public int ActiveTraceDificulty = 1;
+        public double ActiveTraceDificulty = 1;
         public int PassiveTraceDificulty = 1;
         public bool isHidden { protected set; get; } = false;
 

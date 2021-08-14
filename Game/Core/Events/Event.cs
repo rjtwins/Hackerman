@@ -49,7 +49,6 @@ namespace Core.Events
             this.ActionToRun = methodToRun;
         }
 
-        //TODO: work on a if tree here!
         public virtual object[] StartEvent()
         {
 

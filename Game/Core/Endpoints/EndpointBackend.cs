@@ -36,7 +36,7 @@ namespace Game.Core.Endpoints
         //Location and icon data
         private FileSystem.FileSystem FileSystem;
 
-        private Endpoint ConnectedFrom;
+        public Endpoint ConnectedFrom;
 
         public EndpointBackend()
         {
