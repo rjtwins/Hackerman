@@ -13,17 +13,21 @@ namespace Core.Events
         public bool Canceled = false;
 
         private Func<object[], object[]> FunctionToRun;
-        private Action<object[]> ActionToRunWithReturn;
+        private Action<object[]> ActionWithParameter;
         private Action ActionToRun;
         object[] MethodArguments;
+        enum MethodType { VOID, ACTION, FUNC, NOTHING};
+        private MethodType MType = MethodType.VOID;
 
         public Event(string v)
         {
+            MType = MethodType.NOTHING;
             this.Id = Guid.NewGuid();
         }
 
         public Event(string name, double startInSecondes, Func<object[], object[]> methodToRun, object[] methodArguments)
         {
+            this.MType = MethodType.FUNC;
             this.Name = name;
             SetStartInterval(startInSecondes);
             this.FunctionToRun = methodToRun;
@@ -31,13 +35,15 @@ namespace Core.Events
 
         public Event(string name, double startInSecondes, Action<object[]> methodToRun, object[] methodArguments)
         {
+            this.MType = MethodType.ACTION;
             this.Name = name;
             SetStartInterval(startInSecondes);
-            this.ActionToRunWithReturn = methodToRun;
+            this.ActionWithParameter = methodToRun;
         }
 
         public Event(string name, double startInSecondes, Action methodToRun)
         {
+            this.MType = MethodType.VOID;
             this.Name = name;
             SetStartInterval(startInSecondes);
             this.ActionToRun = methodToRun;
@@ -52,7 +58,21 @@ namespace Core.Events
                 return new object[0];
             }
             LogEvent();
-            return MethodToRun(MethodArguments);
+            switch (this.MType)
+            {
+                case MethodType.NOTHING:
+                    return new object[0];
+                case MethodType.VOID:
+                    ActionToRun();
+                    return new object[0];
+                case MethodType.ACTION:
+                    ActionWithParameter(MethodArguments);
+                    return new object[0];
+                case MethodType.FUNC:
+                    return FunctionToRun(MethodArguments);
+                default:
+                    return new object[0];
+            }
         }
 
         public virtual void LogEvent()

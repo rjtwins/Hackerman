@@ -2,7 +2,7 @@
 {
     public class TestEvent : Event
     {
-        public TestEvent() : base()
+        public TestEvent() : base("TEST EVENT")
         {
         }
 
