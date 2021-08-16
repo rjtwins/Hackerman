@@ -65,7 +65,8 @@ namespace Game.Core.Endpoints
             {
                 From = from,
                 Too = too,
-                LogType = LogType.CONNECTION_ROUTED
+                LogType = LogType.CONNECTION_ROUTED,
+                TimeStamp = Global.GameTime
             });
         }
 
@@ -146,12 +147,15 @@ namespace Game.Core.Endpoints
 
         private void LoggConnectionFailed(string username, Endpoint from)
         {
-            this.ConnectionLog.Add(new LogItem
-            {
-                From = from,
-                LogType = LogType.CONNECTION_FAILED,
-                userName = username
-            });
+
+            this.ConnectionLog.Add(LogItemBuilder
+                .Builder()
+                .CONNECTION_FAILED()
+                .From(from)
+                .User(username)
+                .AccesLevel(AccessLevel.USER)
+                .TimeStamp(Global.GameTime)
+                );
         }
 
         private void LoggConnectionSucces(string username, Endpoint from, AccessLevel accessLevel)
