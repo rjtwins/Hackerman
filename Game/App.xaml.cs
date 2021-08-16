@@ -2,6 +2,8 @@
 using Core.Events;
 using Game.Core.Console;
 using Game.Core.Endpoints;
+using Game.Core.Events;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 
@@ -22,16 +24,43 @@ namespace Game
             Global.EndPointMap = new UI.EndpointMap();
             Global.Bounce = new Bounce();
             Global.LocalSystem = new LocalSystem();
+            Global.ActiveTraceTracker = new Core.ActiveTraceTracker();
 
             //TODO move non UI game flow to other class
             base.OnStartup(e);
             Global.EventTicker.StartTicker();
-            TestEvent ev = new TestEvent();
-            ev.SetStartInterval(4);
-            Global.EventTicker.RegisterEvent(ev);
+
+            EventBuilder.BuildEvent("TESTEVENT0")
+                .EventInterval(600d)
+                .EventVoid(PRINTDEBUG)
+                .RegisterWithVoid();
+
+            EventBuilder.BuildEvent("TESTEVENT1")
+                .EventInterval(800d)
+                .EventVoid(PRINTDEBUG)
+                .RegisterWithVoid();
+
+            EventBuilder.BuildEvent("TESTEVENT2")
+                .EventInterval(1000d)
+                .EventVoid(PRINTDEBUG)
+                .RegisterWithVoid();
+
+            EventBuilder.BuildEvent("TESTEVENT3")
+                .EventInterval(1200d)
+                .EventVoid(PRINTDEBUG)
+                .RegisterWithVoid();
+
+            EventBuilder.BuildEvent("TESTEVENT4")
+                .EventInterval(1400d)
+                .EventVoid(PRINTDEBUG)
+                .RegisterWithVoid();
         }
 
-       
+        public void PRINTDEBUG()
+        {
+            Debug.WriteLine("TESTEVENT");
+        }
+
         private void StartupHandler(object sender, System.Windows.StartupEventArgs e)
         {
             //Elysium.Manager.Apply(this, Elysium.Theme.Dark);

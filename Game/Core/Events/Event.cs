@@ -1,7 +1,7 @@
-﻿using Game;
+﻿using Core;
 using System;
 
-namespace Core.Events
+namespace Game.Core.Events
 {
     public class Event
     {
@@ -27,26 +27,37 @@ namespace Core.Events
 
         public Event(string name, double startInSecondes, Func<object[], object[]> methodToRun, object[] methodArguments)
         {
+            this.Id = Guid.NewGuid();
             this.MType = MethodType.FUNC;
             this.Name = name;
             SetStartInterval(startInSecondes);
             this.FunctionToRun = methodToRun;
+            Register();
         }
 
         public Event(string name, double startInSecondes, Action<object[]> methodToRun, object[] methodArguments)
         {
+            this.Id = Guid.NewGuid();
             this.MType = MethodType.ACTION;
             this.Name = name;
             SetStartInterval(startInSecondes);
             this.ActionWithParameter = methodToRun;
+            Register();
         }
 
         public Event(string name, double startInSecondes, Action methodToRun)
         {
+            this.Id = Guid.NewGuid();
             this.MType = MethodType.VOID;
             this.Name = name;
             SetStartInterval(startInSecondes);
             this.ActionToRun = methodToRun;
+            Register();
+        }
+
+        private void Register()
+        {
+            Global.EventTicker.RegisterEvent(this);
         }
 
         public virtual object[] StartEvent()
@@ -88,6 +99,7 @@ namespace Core.Events
         {
             this.Canceled = true;
         }
+
         public virtual void UnCancelEvent()
         {
             this.Canceled = false;

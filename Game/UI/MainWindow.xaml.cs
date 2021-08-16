@@ -21,6 +21,7 @@ namespace Game.UI
 
             this.ConsoleFrame.Navigate(Global.Console);
             this.MapFrame.Navigate(Global.EndPointMap);
+            this.DebugControlFrame.Navigate(new DebugPage());
         }
 
         internal void UpdateDateTime()

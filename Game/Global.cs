@@ -1,4 +1,5 @@
 ﻿using Core.Events;
+using Game.Core;
 using Game.Core.Console;
 using Game.Core.Endpoints;
 using Game.UI;
@@ -22,5 +23,6 @@ namespace Game
         public static LocalSystem LocalSystem;
         public static DateTime GameTime;
         public static bool GamePaused;
+        public static ActiveTraceTracker ActiveTraceTracker;
     }
 }

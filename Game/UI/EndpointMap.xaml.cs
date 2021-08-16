@@ -39,6 +39,7 @@ namespace Game.UI
                 //img.RenderSize = new Size(16, 16);
                 //img.Source = new BitmapImage(new Uri(@"C:\Users\J.Vedder Desktop\source\repos\EventSystemTesting\UI\Icons\server.png"));
 
+                StackPanel stp = new StackPanel();
                 Button btn = new Button();
                 btn.Click += EndpointClick;
                 btn.Background = Brushes.Yellow;
@@ -49,13 +50,17 @@ namespace Game.UI
                     btn.Background = Brushes.Red;
                 }
                 btn.Tag = e.Id;
+                stp.Children.Add(btn);
+                TextBlock txb = new TextBlock();
+                txb.Text = e.IPAddress;
+                stp.Children.Add(txb);
                 int x = e.x;
                 int y = e.y;
                 (x, y) = GetRelativeCoordinates(e);
-                Canvas.SetLeft(btn, x);
-                Canvas.SetTop(btn, y);
-                Debug.WriteLine("ID: " + e.Id + " X:" + x + " Y:" + y);
-                map.Children.Add(btn);
+                Canvas.SetLeft(stp, x);
+                Canvas.SetTop(stp, y);
+                //Debug.WriteLine("ID: " + e.Id + " X:" + x + " Y:" + y);
+                map.Children.Add(stp);
                 this.DrawnEndpointsDict[e.Id] = e;
                 this.GuidButtonDict[e.Id] = btn;
                 if (e.isHidden)
@@ -99,13 +104,15 @@ namespace Game.UI
             }
 
             Button from = GuidButtonDict[Global.StartEndPoint.Id];
-            PointDict[Global.StartEndPoint.Id] = new Point(Canvas.GetLeft(from), Canvas.GetTop(from));
+            var parent = VisualTreeHelper.GetParent(from) as UIElement;
+            PointDict[Global.StartEndPoint.Id] = new Point(Canvas.GetLeft(parent), Canvas.GetTop(parent));
             Polyline.Points.Add(PointDict[Global.StartEndPoint.Id]);
 
-            Button too = null;
             foreach (Endpoint e in Global.Bounce.BounceList)
             {
-                too = GuidButtonDict[e.Id];
+                var button = GuidButtonDict[e.Id];
+                var too = VisualTreeHelper.GetParent(button) as UIElement;
+
                 PointDict[e.Id] = new Point(Canvas.GetLeft(too), Canvas.GetTop(too));
                 Polyline.Points.Add(PointDict[e.Id]);
             }
@@ -135,7 +142,7 @@ namespace Game.UI
             //ScaleTransform scaleTransform1 = new ScaleTransform(0.9, 0.9);
             //map.RenderTransform = scaleTransform1;
 
-            Button b = new Button();
+            StackPanel b = new StackPanel();
             for (int i = 0; i < map.Children.Count; i++)
             {
                 object o = map.Children[i];
@@ -143,14 +150,14 @@ namespace Game.UI
                 {
                     continue;
                 }
-                b = (Button)map.Children[i];
-                Guid id = (Guid)b.Tag;
+                b = (StackPanel)map.Children[i];
+                Guid id = (Guid)(b.Children[0] as Button).Tag;
 
                 (int x, int y) = GetRelativeCoordinates(DrawnEndpointsDict[id]);
                 Canvas.SetLeft(b, x);
                 Canvas.SetTop(b, y);
-                b.Height = GetRelativeSize();
-                b.Width = GetRelativeSize();
+                //b.Height = GetRelativeSize();
+                //b.Width = GetRelativeSize();
 
                 if (PointDict.ContainsKey(id))
                 {

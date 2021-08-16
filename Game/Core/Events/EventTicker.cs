@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.Core.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +29,7 @@ namespace Core.Events
         public EventTicker()
         {
             // timer callback has been reached.
-            MainTimer = new Timer(Beat, this, Timeout.Infinite, 250);
+            MainTimer = new Timer(Beat, this, Timeout.Infinite, 100);
             Global.GameTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             Global.GameTime = Global.GameTime.AddSeconds(1000000000d);
 
@@ -64,8 +65,13 @@ namespace Core.Events
             {
                 throw new Exception("Event cannot be registered as its start time is before the current time.");
             }
+            while (this.EventQueue.ContainsKey(e.StartTime))
+            {
+                e.SetStartTime(e.StartTime.AddSeconds(1));
+            }
             this.EventQueue.Add(e.StartTime, e.Id);
             this.IDEventDict[e.Id] = e;
+            Debug.WriteLine("New Event Registered, Start time: " + e.StartTime + "Current Time: " + Global.GameTime);
         }
 
         public void StopTicker()
@@ -83,7 +89,7 @@ namespace Core.Events
                 Global.GamePaused = false;
                 return;
             }
-            MainTimer.Change(500, 100);
+            MainTimer.Change(100, 100);
             Global.GamePaused = false;
         }
 
