@@ -16,7 +16,7 @@
         <Border x:Name="MapBorder" Grid.Column="4" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-1,0,0,0" MinWidth="1" MinHeight="1" SizeChanged="map_SizeChanged">
                 <Canvas x:Name="map" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinHeight="1" MinWidth="1" ScrollViewer.VerticalScrollBarVisibility="Disabled" Loaded="Map_Loaded">
                     <Canvas.Background>
-                        <ImageBrush ImageSource="/Icons/WorldMap.png"></ImageBrush>
+                    <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png"></ImageBrush>
                     </Canvas.Background>
                 </Canvas>
         </Border>

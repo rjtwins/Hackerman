@@ -32,6 +32,7 @@ namespace Game.Core.Events
             this.Name = name;
             SetStartInterval(startInSecondes);
             this.FunctionToRun = methodToRun;
+            this.MethodArguments = methodArguments;
             Register();
         }
 
@@ -42,6 +43,7 @@ namespace Game.Core.Events
             this.Name = name;
             SetStartInterval(startInSecondes);
             this.ActionWithParameter = methodToRun;
+            this.MethodArguments = methodArguments;
             Register();
         }
 

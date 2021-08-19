@@ -8,10 +8,61 @@
         Title="MainWindow" Height="600" Width="800" WindowState="Normal" WindowStyle="SingleBorderWindow" Visibility="Visible" ShowInTaskbar="False" Background="#FF30363D" Foreground="#FFD6DFE9">
     <Window.Resources>
 
+        <Style x:Key="TitleText" TargetType="{x:Type s:TaskBarButton}">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="Comic Sans MS"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
         <!-- MoveThumb Template -->
         <ControlTemplate x:Key="MoveThumbTemplate" TargetType="{x:Type s:MoveThumb}">
             <Rectangle Fill="Transparent" />
         </ControlTemplate>
+
+        <ControlTemplate x:Key="TaskBarButtonTemplate" TargetType="{x:Type s:TaskBarButton}">
+            <ControlTemplate.Resources>
+                <Sys:Boolean x:Key="Depressed">false</Sys:Boolean>
+            </ControlTemplate.Resources>
+            <Grid Background="Silver">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="1"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="1"/>
+                </Grid.RowDefinitions>
+                <!--//TODO change on click-->
+                <Image x:Name="Image" Grid.Column="3" Grid.Row="3"/>
+                <Rectangle x:Name="r1" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7"/>
+                <Rectangle x:Name="r2" Fill="White" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5"/>
+                <Rectangle x:Name="r3" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3"/>
+
+                <Rectangle x:Name="r4" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.RowSpan="7" />
+                <Rectangle x:Name="r5" Fill="White" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4" />
+                <Rectangle x:Name="r6" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" />
+
+                <Rectangle x:Name="r7" Fill="Black" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="7"/>
+                <Rectangle x:Name="r8" Fill="Gray" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5"/>
+                <Rectangle x:Name="r9" Fill="Silver" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="3"/>
+
+                <Rectangle x:Name="r10" Fill="Silver" Grid.Column="4" Grid.Row="3" Grid.RowSpan="2" />
+                <Rectangle x:Name="r11" Fill="Gray" Grid.Column="5" Grid.Row="2" Grid.RowSpan="3" />
+                <Rectangle x:Name="r12" Fill="Black" Grid.Column="6" Grid.Row="1" Grid.RowSpan="7" />
+
+            </Grid>
+        </ControlTemplate>
+
 
         <ControlTemplate x:Key="MinTemplate" TargetType="{x:Type s:MinButton}">
             <TextBlock Grid.Column="0" Text="-" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" FontWeight="Normal" />
@@ -50,18 +101,60 @@
                 <ContentPresenter Content="{TemplateBinding ContentControl.Content}" />
             </Grid>
         </ControlTemplate>
+
+        <!--Controll template for inner border for frames-->
+        <ControlTemplate x:Key = "BorderedWindowTemplate" TargetType = "ContentControl">
+            <Grid Background="Silver">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="1"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="1"/>
+                </Grid.RowDefinitions>
+                <Frame x:Name="PageFrame" NavigationUIVisibility="Automatic" Padding="0,0,0,0" Margin="0,0,0,0" BorderThickness="1,1,0,0" Foreground="{x:Null}" Grid.Column="3" Grid.Row="3" BorderBrush="Black" />
+                <Rectangle Fill="Silver" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7"/>
+                <Rectangle Fill="Gray" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5"/>
+                <Rectangle Fill="Black" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3"/>
+
+                <Rectangle Fill="Silver" Grid.Column="0" Grid.Row="0" Grid.RowSpan="7" />
+                <Rectangle Fill="Gray" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4" />
+                <Rectangle Fill="Black" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" />
+
+                <Rectangle Fill="#FFDFDFDF" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="7"/>
+                <Rectangle Fill="White" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5"/>
+                <Rectangle Fill="Silver" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="3"/>
+
+                <Rectangle Fill="#FFDFDFDF" Grid.Column="4" Grid.Row="3" Grid.RowSpan="2" />
+                <Rectangle Fill="White" Grid.Column="5" Grid.Row="2" Grid.RowSpan="3" />
+                <Rectangle Fill="Silver" Grid.Column="6" Grid.Row="1" Grid.RowSpan="7" />
+
+            </Grid>
+        </ControlTemplate>
     </Window.Resources>
 
-    <Grid Background="#FF232930">
+    <Grid Background="Teal" MouseUp="WindowContentControlMouseUp">
         <Grid.ColumnDefinitions>
 
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#FF3A434B">
-            <TextBlock x:Name="GameTimeTextBlock" Text="dd-mm-yyyy"/>
+
             <TextBlock x:Name="GameSpeedTextBlock" Text="1" Margin="5,0,5,0"/>
             <Button Name="DecreaseGameSpeedButton" Click="DecreaseGameSpeedButton_Click" HorizontalAlignment="Center" VerticalAlignment="Stretch" >
                 <TextBlock Text="&lt;&lt;"/>
@@ -73,274 +166,330 @@
                 <TextBlock Text="&gt;&gt;"/>
             </Button>
         </StackPanel>
-        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="#FF2E2E2E">
+        <Border Grid.Row="2" BorderBrush="#FF0C0B0B" Background="Silver" BorderThickness="0,0,0,0" Margin="0,0,0,0" Padding="0,0,0,0" Height="42">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Menu Name="Start" HorizontalAlignment="Left" Grid.Column="0" Margin="2,2,2,2">
+                    <MenuItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <MenuItem.Background>
+                            <ImageBrush ImageSource="/Icons/win98_icons/windows.ico" TileMode="None"/>
+                        </MenuItem.Background>
+                        <MenuItem.Header>
+                            test
+                        </MenuItem.Header>
+                        <MenuItem Header="1"/>
+                        <MenuItem Header="2"/>
+                        <MenuItem Header="3"/>
+                    </MenuItem>
+                </Menu>
+                <StackPanel Name="TaskBar" Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Column="1">
+                    <s:TaskBarButton x:Uid="/Icons/win98_icons/world_star.ico"  x:Name="BounceTaskButton" Click="BounceTaskButton_Click" Template="{StaticResource TaskBarButtonTemplate}" Width="36" Loaded="BounceTaskButton_Loaded"/>
+                    <s:TaskBarButton x:Uid="/Icons/win98_icons/world_star.ico" x:Name="ZeeChatTaskButton" Click="ZeeChatTaskButton_Click" Template="{StaticResource TaskBarButtonTemplate}" Width="36"/>
+                    <s:TaskBarButton x:Uid="/Icons/win98_icons/world_star.ico" x:Name="TracONTaskButton" Click="TracONTaskButton_Click" Template="{StaticResource TaskBarButtonTemplate}" Width="36"/>
+                    <s:TaskBarButton x:Uid="/Icons/win98_icons/world_star.ico" x:Name="PromptTaskButton" Click="PromptTaskButton_Click" Template="{StaticResource TaskBarButtonTemplate}" Width="36"/>
+                </StackPanel>
+                <StackPanel Name="Tray" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
+                    <Border BorderThickness="1,1,1,1" Background="Silver" Margin="0,2,2,2" Padding="0,1,0,1" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="1" Direction="311" RenderingBias="Quality" ShadowDepth="0" Opacity="1"/>
+                        </Border.Effect>
+                        <TextBlock x:Name="GameTimeTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,2" Foreground="#FF060000" FontSize="14" FlowDirection="LeftToRight">
+                            hh:mm<LineBreak/>
+                            dd-mm-yy
+                        </TextBlock>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Teal" Margin="0,0,0,0">
 
             <ContentControl
             x:Name="MapControl"
-            Width="400"
+            Width="600"
             MinWidth="0"
-            Height="200"
+            Height="300"
             MinHeight="0"
             Canvas.Top="150"
             Canvas.Left="150"
             Template="{StaticResource DesignerItemTemplate}"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver">
-                <!--<ContentControl.Triggers>
-                        <EventTrigger RoutedEvent="ContentControl.Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation
-                                        Storyboard.TargetName="LocalControl"
-                                        Storyboard.TargetProperty="(ContentControl.Height)"
-                                        To="20" Duration="0:0:0.5" AutoReverse="False" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </ContentControl.Triggers>-->
+            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver" IsVisibleChanged="MapControl_IsVisibleChanged" Visibility="Hidden" GotFocus="MapControl_GotFocus" MouseUp="WindowContentControlMouseUp">
                 <ContentControl.Resources>
                     <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
                 </ContentControl.Resources>
-                <Border BorderBrush="Silver" Padding="0,0,0,0" Margin="2,2,2,2" BorderThickness="4,4,4,4">
-                    <Grid Loaded="Grid_Loaded" Background="Silver">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid Margin="0,0,0,4">
-                            <Grid.Background>
-                                <LinearGradientBrush EndPoint="0.5,0.5" StartPoint="0.1,0.1">
-                                    <GradientStop Color="#FF02076A"/>
-                                    <GradientStop Color="#FF195689" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Grid.Background>
+
+                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" UseLayoutRounding="{DynamicResource Maxed}" BorderBrush="Silver">
+                    <Border.Effect>
+                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
+                    </Border.Effect>
+                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
+                        <Grid Loaded="Grid_Loaded" Background="Silver">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="1">
-                                <!-- Detail controls here -->
-                                <Border Grid.Row="0">
-                                    <Grid DataContext="{Binding ElementName=MapControl}" Height="21">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0" Source="/Icons/win98_icons/world_star.ico"
-                                               Stretch="UniformToFill" Margin="2,2,3,0" 
+                            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                                <Grid x:Name="GradientGrid" DataContext="{Binding ElementName=MapControl}" Height="21" Margin="0,0,0,5">
+                                    <Grid.Background>
+                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
+                                            <GradientStop Color="Navy" Offset="0"/>
+                                            <GradientStop Color="#FF195689" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="/Icons/OtherIcons/001-network.png"
+                                               Stretch="UniformToFill" Margin="2,0,0,0" 
                                                ScrollViewer.VerticalScrollBarVisibility="Disabled" 
                                                Panel.ZIndex="11" VerticalAlignment="Center" 
                                                HorizontalAlignment="Center" Height="21" Width="21" />
-                                        
-                                        <TextBlock Grid.Column="1" Text="BOUNCE" Panel.ZIndex="-1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="18" FontWeight="Bold" FontStyle="Normal" TextDecorations="{x:Null}" LineHeight="Auto" TextAlignment="Justify" Padding="0,0,0,2" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" >
-                                            <TextBlock.RenderTransform>
-                                                <TransformGroup>
-                                                    <ScaleTransform ScaleX="1" ScaleY="0.85"/>
-                                                    <SkewTransform/>
-                                                    <RotateTransform/>
-                                                    <TranslateTransform/>
-                                                </TransformGroup>
-                                            </TextBlock.RenderTransform>
-                                        </TextBlock>
-                                        <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
+                                    <TextBlock Grid.Column="1" Text="Bounce Visual Assistant" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
 
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                            <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
-                                                <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
-                                            </s:MinButton>
-                                            <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
-                                            </s:MaxButton>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </Grid>
-                        <Frame Grid.Row="1" Grid.Column="1" x:Name="MapFrame" NavigationUIVisibility="Automatic" />
-                    </Grid>
-                </Border>
-            </ContentControl>
-            
-            
-            <ContentControl
-            x:Name="ConsoleControl"
-            Width="400"
-            MinWidth="0"
-            Height="200"
-            MinHeight="0"
-            Canvas.Top="50"
-            Canvas.Left="50"
-            Template="{StaticResource DesignerItemTemplate}"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver">
-                <!--<ContentControl.Triggers>
-                        <EventTrigger RoutedEvent="ContentControl.Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation
-                                        Storyboard.TargetName="LocalControl"
-                                        Storyboard.TargetProperty="(ContentControl.Height)"
-                                        To="20" Duration="0:0:0.5" AutoReverse="False" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </ContentControl.Triggers>-->
-                <ContentControl.Resources>
-                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
-                </ContentControl.Resources>
-                <Border BorderBrush="Silver" Padding="0,0,0,0" Margin="2,2,2,2" BorderThickness="4,4,4,4">
-                    <Grid Loaded="Grid_Loaded" Background="Silver">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid Margin="0,0,0,4">
-                            <Grid.Background>
-                                <LinearGradientBrush EndPoint="0.5,0.5" StartPoint="0.1,0.1">
-                                    <GradientStop Color="#FF02076A"/>
-                                    <GradientStop Color="#FF195689" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Grid.Background>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="1">
-                                <!-- Detail controls here -->
-                                <Border Grid.Row="0">
-                                    <Grid DataContext="{Binding ElementName=ConsoleControl}" Height="21">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0" Source="/Icons/win98_icons/console_prompt.ico" Stretch="UniformToFill" Margin="2,2,3,0" ScrollViewer.VerticalScrollBarVisibility="Disabled" Panel.ZIndex="10" VerticalAlignment="Center" HorizontalAlignment="Center" Height="21" Width="21" />
-                                        <TextBlock Grid.Column="1" Text="TrackON-Terminal" Panel.ZIndex="-1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="18" FontWeight="Bold" FontStyle="Normal" TextDecorations="{x:Null}" LineHeight="Auto" TextAlignment="Justify" Padding="0,0,0,2" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" >
-                                            <TextBlock.RenderTransform>
-                                                <TransformGroup>
-                                                    <ScaleTransform ScaleX="1" ScaleY="0.85"/>
-                                                    <SkewTransform/>
-                                                    <RotateTransform/>
-                                                    <TranslateTransform/>
-                                                </TransformGroup>
-                                            </TextBlock.RenderTransform>
-                                        </TextBlock>
-                                        <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
+                                    </TextBlock>
+                                    <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
 
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                            <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
-                                                <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
-                                            </s:MinButton>
-                                            <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
-                                            </s:MaxButton>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                        <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
+                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
+                                        </s:MinButton>
+                                        <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
+                                        </s:MaxButton>
+                                    </StackPanel>
+                                </Grid>
+
                             </Grid>
+                            <ContentControl x:Name="MapControlFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
+                            </ContentControl>
                         </Grid>
-                        <Frame Grid.Row="1" Grid.Column="1" x:Name="ConsoleFrame" NavigationUIVisibility="Automatic" />
-                    </Grid>
+                    </Border>
                 </Border>
             </ContentControl>
 
             <ContentControl
-            x:Name="DebugWindow"
-            Width="400"
+            x:Name="RemoteConsole"
+            Width="600"
             MinWidth="0"
-            Height="200"
+            Height="300"
             MinHeight="0"
             Canvas.Top="150"
             Canvas.Left="150"
             Template="{StaticResource DesignerItemTemplate}"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
             Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver">
-                <!--<ContentControl.Triggers>
-                        <EventTrigger RoutedEvent="ContentControl.Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation
-                                        Storyboard.TargetName="LocalControl"
-                                        Storyboard.TargetProperty="(ContentControl.Height)"
-                                        To="20" Duration="0:0:0.5" AutoReverse="False" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </ContentControl.Triggers>-->
+            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver" IsVisibleChanged="RemoteConsole_IsVisibleChanged" Visibility="Hidden" MouseUp="WindowContentControlMouseUp">
                 <ContentControl.Resources>
                     <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
                 </ContentControl.Resources>
-                <Border BorderBrush="Silver" Padding="0,0,0,0" Margin="2,2,2,2" BorderThickness="4,4,4,4">
-                    <Grid Loaded="Grid_Loaded" Background="Silver">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid Margin="0,0,0,4">
-                            <Grid.Background>
-                                <LinearGradientBrush EndPoint="0.5,0.5" StartPoint="0.1,0.1">
-                                    <GradientStop Color="#FF02076A"/>
-                                    <GradientStop Color="#FF195689" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Grid.Background>
+
+                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" UseLayoutRounding="{DynamicResource Maxed}" BorderBrush="Silver">
+                    <Border.Effect>
+                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
+                    </Border.Effect>
+                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
+                        <Grid Loaded="Grid_Loaded" Background="Silver">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="1">
-                                <!-- Detail controls here -->
-                                <Border Grid.Row="0">
-                                    <Grid DataContext="{Binding ElementName=DebugWindow}" Height="21">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0" Source="/Icons/win98_icons/world_star.ico"
-                                               Stretch="UniformToFill" Margin="2,2,3,0" 
+                            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                                <Grid x:Name="RemoteGradientGrid" DataContext="{Binding ElementName=RemoteConsole}" Height="21" Margin="0,0,0,5">
+                                    <Grid.Background>
+                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
+                                            <GradientStop Color="Navy" Offset="0"/>
+                                            <GradientStop Color="#FF195689" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="/Icons/OtherIcons/015-configuration.png"
+                                               Stretch="UniformToFill" Margin="2,0,0,0" 
                                                ScrollViewer.VerticalScrollBarVisibility="Disabled" 
                                                Panel.ZIndex="11" VerticalAlignment="Center" 
                                                HorizontalAlignment="Center" Height="21" Width="21" />
+                                    <TextBlock Grid.Column="1" Text="TracON Remote Shell" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
 
-                                        <TextBlock Grid.Column="1" Text="BOUNCE" Panel.ZIndex="-1" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="18" FontWeight="Bold" FontStyle="Normal" TextDecorations="{x:Null}" LineHeight="Auto" TextAlignment="Justify" Padding="0,0,0,2" UseLayoutRounding="True" RenderTransformOrigin="0.5,0.5" >
-                                            <TextBlock.RenderTransform>
-                                                <TransformGroup>
-                                                    <ScaleTransform ScaleX="1" ScaleY="0.85"/>
-                                                    <SkewTransform/>
-                                                    <RotateTransform/>
-                                                    <TranslateTransform/>
-                                                </TransformGroup>
-                                            </TextBlock.RenderTransform>
-                                        </TextBlock>
-                                        <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
+                                    </TextBlock>
 
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                            <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
-                                                <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
-                                            </s:MinButton>
-                                            <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
-                                            </s:MaxButton>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
+                                    <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
+
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                        <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
+                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
+                                        </s:MinButton>
+                                        <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
+                                        </s:MaxButton>
+                                    </StackPanel>
+                                </Grid>
+
                             </Grid>
+                            <ContentControl x:Name="RemoteConsoleFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
+                            </ContentControl>
                         </Grid>
-                        <Frame Grid.Row="1" Grid.Column="1" x:Name="DebugControlFrame" NavigationUIVisibility="Automatic" />
-                    </Grid>
+                    </Border>
+                </Border>
+            </ContentControl>
+
+            <ContentControl
+            x:Name="LocalConsole"
+            Width="600"
+            MinWidth="0"
+            Height="300"
+            MinHeight="0"
+            Canvas.Top="0"
+            Canvas.Left="0"
+            Template="{StaticResource DesignerItemTemplate}"
+            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+            Padding="0,0,0,0" UseLayoutRounding="True"
+            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver" IsVisibleChanged="LocalConsole_IsVisibleChanged" Visibility="Hidden" MouseUp="WindowContentControlMouseUp">
+                <ContentControl.Resources>
+                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
+                </ContentControl.Resources>
+
+                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" UseLayoutRounding="{DynamicResource Maxed}" BorderBrush="Silver" Background="Silver">
+                    <Border.Effect>
+                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
+                    </Border.Effect>
+                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
+                        <Grid Loaded="Grid_Loaded" Background="Silver">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,0">
+
+                                <Grid x:Name="LocalGradientGrid" DataContext="{Binding ElementName=LocalConsole}" Height="21" Margin="0,0,0,5">
+                                    <Grid.Background>
+                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
+                                            <GradientStop Color="Navy" Offset="0"/>
+                                            <GradientStop Color="#FF195689" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="/Icons/OtherIcons/014-programing-1.png"
+                                               Stretch="UniformToFill" Margin="2,0,0,0" 
+                                               ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                                               Panel.ZIndex="11" VerticalAlignment="Center" 
+                                               HorizontalAlignment="Center" Height="21" Width="21" />
+                                    <TextBlock Grid.Column="1" Text="Apature Command Prompt" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
+
+                                    </TextBlock>
+
+
+                                    <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
+
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                        <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
+                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
+                                        </s:MinButton>
+                                        <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
+                                        </s:MaxButton>
+                                    </StackPanel>
+                                </Grid>
+
+                            </Grid>
+                            <ContentControl x:Name="LocalConsoleFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
+                            </ContentControl>
+                        </Grid>
+                    </Border>
+                </Border>
+            </ContentControl>
+
+            <ContentControl
+            x:Name="IRC"
+            Width="600"
+            MinWidth="0"
+            Height="300"
+            MinHeight="0"
+            Canvas.Top="0"
+            Canvas.Left="0"
+            Template="{StaticResource DesignerItemTemplate}"
+            ScrollViewer.VerticalScrollBarVisibility="Disabled"
+            Padding="0,0,0,0" UseLayoutRounding="True"
+            RenderTransformOrigin="0.5,0.5" Foreground="White" IsVisibleChanged="IRC_IsVisibleChanged" Background="Silver" Visibility="Hidden" MouseUp="WindowContentControlMouseUp">
+                <ContentControl.Resources>
+                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
+                </ContentControl.Resources>
+
+                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" UseLayoutRounding="{DynamicResource Maxed}" BorderBrush="Silver" Background="Silver">
+                    <Border.Effect>
+                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
+                    </Border.Effect>
+                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
+                        <Grid Loaded="Grid_Loaded" Background="Silver">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,0">
+
+                                <Grid x:Name="IRCGradientGrid" DataContext="{Binding ElementName=IRC}" Height="21" Margin="-1,-1,-1,5">
+                                    <Grid.Background>
+                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
+                                            <GradientStop Color="Navy" Offset="0"/>
+                                            <GradientStop Color="#FF195689" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="/Icons/OtherIcons/005-chat-1.png"
+                                               Stretch="UniformToFill" Margin="2,0,0,0" 
+                                               ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                                               Panel.ZIndex="11" VerticalAlignment="Center" 
+                                               HorizontalAlignment="Center" Height="21" Width="21" />
+                                    <TextBlock Grid.Column="1" Text="Zee Chat IRC" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
+                                       
+                                    </TextBlock>
+
+
+                                    <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" Padding="0,0,0,0" />
+
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                        <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
+                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
+                                        </s:MinButton>
+                                        <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
+                                        </s:MaxButton>
+                                    </StackPanel>
+                                </Grid>
+
+                            </Grid>
+                            <ContentControl x:Name="IRCFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
+                            </ContentControl>
+                        </Grid>
+                    </Border>
                 </Border>
             </ContentControl>
 

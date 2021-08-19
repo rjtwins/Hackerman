@@ -6,8 +6,8 @@ namespace Game.Core.Endpoints
 {
     public class EndpointGenerator
     {
-        public static int XMax = 3950;
-        public static int YMax = 1616;
+        public static int XMax = 4984;
+        public static int YMax = 2576;
         public static int EndpointBaseSize = 6;
         private int[,] EndpointCoordinates;
         private Random Rand = new Random();

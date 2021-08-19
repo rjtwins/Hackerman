@@ -1,36 +1,33 @@
 ﻿using Game.Core.Endpoints;
+using Game.Core.FileSystem;
 using Game.UI;
 using System;
 using System.Collections.Generic;
 
 namespace Game.Core.Console
 {
-    //TODO: Fix issue where console parser is not recognizing local command anymore?
-    public class CommandParser
+    public class RemoteCommandParser : ICommandParser
     {
         private ConsoleContent ConsoleContent;
-        private Endpoint AttachedSystem;
+        public Endpoint AttachedSystem { private set; get; }
         private Endpoint ConnectingFrom;
         public Dictionary<string, Action<string>> CommandDictionary = new Dictionary<string, Action<string>>();
-        public Dictionary<string, Action<string>> LocalCommandDictionary = new Dictionary<string, Action<string>>();
         private string username;
         private string password;
 
         public bool GivingUsername { get; private set; } = false;
         public bool GivingPassword { get; private set; } = false;
 
-        public CommandParser(ConsoleContent c)
+        public RemoteCommandParser(ConsoleContent c)
         {
             this.ConsoleContent = c;
             //this.AttachSystem(new Endpoint());
             FillCommandDictionary();
-            FillLocalCommandDictionary();
         }
 
         private void FillCommandDictionary()
         {
             CommandDictionary["cat"] = this.Concatenate;
-            CommandDictionary["copy"] = this.Copy;
             CommandDictionary["cd"] = this.CurrentDirectory;
             CommandDictionary["help"] = this.PrintHelp;
             CommandDictionary["cls"] = this.ClearConsole;
@@ -42,20 +39,15 @@ namespace Game.Core.Console
             CommandDictionary["run"] = this.RunProgram;
             CommandDictionary["upload"] = this.Upload;
             CommandDictionary["download"] = this.Download;
+            CommandDictionary["delete"] = this.Delete;
         }
 
-        private void FillLocalCommandDictionary()
+        private void Delete(string obj)
         {
-            LocalCommandDictionary["connect"] = this.MakeConnection;
-            LocalCommandDictionary["bounce"] = this.ParseBounceCommand;
-            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
-            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
-            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
-            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
-            //LocalCommandDictionary["connect"] = this.ParseBounceCommand;
+            throw new NotImplementedException();
         }
 
-        private void MakeConnection(string obj)
+        private void MakeConnection()
         {
             (Endpoint from, Endpoint too, bool Succes) =  Global.Bounce.MakeConnection();
             if (!Succes)
@@ -78,7 +70,25 @@ namespace Game.Core.Console
 
         private void Upload(string commandBody)
         {
-            throw new NotImplementedException();
+            string result = string.Empty;
+            string[] splitCommand = commandBody.Split(" ");
+
+            
+            Program P = Global.StartEndPoint.GetFile("root", splitCommand[0]);
+            if (P == null)
+            {
+                ConsoleContent.ConsoleOutput.Add("\"" + splitCommand[0] + "\"" + " cannot be found on the local machine.\n");
+                return;
+            }
+
+            try
+            {
+                Global.RemoteSystem.UploadFileToo(splitCommand[1], P);
+            }
+            catch (Exception ex)
+            {
+                ConsoleContent.ConsoleOutput.Add(ex.Message);
+            }
         }
 
         public void ParseCommand(string command, string prefix)
@@ -121,9 +131,16 @@ namespace Game.Core.Console
                 commandBody = string.Join(' ', splitCommand.GetRange(1, splitCommand.Count - 1));
             }
 
-            if (this.AttachedSystem == null && LocalCommandDictionary.ContainsKey(commandType))
+
+
+            if (this.AttachedSystem == null && commandType != "connect")
             {
-                LocalCommandDictionary[commandType](commandBody);
+                ConsoleContent.ConsoleOutput.Add("Unable to excute: " + commandType + " on remote: \"NONE\"\n");
+                return;
+            }
+            if(this.AttachedSystem == null && commandType == "connect")
+            {
+                MakeConnection();
                 return;
             }
 
@@ -131,7 +148,7 @@ namespace Game.Core.Console
             if (CommandDictionary.ContainsKey(commandType))
             {
                 CommandDictionary[commandType](commandBody);
-                return; 
+                return;
             }
 
             ConsoleContent.ConsoleOutput.Add("\"" + command + "\"" + " is not recognized as an internal or external command or operable program.\n");
@@ -243,12 +260,13 @@ namespace Game.Core.Console
         {
             this.ConnectingFrom = from;
             this.AttachedSystem = too;
+            Global.RemoteSystem = too;
             this.GivingUsername = true;
             this.ConsoleContent.ConsoleOutput.Add("Connected to: " + too.IPAddress + "\nPlease input username and password.\n");
             this.ConsoleContent.ConsolePrefix = "LOGIN USERNAME:";
         }
 
-        internal void AttachConsole(ConsoleContent consoleContent)
+        public void AttachConsole(ConsoleContent consoleContent)
         {
             this.ConsoleContent = consoleContent;
         }

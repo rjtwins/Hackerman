@@ -43,17 +43,18 @@ namespace Game.Core.Endpoints
             Endpoint too = null;
             Endpoint current = null;
 
-            if (BounceList.Count <= 1)
+            if (BounceList.Count < 1)
             {
                 return (null, null, false);
             }
 
-            if (BounceList.Count == 2)
+            if (BounceList.Count == 1)
             {
                 Global.EndPointMap.DisplayConnection();
-                return (BounceList[0], BounceList[1], true);
+                return (Global.StartEndPoint, BounceList[0], true);
             }
 
+            BounceList[0].BounceTo(Global.StartEndPoint, BounceList[1]);
             for (int i = 1; i < BounceList.Count - 1; i++)
             {
                 from = BounceList[i - 1];

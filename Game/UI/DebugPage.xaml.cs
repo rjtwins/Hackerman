@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Core.Endpoints;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,6 +34,13 @@ namespace Game.UI
         private void ActiveTraceStop_Click(object sender, RoutedEventArgs e)
         {
             Global.ActiveTraceTracker.StopTrace();
+        }
+
+        private void PassiveTraceStart_Click(object sender, RoutedEventArgs e)
+        {
+            Endpoint A = Global.Bounce.BounceList[Global.Bounce.BounceList.Count - 1];
+            Endpoint B = Global.Bounce.BounceList[Global.Bounce.BounceList.Count - 2];
+            Global.PassiveTraceTracker.StartTrace(A, B, A.ConnectionLog[A.ConnectionLog.Count - 1].TimeStamp);
         }
     }
 }

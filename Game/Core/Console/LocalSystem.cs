@@ -8,9 +8,11 @@ namespace Game.Core.Console
 {
     public class LocalSystem
     {
+        //TODO make components to fix placeholders for speed exct
+
         public Bouncer Bouncer = new Bouncer();
         private Dictionary<string, Endpoint[]> SavedBounceLists = new Dictionary<string, Endpoint[]>();
-        private Dictionary<string, Program> SavedPrograms = new Dictionary<string, Program>();
+        //private Dictionary<string, Program> SavedFiles = new Dictionary<string, Program>();
 
         internal void SaveCurrentBounceListsAs(string commandBody)
         {
@@ -40,5 +42,31 @@ namespace Game.Core.Console
             SavedBounceLists.Remove(commandBody);
             return true;
         }
+
+        public int GetModumSpeed()
+        {
+            return 99;
+        }
+
+        public int GetProcessorSpeed()
+        {
+            return 99;
+        }
+
+        public int GetDiskMemory()
+        {
+            return 999999;
+        }
+
+        public int GetDiskFreeMemory()
+        {
+            return 99999;
+        }
+
+        public int GetDiskUsedMemory()
+        {
+            return 0;
+        }
+
     }
 }

@@ -18,6 +18,8 @@ namespace Game.UI
             //this.Background = Brushes.Transparent;
             ButtonText = new TextBlock();
             ButtonText.Text = MaxText;
+            ButtonText.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
+            ButtonText.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             this.AddChild(ButtonText);
         }
 

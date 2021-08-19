@@ -20,11 +20,16 @@ namespace Game
             Global.App = this;
             Global.EventTicker = new EventTicker();
             Global.EndpointGenerator = new EndpointGenerator();
-            Global.Console = new UI.Console();
+
+            Global.RemoteConsole = new UI.RemoteConsole();
+            Global.LocalConsole = new UI.LocalConsole();
             Global.EndPointMap = new UI.EndpointMap();
+            Global.IRCWindow = new UI.IRC();
+
             Global.Bounce = new Bounce();
             Global.LocalSystem = new LocalSystem();
             Global.ActiveTraceTracker = new Core.ActiveTraceTracker();
+            Global.PassiveTraceTracker = new Core.PassiveTraceTracker();
 
             //TODO move non UI game flow to other class
             base.OnStartup(e);

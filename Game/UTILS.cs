@@ -45,24 +45,4 @@ namespace Game
             }
         }
     }
-
-    public enum AccessLevel
-    {
-        USER = 1,
-        ADMIN = 2,
-        ROOT = 3
-    }
-
-    public enum LogType
-    {
-        CONNECTION_ATTEMPT = 1,
-        CONNECTION_FAILED = 2,
-        CONNECTION_SUCCES = 3,
-        FILE_EDITED = 4,
-        FILE_COPIED = 5,
-        FILE_DELETED = 6,
-        FILE_RUN = 7,
-        CONNECTION_ROUTED = 8,
-        CONNECTION_DISCONNECTED = 9
-    }
 }

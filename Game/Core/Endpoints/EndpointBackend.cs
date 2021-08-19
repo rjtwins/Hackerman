@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Core.FileSystem;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -34,7 +35,7 @@ namespace Game.Core.Endpoints
         }
 
         //Location and icon data
-        private FileSystem.FileSystem FileSystem;
+        protected FileSystem.FileSystem FileSystem;
 
         public Endpoint ConnectedFrom;
 
@@ -72,6 +73,7 @@ namespace Game.Core.Endpoints
 
         internal void Discconect()
         {
+            Global.RemoteSystem = null;
             LogDisconnected();
             FileSystem.ResetConnection();
             CurrentUsername = string.Empty;
@@ -107,6 +109,11 @@ namespace Game.Core.Endpoints
             return listString;
         }
 
+        internal Program GetFile(string folderPath, string fileName)
+        {
+            return this.FileSystem.GetFileFromPath(folderPath, fileName);
+        }
+
         internal string TryPrintFile(string command)
         {
             return FileSystem.TryPrintFile(command);
@@ -116,6 +123,22 @@ namespace Game.Core.Endpoints
         {
             FileSystem.NavigateTo(command);
             return CurrentPath();
+        }
+
+        internal string UploadFileToo(string path, Program p)
+        {
+            string result = this.FileSystem.CopyFileToFonder(path, p);
+            if (result == "Done")
+            {
+                this.ConnectionLog.Add(LogItemBuilder
+                    .Builder()
+                    .FILE_COPIED()
+                    .From(this.ConnectedFrom)
+                    .User(this.CurrentUsername)
+                    .AccesLevel(this.AccessLevel)
+                    .TimeStamp(Global.GameTime));
+            }
+            return result;
         }
 
         internal string ConnectTo(string username, string password, Endpoint from)
@@ -153,30 +176,33 @@ namespace Game.Core.Endpoints
                 .CONNECTION_FAILED()
                 .From(from)
                 .User(username)
-                .AccesLevel(AccessLevel.USER)
+                .AccesLevel(AccessLevel.NONE)
                 .TimeStamp(Global.GameTime)
                 );
         }
 
         private void LoggConnectionSucces(string username, Endpoint from, AccessLevel accessLevel)
         {
-            this.ConnectionLog.Add(new LogItem
-            {
-                From = from,
-                LogType = LogType.CONNECTION_SUCCES,
-                userName = username,
-                AccessLevel = accessLevel
-            }) ;
+            this.ConnectionLog.Add(LogItemBuilder
+                .Builder()
+                .CONNECTION_SUCCES()
+                .From(from)
+                .User(username)
+                .AccesLevel(accessLevel)
+                .TimeStamp(Global.GameTime)
+                );
         }
 
         private void LoggConnectionAttempt(string username, Endpoint from)
         {
-            this.ConnectionLog.Add(new LogItem
-            {
-                From = from,
-                LogType = LogType.CONNECTION_ATTEMPT,
-                userName = username
-            });
+            this.ConnectionLog.Add(LogItemBuilder
+                .Builder()
+                .CONNECTION_ATTEMPT()
+                .From(from)
+                .User(username)
+                .AccesLevel(AccessLevel.NONE)
+                .TimeStamp(Global.GameTime)
+                );
         }
 
         public void Restart()

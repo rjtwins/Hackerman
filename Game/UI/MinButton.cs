@@ -8,6 +8,7 @@ namespace Game.UI
         public MinButton()
         {
             this.Click += MinButton_Click;
+
             //this.BorderBrush = Brushes.Transparent;
             //this.Background = Brushes.Transparent;
         }
@@ -18,6 +19,11 @@ namespace Game.UI
             if (ContextedControl == null)
             {
                 return;
+            }
+            if (ContextedControl.IsEnabled)
+            {
+                ContextedControl.IsEnabled = false;
+                ContextedControl.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
     }

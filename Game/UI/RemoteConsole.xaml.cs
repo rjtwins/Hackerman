@@ -14,21 +14,21 @@ namespace Game.UI
     /// <summary>
     /// Interaction logic for Console.xaml
     /// </summary>
-    public partial class Console : System.Windows.Controls.Page
+    public partial class RemoteConsole : System.Windows.Controls.Page
     {
         private ConsoleContent ConsoleContent = new ConsoleContent();
-        private CommandParser CommandParser;
+        private RemoteCommandParser CommandParser;
         private int historyIndex = 0;
 
-        public Console()
+        public RemoteConsole()
         {
             InitializeComponent();
             DataContext = ConsoleContent;
             Loaded += ConsolePageLoaded;
-            this.CommandParser = new CommandParser(ConsoleContent);
+            this.CommandParser = new RemoteCommandParser(ConsoleContent);
             ConsoleContent.AttachCommandParser(CommandParser);
             ConsoleContent.ConsoleOutput.Add("Remote Console [Version 11.0.19042.1110]");
-            ConsoleContent.ConsoleOutput.Add("(c) TracON LLC All Rights Reserved\n");
+            ConsoleContent.ConsoleOutput.Add("(c) TracON LLC. All Rights Reserved\n");
         }
 
         private void ConsolePageLoaded(object sender, RoutedEventArgs e)
@@ -39,6 +39,7 @@ namespace Game.UI
 
         public void StartConsole(string user)
         {
+
         }
 
         private void InputBlock_KeyDown(object sender, KeyEventArgs e)
@@ -103,13 +104,13 @@ namespace Game.UI
 
     public class ConsoleContent : INotifyPropertyChanged
     {
-        private CommandParser CMDP;
+        private ICommandParser CMDP;
         private string consoleInput = string.Empty;
         private ObservableCollection<string> consoleOutput = new ObservableCollection<string>();
         public List<string> History = new List<string>();
         public string Prefix { set; get; }
 
-        public void AttachCommandParser(CommandParser CMDP)
+        public void AttachCommandParser(ICommandParser CMDP)
         {
             this.CMDP = CMDP;
             CMDP.AttachConsole(this);

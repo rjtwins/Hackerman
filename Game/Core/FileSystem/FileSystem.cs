@@ -35,9 +35,25 @@ namespace Game.Core.FileSystem
             GetFolderFromPath(@"root\system\logs").AddProgram(this.SystemLog);
 
             MakeFolderFromPath(@"root\users").AccessLevel = AccessLevel.ADMIN;
+            MakeFolderFromPath(@"root\users\shared").AccessLevel = AccessLevel.USER;
             MakeFolderFromPath(@"root\users\admin").AccessLevel = AccessLevel.ADMIN;
             MakeFolderFromPath(@"root\users\admin\userinfo").AccessLevel = AccessLevel.ADMIN;
             GetFolderFromPath(@"root\users\admin\userinfo").AddProgram(new TextFile("users.info"));
+        }
+
+        internal string CopyFileToFonder(string folderPath, Program p)
+        {
+            Folder f = null;
+            if (folderPath.Contains("root"))
+            {
+                f = GetFolderFromPath(folderPath);
+            }
+            else
+            {
+                f = GetFolderFromPath(folderPath, CurrentFolder);
+            }
+            AddFileToFolder(p.Copy(), f, false);
+            return "Done";
         }
 
         internal void ResetConnection()
@@ -80,6 +96,29 @@ namespace Game.Core.FileSystem
                 return CurrentFolder.Programs[command].ToString();
             }
             return "File not found.";
+        }
+
+        internal Program GetFileFromPath(string folderPath, string fileName)
+        {
+            Folder f = null;
+            if(this.Folders.Count == 0)
+            {
+                f = CurrentFolder;
+            }
+            else if (folderPath.Contains("root"))
+            {
+                f = GetFolderFromPath(folderPath);
+            }
+            else
+            {
+                f = GetFolderFromPath(folderPath, CurrentFolder);
+            }
+
+            if(f.Programs.TryGetValue(fileName, out Program p))
+            {
+                return p;
+            }
+            return null;
         }
 
         internal string NavigateTo(string f)

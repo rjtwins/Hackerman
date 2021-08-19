@@ -13,7 +13,7 @@ namespace Core.Events
         private Timer MainTimer;
 
         public int GameSpeed { private set; get; } = 1;
-        public double TimeIntervalInSecondes = 6d;
+        public double TimeIntervalInSecondes = 0.1d;
 
         //Amount of time the ticker was called.
         public static int invokeCount { private set; get; }
@@ -34,17 +34,18 @@ namespace Core.Events
             Global.GameTime = Global.GameTime.AddSeconds(1000000000d);
 
             GameSpeedDict[0] = 0;
-            GameSpeedDict[1] = 6;
-            GameSpeedDict[2] = 45;
-            GameSpeedDict[3] = 232;
-            GameSpeedDict[4] = 632;
-            GameSpeedDict[5] = 1832;
+            GameSpeedDict[1] = 0.1;
+            GameSpeedDict[2] = 6;
+            GameSpeedDict[3] = 45;
+            GameSpeedDict[4] = 232;
+            GameSpeedDict[5] = 632;
+            GameSpeedDict[6] = 1832;
 
         }
 
         public void IncreaseGameSpeed()
         {
-            ChangeSpeed(Math.Min(this.GameSpeed + 1, 5));
+            ChangeSpeed(Math.Min(this.GameSpeed + 1, 6));
         }
 
         public void DecreaseGameSpeed()
@@ -71,7 +72,7 @@ namespace Core.Events
             }
             this.EventQueue.Add(e.StartTime, e.Id);
             this.IDEventDict[e.Id] = e;
-            Debug.WriteLine("New Event Registered, Start time: " + e.StartTime + "Current Time: " + Global.GameTime);
+            //Debug.WriteLine("New Event Registered, Start time: " + e.StartTime + "Current Time: " + Global.GameTime);
         }
 
         public void StopTicker()
@@ -121,7 +122,7 @@ namespace Core.Events
 
             foreach (Event eventToHandle in EventsToHandle)
             {
-                Debug.WriteLine(eventToHandle.Name);
+                //Debug.WriteLine(eventToHandle.Name);
                 EventQueue.Remove(eventToHandle.StartTime);
                 TryStartEvent(eventToHandle);
             }

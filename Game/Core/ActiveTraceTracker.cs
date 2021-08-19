@@ -54,6 +54,7 @@ namespace Game.Core
             CurrentEndpointIndex -= 1;
             if(CurrentEndpointIndex == 0)
             {
+                //TODO Do something
                 //we are at the origin so do something
                 Debug.WriteLine("Active Trace: CurrentEndpointIdex == 0, found local endpoint");
                 return;

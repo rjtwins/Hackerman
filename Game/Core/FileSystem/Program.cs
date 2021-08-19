@@ -2,7 +2,7 @@
 
 namespace Game.Core.FileSystem
 {
-    public class Program
+    public class Program : ICloneable
     {
         public Folder Folder { set; get; }
         public string Name { private set; get; }
@@ -21,6 +21,16 @@ namespace Game.Core.FileSystem
         public override string ToString()
         {
             return System.Text.Encoding.ASCII.GetString(this.content);
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        public Program Copy()
+        {
+            return (Program)this.Clone();
         }
     }
 }

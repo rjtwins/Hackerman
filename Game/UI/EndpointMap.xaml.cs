@@ -52,7 +52,7 @@ namespace Game.UI
                 btn.Tag = e.Id;
                 stp.Children.Add(btn);
                 TextBlock txb = new TextBlock();
-                txb.Text = e.IPAddress;
+                //txb.Text = e.IPAddress;
                 stp.Children.Add(txb);
                 int x = e.x;
                 int y = e.y;

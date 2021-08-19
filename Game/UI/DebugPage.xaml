@@ -12,7 +12,7 @@
         <Button x:Name="ActiveTraceStart" Content="ATraceStart" HorizontalAlignment="Left" Margin="36,30,0,0" VerticalAlignment="Top" Click="ActiveTraceStart_Click"/>
         <Button x:Name="ActiveTraceStop" Content="ATraceStop" HorizontalAlignment="Left" Margin="104,30,0,0" VerticalAlignment="Top" Click="ActiveTraceStop_Click"/>
         <TextBlock x:Name="ActiveTraceLocation" HorizontalAlignment="Left" Margin="172,32,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
-        <Button x:Name="PassiveTraceStart" Content="PTraceStart" HorizontalAlignment="Left" Margin="36,91,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="PassiveTraceStart" Content="PTraceStart" HorizontalAlignment="Left" Margin="36,91,0,0" VerticalAlignment="Top" Click="PassiveTraceStart_Click"/>
         <Button x:Name="PassiveTraceStop" Content="PTraceStop" HorizontalAlignment="Left" Margin="104,91,0,0" VerticalAlignment="Top"/>
         <TextBlock x:Name="PassiveTraceLocation" HorizontalAlignment="Left" Margin="172,93,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Foreground="White"/>
 

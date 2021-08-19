@@ -15,31 +15,73 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Core\Dialog\DialogSequences\example.spd" />
+    <None Remove="Core\Mission\Dictionaries\example.spd" />
     <None Remove="Fonts\clacon.ttf" />
+    <None Remove="Fonts\Microsoft Sans Serif.ttf" />
     <None Remove="Fonts\Nintendo-DS-BIOS.ttf" />
     <None Remove="Fonts\PixelOperator.ttf" />
     <None Remove="Fonts\VideoTerminalScreen.ttf" />
+    <None Remove="Icons\OtherIcons\001-network.png" />
+    <None Remove="Icons\OtherIcons\005-chat-1.png" />
+    <None Remove="Icons\OtherIcons\014-programing-1.png" />
+    <None Remove="Icons\OtherIcons\015-configuration.png" />
+    <None Remove="Icons\UIPixels\BlackBlackConer.png" />
+    <None Remove="Icons\UIPixels\BlackWhiteCorner.jpg" />
+    <None Remove="Icons\UIPixels\MapBlackBorder.png" />
+    <None Remove="Icons\UIPixels\MapWhiteBorder.png" />
+    <None Remove="Icons\UIPixels\SideBorder.PNG" />
+    <None Remove="Icons\UIPixels\WhiteWhiteCorner.png" />
+    <None Remove="Icons\UIPixels\WindowBorder.PNG" />
+    <None Remove="Icons\UIPixels\WindowBorder.svg" />
     <None Remove="Icons\win98_icons\console_prompt.ico" />
+    <None Remove="Icons\win98_icons\windows.ico" />
     <None Remove="Icons\win98_icons\world_star.ico" />
     <None Remove="Icons\WorldMapDensity.png" />
+    <None Remove="Icons\WorldMapPixelHighRes.png" />
+    <None Remove="Icons\WorldMapPixels.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Core\Dialog\DialogSequences\example.spd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Core\Mission\Dictionaries\example.spd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Fonts\clacon.ttf" />
+    <Resource Include="Fonts\Microsoft Sans Serif.ttf" />
     <Resource Include="Fonts\Nintendo-DS-BIOS.ttf" />
     <Resource Include="Fonts\PixelOperator.ttf" />
     <Resource Include="Fonts\VideoTerminalScreen.ttf" />
-    <Resource Include="Icons\server.png" />
+    <Resource Include="Icons\OtherIcons\001-network.png" />
+    <Resource Include="Icons\OtherIcons\005-chat-1.png" />
+    <Resource Include="Icons\OtherIcons\014-programing-1.png" />
+    <Resource Include="Icons\OtherIcons\015-configuration.png" />
+    <Resource Include="Icons\UIPixels\BlackBlackConer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\UIPixels\BlackWhiteCorner.jpg" />
+    <Resource Include="Icons\UIPixels\MapBlackBorder.png" />
+    <Resource Include="Icons\UIPixels\MapWhiteBorder.png" />
+    <Resource Include="Icons\UIPixels\SideBorder.PNG" />
+    <Resource Include="Icons\UIPixels\WhiteWhiteCorner.png" />
+    <Resource Include="Icons\UIPixels\WindowBorder.PNG" />
+    <Resource Include="Icons\UIPixels\WindowBorder.svg" />
     <Resource Include="Icons\win98_icons\console_prompt.ico" />
+    <Resource Include="Icons\win98_icons\windows.ico" />
     <Resource Include="Icons\win98_icons\world_star.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Icons\WorldMapDensity.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\WorldMap.png" />
+    <Resource Include="Icons\WorldMapDensity.png" />
+    <Resource Include="Icons\WorldMapPixelHighRes.png" />
+    <Resource Include="Icons\WorldMapPixels.jpg" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+    <PackageReference Include="xbloom.Spin" Version="0.1.1-beta7" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
@@ -69,5 +111,11 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="UI\LocalConsole.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	  </Page>
+	</ItemGroup>
   <Import Project="..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.91.1.230\build\CefSharp.Common.targets')" />
 </Project>
