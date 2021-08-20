@@ -25,7 +25,7 @@ namespace Game.Core.Dialog
         {
             Sequence = new Sequence(new DictionaryBackend(), new FileDocumentLoader());
             Sequence.RegisterStandardLibrary();
-            Sequence.AutomaticLineBreaks = false;
+            Sequence.AutomaticLineBreaks = true;
             this.AttachedChannelName = attachedChannelName;
             SelectSequence(sequenceName);
         }
@@ -72,7 +72,7 @@ namespace Game.Core.Dialog
 
             string[] splitString = sString.Split('\n');
             string result = string.Empty;
-
+            string user = string.Empty;
             string currentWho = string.Empty;
             for (int i = startIndex; i < splitString.Length; i++)
             {
@@ -81,7 +81,7 @@ namespace Game.Core.Dialog
                 {
                     s = s.Remove(0, 1);
                     int delay = int.Parse(s);
-                    Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, result);
+                    Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
                     result = string.Empty;
                     Task.Factory.StartNew(() => this.ContinueAfterDelay(delay, i + 1, Sequence));
                     return;
@@ -91,27 +91,26 @@ namespace Game.Core.Dialog
                 {
                     if(result != string.Empty)
                     {
-                        result += "\n";
+                        Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
+                        result = string.Empty;
                     }
                     s = s.Remove(0, 1);
-                    
                     if(s.Contains("PLAYER"))
                     {
                         s = Global.CurrentUserName;
                     }
-
-                    result += Global.GameTime.ToString() + ":" + s + "\t\t" + splitString[i + 1] + "\n";
+                    user = s;
                     i++;
-                    continue;
+                    s = splitString[i];
                 }
-                if (i == splitString.Length - 1)
+                if(i == splitString.Length - 1)
                 {
-                    result += "\t\t\t" + s;
+                    result += s;
                     continue;
                 }
-                result += "\t\t\t" + s + "\n";
+                result += s + "\n";
             }
-            Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, result);
+            Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
         }
 
 

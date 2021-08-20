@@ -5,14 +5,16 @@ namespace Game.Core.FileSystem
 {
     public class ConnectionLog : Program
     {
+        public List<LogItem> Log;
         public ConnectionLog() : base("syslog.log", false)
         {
+            Log = new List<LogItem>();
         }
 
-        public override string ToString()
+    public override string ToString()
         {
             string result = "CONNECTION LOG:\n";
-            foreach (LogItem item in this.Folder.ParentFileSystem.ParrentEndpoint.ConnectionLog)
+            foreach (LogItem item in this.Log)
             {
                 string acceslevel = string.Empty;
                 switch (item.AccessLevel)

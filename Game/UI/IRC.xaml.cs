@@ -26,7 +26,7 @@ namespace Game.UI
     public partial class IRC : Page , INotifyPropertyChanged
     {
         public string Prefix { set; get; }
-        private ObservableCollection<string> iRCOutput = new ObservableCollection<string>();
+        //private ObservableCollection<StackPanel> iRCOutput = new ObservableCollection<StackPanel>();
 
         public IRCChannel CurrentChannel;
         public Dictionary<string, IRCChannel> IDChannelDict = new Dictionary<string, IRCChannel>();
@@ -50,7 +50,7 @@ namespace Game.UI
             InputBlock.KeyDown += IRC_KeyDown;
             InputBlock.Focus();
             AddChannel("missions");
-            AddMessage("missions", "test123");
+            AddMessage("missions", "fklaj;fldasjfsfdjas;fdjas;fjd;lsfjasfjd;lasfjd;lasjf;dlasj", "Hello how are you doing today?\nI'm doing very well myself.");
 
             AddChannel("Grery");
             AddChannel("Bob");
@@ -73,20 +73,20 @@ namespace Game.UI
             IRCChannel IRCChannel = new IRCChannel()
             {
                 ChannelName = channelName,
-                Messages = new List<string>(),
+                Messages = new List<StackPanel>(),
                 ChannelNameTextBlock = Channel
             };
             this.IDChannelDict.Add(channelName, IRCChannel);
             //this.Channels.Children.Add(Channel);
         }
 
-        public void AddMessageFromThread(string channelName, string message)
+        public void AddMessageFromThread(string channelName, string sender, string message)
         {
             try
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    AddMessage(channelName, message);
+                    AddMessage(channelName, sender, message);
                 });
 
             }
@@ -96,18 +96,38 @@ namespace Game.UI
             }
         }
 
-        public void AddMessage(string channelName, string message)
+        public void AddMessage(string channelName, string sender, string message)
         {
+            StackPanel stp = new StackPanel();
+            TextBlock nameBlock = new TextBlock();
+            TextBlock messageBlock = new TextBlock();
+            messageBlock.TextWrapping = TextWrapping.Wrap;
+            messageBlock.Text = message;
+            messageBlock.Background = Brushes.Black;
+            messageBlock.Foreground = Brushes.White;
+            nameBlock.Width = 150;
+            nameBlock.TextWrapping = TextWrapping.Wrap;
+            nameBlock.Text = sender;
+            nameBlock.Background = Brushes.Black;
+            nameBlock.Foreground = Brushes.White;
+            nameBlock.Margin = new Thickness(0, 0, 10, 0);
+            stp.Children.Add(nameBlock);
+            stp.Children.Add(messageBlock);
+            stp.VerticalAlignment = VerticalAlignment.Stretch;
+            stp.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            stp.Orientation = Orientation.Horizontal;
+            
             if(!IDChannelDict.TryGetValue(channelName, out IRCChannel toWriteTo))
             {
                 return;
             }
             if (this.CurrentChannel.ChannelName == toWriteTo.ChannelName)
             {
-                IRCOutput.Add(message);
+                IRCOutput.Children.Add(stp);
                 return;
             }
-            toWriteTo.Messages.Add(message);
+            toWriteTo.Messages.Add(stp);
             toWriteTo.ChannelNameTextBlock.Foreground = Brushes.Red;
             toWriteTo.ChannelNameTextBlock.Background = Brushes.Black;
         }
@@ -134,7 +154,25 @@ namespace Game.UI
                 string result = Parse(InputBlock.Text);
                 if(result != string.Empty)
                 {
-                    this.IRCOutput.Add(result);
+                    StackPanel stp = new StackPanel();
+                    TextBlock nameBlock = new TextBlock();
+                    TextBlock messageBlock = new TextBlock();
+                    messageBlock.TextWrapping = TextWrapping.Wrap;
+                    nameBlock.Width = 0;
+                    nameBlock.TextWrapping = TextWrapping.Wrap;
+                    nameBlock.Text = string.Empty;
+                    messageBlock.Text = result;
+                    nameBlock.Background = Brushes.Black;
+                    nameBlock.Foreground = Brushes.White;
+                    nameBlock.Margin = new Thickness(0, 0, 10, 0);
+                    messageBlock.Background = Brushes.Black;
+                    messageBlock.Foreground = Brushes.White;
+                    stp.Children.Add(nameBlock);
+                    stp.Children.Add(messageBlock);
+                    stp.VerticalAlignment = VerticalAlignment.Stretch;
+                    stp.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+                    this.IRCOutput.Children.Add(stp);
                 }
                 this.InputBlock.Text = string.Empty;
                 InputBlock.Focus();
@@ -147,7 +185,7 @@ namespace Game.UI
             //Save current convo
             if(CurrentChannel.Messages != null)
             {
-                this.CurrentChannel.Messages = IRCOutput.ToList<string>();
+                this.CurrentChannel.Messages = IRCOutput.Children.OfType<StackPanel>().ToList();
                 this.IDChannelDict[CurrentChannel.ChannelName] = this.CurrentChannel;
             }
             if(this.CurrentChannel.ChannelNameTextBlock != null)
@@ -162,8 +200,8 @@ namespace Game.UI
                 return "Channel not found.\n";
             }
             this.CurrentChannel = iRCChannel;
-            this.IRCOutput.Clear();
-            this.IRCOutput = new ObservableCollection<string>(CurrentChannel.Messages);
+            this.IRCOutput.Children.Clear();
+            CurrentChannel.Messages.ForEach(x => this.IRCOutput.Children.Add(x));
 
             if (!this.Channels.Children.Contains(iRCChannel.ChannelNameTextBlock)
                 && iRCChannel.ChannelNameTextBlock != null)
@@ -185,7 +223,7 @@ namespace Game.UI
             IRCChannel IRCChannel = new IRCChannel()
             {
                 ChannelName = "Lobby",
-                Messages = new List<string>(),
+                Messages = new List<StackPanel>(),
                 ChannelNameTextBlock = null
             };
             this.IDChannelDict.Add("Lobby", IRCChannel);
@@ -199,7 +237,7 @@ namespace Game.UI
             IRCChannel IRCChannel = new IRCChannel()
             {
                 ChannelName = channelName,
-                Messages = new List<string>(),
+                Messages = new List<StackPanel>(),
                 ChannelNameTextBlock = Channel
             };
             this.IDChannelDict.Add(channelName, IRCChannel);
@@ -262,18 +300,18 @@ namespace Game.UI
             }
         }
 
-        public ObservableCollection<string> IRCOutput
-        {
-            get
-            {
-                return iRCOutput;
-            }
-            set
-            {
-                iRCOutput = value;
-                OnPropertyChanged("IRCOutput");
-            }
-        }
+        //public ObservableCollection<StackPanel> IRCOutput
+        //{
+        //    get
+        //    {
+        //        return iRCOutput;
+        //    }
+        //    set
+        //    {
+        //        iRCOutput = value;
+        //        OnPropertyChanged("IRCOutput");
+        //    }
+        //}
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
@@ -284,7 +322,7 @@ namespace Game.UI
         public struct IRCChannel
         {
             public string ChannelName;
-            public List<string> Messages;
+            public List<StackPanel> Messages;
             public TextBlock ChannelNameTextBlock;
             public DialogResolver DialogResolver { get; set; }
         }

@@ -32,8 +32,6 @@ namespace Game.Core.Console
             CommandDictionary["dir"] = this.List;
             CommandDictionary["cat"] = this.Concatenate;
             CommandDictionary["run"] = this.RunProgram;
-            CommandDictionary["upload"] = this.Upload;
-            CommandDictionary["download"] = this.Download;
             CommandDictionary["delete"] = this.Delete;
         }
 

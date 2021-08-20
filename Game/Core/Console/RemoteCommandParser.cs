@@ -65,15 +65,24 @@ namespace Game.Core.Console
 
         private void Download(string commandBody)
         {
-            throw new NotImplementedException();
+            Program p;
+            string[] splitCommand = commandBody.Split('\\');
+            if(splitCommand.Length == 1)
+            {
+                p = this.AttachedSystem.GetFile(null, commandBody);
+                Global.StartEndPoint.UploadFileToo(null, p);
+                return;
+            }
+
+            string fileName = splitCommand[splitCommand.Length - 1];
+            string filePath = string.Join('\\', new List<string>(splitCommand).Remove(fileName));
+            p = this.AttachedSystem.GetFile(filePath, fileName);
+            Global.StartEndPoint.UploadFileToo(null, p);
         }
 
         private void Upload(string commandBody)
         {
-            string result = string.Empty;
             string[] splitCommand = commandBody.Split(" ");
-
-            
             Program P = Global.StartEndPoint.GetFile("root", splitCommand[0]);
             if (P == null)
             {

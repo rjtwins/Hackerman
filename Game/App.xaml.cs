@@ -3,6 +3,7 @@ using Core.Events;
 using Game.Core.Console;
 using Game.Core.Endpoints;
 using Game.Core.Events;
+using Game.Core.Mission;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
@@ -30,6 +31,7 @@ namespace Game
             Global.LocalSystem = new LocalSystem();
             Global.ActiveTraceTracker = new Core.ActiveTraceTracker();
             Global.PassiveTraceTracker = new Core.PassiveTraceTracker();
+            MissionDictionaryParser.ParseFromFiles();
 
             //TODO move non UI game flow to other class
             base.OnStartup(e);

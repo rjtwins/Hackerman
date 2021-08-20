@@ -11,7 +11,6 @@ namespace Game.Core.FileSystem
 
         public Folder CurrentFolder;
 
-        public ConnectionLog SystemLog;
         public EndpointBackend ParrentEndpoint { protected set; get; }
         public List<Program> SystemPrograms { private set; get; } = new List<Program>();
         public List<Folder> AllFolders { protected set; get; } = new List<Folder>();
@@ -26,13 +25,37 @@ namespace Game.Core.FileSystem
             GenerateStandardFolderStructure();
         }
 
+        //public SystemLog GetSystemLog()
+        //{
+
+        //}
+
+        public List<LogItem> GetConnectionLog()
+        {
+            ConnectionLog l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
+            if(l == null)
+            {
+                GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
+            }
+            return l.Log;
+        }
+
+        public void SetConnectionLog(List<LogItem> log)
+        {
+            ConnectionLog l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
+            if (l == null)
+            {
+                GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
+            }
+            l.Log = log;
+        }
+
         private void GenerateStandardFolderStructure()
         {
-            SystemLog = new ConnectionLog();
             AccessLevel = AccessLevel.ROOT;
             MakeFolderFromPath(@"root\system").AccessLevel = AccessLevel.ROOT;
-            MakeFolderFromPath(@"root\system\logs").AccessLevel = AccessLevel.ROOT; ;
-            GetFolderFromPath(@"root\system\logs").AddProgram(this.SystemLog);
+            MakeFolderFromPath(@"root\system\logs").AccessLevel = AccessLevel.ROOT;
+            GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
 
             MakeFolderFromPath(@"root\users").AccessLevel = AccessLevel.ADMIN;
             MakeFolderFromPath(@"root\users\shared").AccessLevel = AccessLevel.USER;
@@ -44,7 +67,11 @@ namespace Game.Core.FileSystem
         internal string CopyFileToFonder(string folderPath, Program p)
         {
             Folder f = null;
-            if (folderPath.Contains("root"))
+            if(folderPath == null)
+            {
+                f = CurrentFolder;
+            }
+            else if (folderPath.Contains("root"))
             {
                 f = GetFolderFromPath(folderPath);
             }
@@ -100,10 +127,14 @@ namespace Game.Core.FileSystem
 
         internal Program GetFileFromPath(string folderPath, string fileName)
         {
+            //Ugly else if chain but gwatever
             Folder f = null;
-            if(this.Folders.Count == 0)
+            if(folderPath == null)
             {
-                f = CurrentFolder;
+                f = this.CurrentFolder;
+            }else if(this.Folders.Count == 0)
+            {
+                f = this.CurrentFolder;
             }
             else if (folderPath.Contains("root"))
             {
@@ -111,9 +142,8 @@ namespace Game.Core.FileSystem
             }
             else
             {
-                f = GetFolderFromPath(folderPath, CurrentFolder);
+                f = GetFolderFromPath(folderPath, this.CurrentFolder);
             }
-
             if(f.Programs.TryGetValue(fileName, out Program p))
             {
                 return p;
@@ -159,7 +189,7 @@ namespace Game.Core.FileSystem
 
         public void AddFileToFolder(Program p, Folder f, bool o)
         {
-            if (!this.AllFolders.Contains(f))
+            if (!this.AllFolders.Contains(f) && this.AllFolders.Count != 0)
             {
                 throw new Exception("The system cannot find the path specified to.");
             }

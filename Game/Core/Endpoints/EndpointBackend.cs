@@ -13,7 +13,17 @@ namespace Game.Core.Endpoints
     {
         public bool IsLocalEndpoint { protected set; get; } = false;
         public List<LogItem> SystemLog = new List<LogItem>();
-        public List<LogItem> ConnectionLog = new List<LogItem>();
+        public List<LogItem> ConnectionLog
+        {
+            get
+            {
+                return FileSystem.GetConnectionLog();
+            }
+            set
+            {
+                FileSystem.SetConnectionLog(value);
+            }
+        }
 
         protected Dictionary<string, AccessLevel> UsernamePasswordDict = new Dictionary<string, AccessLevel>();
         public AccessLevel AccessLevel { protected set; get; } = AccessLevel.USER;

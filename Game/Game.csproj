@@ -16,7 +16,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Core\Dialog\DialogSequences\example.spd" />
+    <None Remove="Core\Mission\Dictionaries\bigNames.txt" />
     <None Remove="Core\Mission\Dictionaries\example.spd" />
+    <None Remove="Core\Mission\Dictionaries\smallNames.txt" />
     <None Remove="Fonts\clacon.ttf" />
     <None Remove="Fonts\Microsoft Sans Serif.ttf" />
     <None Remove="Fonts\Nintendo-DS-BIOS.ttf" />
@@ -45,7 +47,13 @@
     <Content Include="Core\Dialog\DialogSequences\example.spd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Core\Mission\Dictionaries\example.spd">
+    <Content Include="Core\Mission\Dictionaries\steal_0.spd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Core\Mission\Dictionaries\bigNames.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Core\Mission\Dictionaries\smallNames.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Fonts\clacon.ttf" />

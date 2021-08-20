@@ -8,11 +8,13 @@ namespace Game.Core.FileSystem
         public string Name { private set; get; }
         public byte[] content { private set; get; }
         public bool Executable = false;
+        public Guid Id { private set; get; }
 
         public Program(string name, bool executable)
         {
             this.Name = name;
             this.Executable = executable;
+            this.Id = Guid.NewGuid();
             Random rand = new Random();
             content = new byte[512];
             rand.NextBytes(content);

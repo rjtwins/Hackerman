@@ -6,21 +6,29 @@ using System.Threading.Tasks;
 
 namespace Game.Core.Mission
 {
-    class Mission
+    public class Mission
     {
         public static Dictionary<int, MissionType[]> DifficultyMissionTypeDict = new Dictionary<int, MissionType[]>()
         {
             { 1, new MissionType[] {MissionType.STEAL, MissionType.DELETE } }
         };
 
-        MissionType MissionType;
-        int MinRating = 0;
-        int Difficulty = 0;
-        int Reward = 0;
-        int RepReward = 0;
-        string MissionChannel = string.Empty;
-        bool CloseChannelAfterMission = false;
-        string Contact = string.Empty;
+
+        public Mission()
+        {
+            this.id = Guid.NewGuid();
+
+        }
+
+        internal Guid id;
+        internal MissionType MissionType;
+        internal int MinRating = 0;
+        internal int Difficulty = 0;
+        internal int Reward = 0;
+        internal int RepReward = 0;
+        internal string MissionChannel = string.Empty;
+        internal bool CloseChannelAfterMission = false;
+        internal string Contact = string.Empty;
     }
 }
 

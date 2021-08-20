@@ -41,8 +41,22 @@ namespace Game
                     return "ROOT";
 
                 default:
-                    throw new Exception("AccessLeve outside of bounds!");
+                    throw new Exception("AccessLevel outside of bounds!");
             }
+        }
+
+        public static string GenerateRandomString(int n)
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringChars = new char[n];
+            var random = new Random();
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new String(stringChars);
         }
     }
 }

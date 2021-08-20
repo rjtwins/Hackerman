@@ -8,6 +8,7 @@ namespace Game.Core.FileSystem
 
         public TextFile(string name) : base(name, false)
         {
+
         }
 
         public override string ToString()
