@@ -1,12 +1,8 @@
 #A dialog flow must always begin with >begin start
+#Text in the start block will be in the chat when the users joins/opens/sees the chat.
+#
 #+name indicates a block of text to be shown with no input in between.
-#To get a new line there MUST be a line between lines:
-#
-#line1
-#
-#line2
-#
-#To indicate who is doing the dialog use @talker followed by an empty line.
+#To indicate who is doing the dialog use @talker
 #To have a pause between messages use %sec for a delay in secondes.
 #To indicate what block to show next use >next block_name.
 #
@@ -16,106 +12,136 @@
 #
 #+example
 #You have 3 choises
-#
 #choise 1
-#
 #choise 2
-#
 #choise 3
-#
 #+>next +exampleChoises
 #
 #+exampleChoises
 #+
-#>{ifeq $choise "1"}next examplechosen1{/}
-#>{ifeq $choise "2"}next examplechosen2{/}
-#>{ifeq $choise "3"}next examplechosen3{/}
+#>{ifeq $choise "1"}next exampleChosen1{/}
+#>{ifeq $choise "2"}next exampleChosen2{/}
+#>{ifeq $choise "3"}next exampleChosen3{/}
 #>skip
 #
 #If the user inputs a choise outside of the range of possible choises it will loop back until they do.
 #
+#To indicate a users final choise in a dialog use 
+#>set $result resultnumber
+#
 #To indicate the dialog has ended use:
 #>set $endOfConvo true
+#
 ################################################################################################################
 >begin start
++listing
+Just a quick job.
++>next start
 
 +start
-@Bob
+@{$contact}
+Hey, I've got a job for you.
++>next onUserObserve
 
-Hey, I've got a job for you, I want you to hack into bankX and transfer X amount from Y into Z.
-
++onUserObserve
+%3
+@{$contact}
+I want you to hack into {$target} and transfer X amount from Y into Z.
+The job will get you {$reward}
+%1
+@PLAYER
 1:Allright I'll take the job.
-
 2:No.
-
 3:How secure is the target?
-
-@John
-
-Okay I know what he just said, but DONT DO IT its a trap!
-+>next startChoise
++> next startChoise
 
 +startChoise
-choise is now \"{$choise}\".
+~~skip~~
 +
-# >next error
->{ifeq $choise "1"}next C0{/}
->{ifeq $choise "2"}next C1{/}
->{ifeq $choise "3"}next C2{/}
+>{ifeq $choise "1"}set $missionAccepted true; next accept{/}
+>{ifeq $choise "2"}set $missionRejected true; next reject{/}
+>{ifeq $choise "3"}next moreInfo{/}
 >skip
 
-+C0
++accept
 @PLAYER
-
 Allright I'll take the job.
-
-@Bob
-
-Here are the details,
-
 %3
-
-@Bob
-
-Address: 129.112.590.321
-
+@{$contact}
+Let me get you the details.
+%5
+@{$contact}
+Here is the IP, {$targetIp}. Get back to me when you're done.
+%1
+@{$contact}
 Good luck!
+%1
+@PLAYER
+1:Job's done the money is wired.
+2:I'm sorry but I have to cancel the job.
++
+>next acceptChoise
+
++acceptChoise
+~~skip~~
++
+>{ifeq $choise "1"}next jobDone{/}
+>{ifeq $choise "2"}set $missionRejected true; next jobCancel{/}
+>skip
+
++jobDone
+%3
+@{$contact}
+Allright let me check hold on.
++
+>set $checkMissionCompleted true
+>next jobDone2
+
++jobDone2
+{ifeq $missionCompleted true}
+%10
+@{$contact}
+I can confirm the transfer was succesfull.
+Sending payment now.
+{/}
+{ifeq $missionCompleted false}
+%10
+@{$contact}
+I don't see the transfer.
+{/}
++
+>{ifeq $missionCompleted true}set $endOfConvo true; next end{/}
+>{ifeq $missionCompleted false}next acceptChoise{/}
+
++jobCancel
+%3
+@{$contact}
+Allright I guess I'll have to find someone else then.
 +
 >set $endOfConvo true
-> next end
+>next end
 
-+C1
++reject
 @PLAYER
-
 No.
-
-@Bob
-
+%4
+@{$contact}
 Allright I'll go find somebody else.
 +
+>set $missionRejected true
 >set $endOfConvo true
 > next end
 
-+C2
++moreInfo
 @PLAYER
-
 How secure is the target?
-
-@Bob
-
+%4
+@{$contact}
 Nothing serious just a personal computer with a password.
 +
 > next startChoise
 
-
-+error
-please select one of the options available.
-+
->set $error true
->next start
-
 +end
 @RJ
-
 this should never be seen!
 +

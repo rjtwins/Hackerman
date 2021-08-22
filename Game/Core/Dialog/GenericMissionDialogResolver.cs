@@ -1,0 +1,244 @@
+﻿using Spin;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Game.Core.Mission;
+using Game.Core.Events;
+
+namespace Game.Core.Dialog
+{
+    public class GenericMissionDialogResolver
+    {
+        //TODO: Make the dialog show the target ip and name
+        //TODO: Look into registering commands with the sequence to check for things instead of relying on flags.
+        Sequence Sequence;
+        VariableRef ChoiseVariable = new VariableRef("choise");
+        VariableRef EndOfConvoVariable = new VariableRef("endOfConvo");
+        VariableRef _DialogResult = new VariableRef("result");
+        VariableRef _Contact = new VariableRef("contact");
+        VariableRef _Target = new VariableRef("target");
+        VariableRef _Reward = new VariableRef("reward");
+        VariableRef _MissionCompleted = new VariableRef("missionCompleted");
+        VariableRef _MissionAccepted = new VariableRef("missionAccepted");
+        VariableRef _MissionRejected = new VariableRef("missionRejected");
+        VariableRef _CheckMissionCompleted = new VariableRef("checkMissionCompleted");
+        VariableRef _TargetIp = new VariableRef("targetIp");
+
+        public int DialogResult = 99;
+        string Contact = string.Empty;
+
+        string PreviousLineName = string.Empty;
+        List<string> History = new List<string>();
+        public int Choise;
+        public bool EndOfConvo = false;
+        private string AttachedChannelName;
+        public Mission.Mission Mission;
+        private bool Started = false;
+
+        public GenericMissionDialogResolver(string attachedChannelName)
+        {
+            Sequence = new Sequence(new DictionaryBackend(), new FileDocumentLoader());
+            Sequence.RegisterStandardLibrary();
+            Sequence.AutomaticLineBreaks = false;
+            this.AttachedChannelName = attachedChannelName;
+        }
+
+        public void SelectSequence(string sequenceName)
+        {
+            try
+            {
+                Sequence.LoadAndStartDocument("Core/Dialog/DialogSequences/" + sequenceName + ".spd");
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+
+        public void SelectSequenceFromMissionDictionaries(string sequenceName)
+        {
+            try
+            {
+                Sequence.LoadAndStartDocument("Core/Mission/Dictionaries/" + sequenceName + ".spd");
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+
+        //public void SetContact(string contact)
+        //{
+        //    this.Contact = contact;
+        //    this.Sequence.SetVariable(_Contact, contact);
+        //}
+
+
+        public void StartFromLine(string Line)
+        {
+            Sequence.SetNextLine(Line);
+        }
+
+        private void ContinueAfterDelay(int sec, int parserIndex, Sequence sequence)
+        {
+            System.Threading.Thread.Sleep(sec * 1000);
+            Parse(sequence, parserIndex);
+        }
+
+        /// <summary>
+        /// Recursivly parse a sequence starting at an index with possible delay.
+        /// </summary>
+        /// <param name="Sequence"></param>
+        /// <param name="startIndex"></param>
+        private void Parse(Sequence Sequence, int startIndex)
+        {
+
+            string sString = string.Empty;
+            try
+            {
+                sString = Sequence.ExecuteCurrentLine().BuildString(true, false);
+            }
+            catch (NullReferenceException ex)
+            {
+                Sequence.SetNextLine(PreviousLineName);
+                Sequence.StartNextLine();
+                Sequence.ExecuteCurrentLine();
+                return;
+            }
+
+            string[] splitString = sString.Split('\n');
+            string result = string.Empty;
+            string user = string.Empty;
+            string currentWho = string.Empty;
+            for (int i = startIndex; i < splitString.Length; i++)
+            {
+                string s = splitString[i];
+                if (s.StartsWith('%'))
+                {
+                    s = s.Remove(0, 1);
+                    int delay = int.Parse(s);
+                    if (!string.IsNullOrWhiteSpace(result))
+                    {
+                        Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
+                    }
+                    result = string.Empty;
+                    Task.Factory.StartNew(() => this.ContinueAfterDelay(delay, i + 1, Sequence));
+                    return;
+                }
+
+                if (s.StartsWith('@'))
+                {
+                    if (result.StartsWith("\n"))
+                    {
+                        result.TrimStart();
+                    }
+                    if(!string.IsNullOrEmpty(result) && !string.IsNullOrWhiteSpace(result))
+                    {
+                        Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
+                        result = string.Empty;
+                    }
+                    s = s.Remove(0, 1);
+                    if(s.Contains("PLAYER"))
+                    {
+                        s = Global.GameState.UserName;
+                    }
+                    user = s;
+                    i++;
+                    s = splitString[i];
+                }
+                if (string.IsNullOrWhiteSpace(s))
+                {
+                    s = string.Empty;
+                }
+                if (i == splitString.Length - 1)
+                {
+                    result += s;
+                    continue;
+                }
+                result += s + "\n";
+            }
+            Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
+        }
+
+        public string SetInfoGetListing(string contact, string target, int reward)
+        {
+            this.Contact = contact;
+            this.Sequence.SetVariable(_Contact, contact);
+            this.Sequence.SetVariable(_Target, target);
+            this.Sequence.SetVariable(_Reward, reward);
+            this.Sequence.SetVariable(_TargetIp, Mission.TargetEndpoint.IPAddress);
+            Sequence.SetNextLine("listing");
+            Sequence.StartNextLine();
+            return Sequence.ExecuteCurrentLine().BuildString(true, false);
+        }
+
+        public void MissionCompleted()
+        {
+            this.Sequence.SetVariable(_MissionCompleted, true);
+        }
+
+        public void SetupDialog()
+        {
+            this.EndOfConvo = false;
+            Sequence.SetNextLine("start");
+            Sequence.StartNextLine();
+            Sequence.SetVariable(ChoiseVariable, 0);
+            Sequence.SetVariable(EndOfConvoVariable, false);
+            Sequence.SetVariable(_DialogResult, -1);
+            Sequence.SetVariable(_MissionCompleted, false);
+            Sequence.SetVariable(_MissionAccepted, false);
+            Sequence.SetVariable(_MissionRejected, false);
+            Sequence.SetVariable(_CheckMissionCompleted, false);
+            Parse(Sequence, 0);
+        }
+
+        public void CheckStartDialog()
+        {
+            if (Started)
+            {
+                return;
+            }
+            Next(0);
+            Started = true;
+        }
+
+        public void Next(int choise)
+        {
+            this.PreviousLineName = Sequence.CurrentLine.Value.Name;
+            if ((bool)Sequence.GetVariable(EndOfConvoVariable))
+            {
+                this.EndOfConvo = true;
+                
+                return;
+            }
+
+            Sequence.StartNextLine();
+            this.Choise = choise;
+            Sequence.SetVariable(ChoiseVariable, choise.ToString());
+            Parse(Sequence, 0);
+
+            //Chick mission completed
+            if ((bool)Sequence.GetVariable(_CheckMissionCompleted))
+            {
+                if (Mission.CheckMissionCompleted())
+                {
+                    Sequence.SetVariable(_MissionCompleted, true);
+                }
+                Next(0);
+            }
+
+            //Check for mission accepted
+            if ((bool)Sequence.GetVariable(_MissionAccepted))
+            {
+                Global.MissionManager.AcceptMission(this.Mission);
+            }
+            if ((bool)Sequence.GetVariable(_MissionRejected))
+            {
+                Global.MissionManager.RejectMission(this.Mission);
+            }
+        }
+    }
+}

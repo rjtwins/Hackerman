@@ -98,8 +98,11 @@ namespace Core.Events
         {
             EventTicker.invokeCount += 1;
             Global.GameTime = Global.GameTime.AddSeconds(TimeIntervalInSecondes);
-            Global.MainWindow.UpdateDateTime();
-            HandleEvents();
+            if(Global.MainWindow != null)
+            {
+                Global.MainWindow.UpdateDateTime();
+                HandleEvents();
+            }
         }
 
         private void HandleEvents()

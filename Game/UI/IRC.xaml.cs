@@ -1,5 +1,6 @@
 ﻿using Game.Core.Console;
 using Game.Core.Dialog;
+using Game.Core.Mission;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,7 +32,7 @@ namespace Game.UI
         public IRCChannel CurrentChannel;
         public Dictionary<string, IRCChannel> IDChannelDict = new Dictionary<string, IRCChannel>();
         Dictionary<string, Func<string, string>> CommandDict = new Dictionary<string, Func<string, string>>();
-
+        Dictionary<Guid, StackPanel> GuidJobListingDict = new Dictionary<Guid, StackPanel>();
         public IRC()
         {
             this.CommandDict["join"] = SetChannel;
@@ -39,45 +40,31 @@ namespace Game.UI
             InitializeComponent();
             Loaded += PageLoaded;
             DataContext = this;
-            //IRCContent.ConsoleOutput.Add("Remote Console [Version 11.0.19042.1110]");
-            //IRCContent.ConsoleOutput.Add("(c) TracON LLC All Rights Reserved\n");
+
         }
 
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            SetChannel(AddBaseChannel().ChannelName);
-            this.IRCPrefix = Global.CurrentUserName;
+            AddHiddenChannel("Lobby");
+            SetChannel("Lobby");
+
+            this.IRCPrefix = Global.GameState.UserName;
             InputBlock.KeyDown += IRC_KeyDown;
             InputBlock.Focus();
-            AddChannel("missions");
-            AddMessage("missions", "fklaj;fldasjfsfdjas;fdjas;fjd;lsfjasfjd;lasfjd;lasjf;dlasj", "Hello how are you doing today?\nI'm doing very well myself.");
-
-            AddChannel("Grery");
-            AddChannel("Bob");
-            AddChannel("Joe");
-            AddChannel("Alice");
-
-            AddHiddenChannel("Hidden123");
-
-            IRCChannel BobsChannel = IDChannelDict["Bob"];
-            BobsChannel.DialogResolver = new DialogResolver("example", BobsChannel.ChannelName);
-            IDChannelDict["Bob"] = BobsChannel;
-            BobsChannel.DialogResolver.StartDialog();
+            
+            AddChannel("jobs");
         }
-
 
         public void AddHiddenChannel(string channelName)
         {
-            TextBlock Channel = new TextBlock();
-            Channel.Text = channelName;
-            IRCChannel IRCChannel = new IRCChannel()
-            {
-                ChannelName = channelName,
-                Messages = new List<StackPanel>(),
-                ChannelNameTextBlock = Channel
-            };
+            IRCChannel IRCChannel = new IRCChannel(channelName);
+            IRCChannel.ChannelNameTextBlock.Text = channelName;
             this.IDChannelDict.Add(channelName, IRCChannel);
-            //this.Channels.Children.Add(Channel);
+        }
+
+        public void AddHiddenChannel(IRCChannel iRCChannel)
+        {
+            this.IDChannelDict.Add(iRCChannel.ChannelName, iRCChannel);
         }
 
         public void AddMessageFromThread(string channelName, string sender, string message)
@@ -96,7 +83,7 @@ namespace Game.UI
             }
         }
 
-        public void AddMessage(string channelName, string sender, string message)
+        public StackPanel AddMessage(string channelName, string sender, string message)
         {
             StackPanel stp = new StackPanel();
             TextBlock nameBlock = new TextBlock();
@@ -117,19 +104,29 @@ namespace Game.UI
             stp.HorizontalAlignment = HorizontalAlignment.Stretch;
 
             stp.Orientation = Orientation.Horizontal;
-            
-            if(!IDChannelDict.TryGetValue(channelName, out IRCChannel toWriteTo))
+
+            if (!IDChannelDict.TryGetValue(channelName, out IRCChannel toWriteTo))
             {
-                return;
+                return stp;
             }
-            if (this.CurrentChannel.ChannelName == toWriteTo.ChannelName)
+            if (IsCurrentChannel(toWriteTo))
             {
                 IRCOutput.Children.Add(stp);
-                return;
+                return stp;
             }
             toWriteTo.Messages.Add(stp);
             toWriteTo.ChannelNameTextBlock.Foreground = Brushes.Red;
             toWriteTo.ChannelNameTextBlock.Background = Brushes.Black;
+
+            bool IsCurrentChannel(IRCChannel toWriteTo)
+            {
+                if(this.CurrentChannel == null)
+                {
+                    return false;
+                }
+                return this.CurrentChannel.ChannelName == toWriteTo.ChannelName;
+            }
+            return stp;
         }
 
         public IRCChannel GetCurrentChannel()
@@ -183,15 +180,9 @@ namespace Game.UI
         public string SetChannel(string ChannelName)
         {
             //Save current convo
-            if(CurrentChannel.Messages != null)
+            if (this.CurrentChannel != null)
             {
-                this.CurrentChannel.Messages = IRCOutput.Children.OfType<StackPanel>().ToList();
-                this.IDChannelDict[CurrentChannel.ChannelName] = this.CurrentChannel;
-            }
-            if(this.CurrentChannel.ChannelNameTextBlock != null)
-            {
-                this.CurrentChannel.ChannelNameTextBlock.Background = Brushes.Black;
-                this.CurrentChannel.ChannelNameTextBlock.Foreground = Brushes.White;
+                SaveCurrentChannelMessages();
             }
 
             //Get channel and port messages back
@@ -204,45 +195,77 @@ namespace Game.UI
             CurrentChannel.Messages.ForEach(x => this.IRCOutput.Children.Add(x));
 
             if (!this.Channels.Children.Contains(iRCChannel.ChannelNameTextBlock)
-                && iRCChannel.ChannelNameTextBlock != null)
+                && iRCChannel.ChannelNameTextBlock != null
+                && iRCChannel.ChannelName != "Lobby")
             {
                 this.Channels.Children.Add(iRCChannel.ChannelNameTextBlock);
             }
 
-            if(CurrentChannel.ChannelNameTextBlock != null)
+            if (CurrentChannel.ChannelNameTextBlock != null)
             {
                 CurrentChannel.ChannelNameTextBlock.Background = Brushes.White;
                 CurrentChannel.ChannelNameTextBlock.Foreground = Brushes.Black;
             }
 
+            if (CurrentChannel.DialogResolver != null)
+            {
+                CurrentChannel.DialogResolver.CheckStartDialog();
+            }
             return string.Empty; /*"Channel "+ "\"" + ChannelName + "\" joined.\n";*/
         }
 
-        public IRCChannel AddBaseChannel()
+        private void SaveCurrentChannelMessages()
         {
-            IRCChannel IRCChannel = new IRCChannel()
+            if (CurrentChannel.Messages != null)
             {
-                ChannelName = "Lobby",
-                Messages = new List<StackPanel>(),
-                ChannelNameTextBlock = null
-            };
-            this.IDChannelDict.Add("Lobby", IRCChannel);
-            return IRCChannel;
+                this.CurrentChannel.Messages = IRCOutput.Children.OfType<StackPanel>().ToList();
+                this.IDChannelDict[CurrentChannel.ChannelName] = this.CurrentChannel;
+            }
+            if (this.CurrentChannel.ChannelNameTextBlock != null)
+            {
+                this.CurrentChannel.ChannelNameTextBlock.Background = Brushes.Black;
+                this.CurrentChannel.ChannelNameTextBlock.Foreground = Brushes.White;
+            }
         }
 
-        public string AddChannel(string channelName)
+        public void AddChannel(IRCChannel iRCChannel)
         {
-            TextBlock Channel = new TextBlock();
-            Channel.Text = channelName;
-            IRCChannel IRCChannel = new IRCChannel()
-            {
-                ChannelName = channelName,
-                Messages = new List<StackPanel>(),
-                ChannelNameTextBlock = Channel
-            };
+            this.IDChannelDict.Add(iRCChannel.ChannelName, iRCChannel);
+            this.Channels.Children.Add(iRCChannel.ChannelNameTextBlock);
+        }
+
+        public void AddChannel(string channelName)
+        {
+            IRCChannel IRCChannel = new IRCChannel(channelName);
+            IRCChannel.ChannelNameTextBlock.Text = channelName;
             this.IDChannelDict.Add(channelName, IRCChannel);
-            this.Channels.Children.Add(Channel);
-            return channelName;
+            this.Channels.Children.Add(IRCChannel.ChannelNameTextBlock);
+        }
+
+        public void RemoveChannel(string channelName)
+        {
+            if(this.IDChannelDict.TryGetValue(channelName, out IRCChannel iRCChannel))
+            {
+                if(channelName == CurrentChannel.ChannelName)
+                {
+                    SetChannel("Lobby");
+                }
+                this.Channels.Children.Remove(iRCChannel.ChannelNameTextBlock);
+                this.IDChannelDict.Remove(channelName);
+            }
+        }
+        public void RemoveJobListing(Mission mission)
+        {
+            this.RemoveChannel(mission.MissionChannel);
+            this.IDChannelDict["jobs"].Messages.Remove(this.GuidJobListingDict[mission.id]);
+        }
+        public void AddJobListing(Mission mission)
+        {
+            this.AddHiddenChannel(mission.IRCChannel);
+            string listingMessage = mission.DialogResolver.SetInfoGetListing(mission.Contact, mission.Target, mission.Reward) +
+                "\nJoin " + mission.MissionChannel + " for more info.";
+            mission.DialogResolver.SetupDialog();
+            GuidJobListingDict[mission.id] = this.AddMessage("jobs", mission.Contact, listingMessage);
         }
 
         public string LeaveChannel(string input)
@@ -317,14 +340,6 @@ namespace Game.UI
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public struct IRCChannel
-        {
-            public string ChannelName;
-            public List<StackPanel> Messages;
-            public TextBlock ChannelNameTextBlock;
-            public DialogResolver DialogResolver { get; set; }
         }
     }
 }

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Game.Core.Endpoints;
+using System;
 using System.Drawing;
 
 namespace Game
 {
     public static class UTILS
     {
+        private readonly static Random Rand = new Random();
         public static int[,] getBoolBitmap(uint treshold, Bitmap b)
         {
             int[,] ar = new int[b.Width, b.Height];
@@ -47,7 +49,8 @@ namespace Game
 
         public static string GenerateRandomString(int n)
         {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            //ABCDEFGHIJKLMNOPQRSTUVWXYZ
+            var chars = "abcdefghijklmnopqrstuvwxyz0123456789";
             var stringChars = new char[n];
             var random = new Random();
 
@@ -57,6 +60,23 @@ namespace Game
             }
 
             return new String(stringChars);
+        }
+
+        public static Endpoint PickRandomEndpoint()
+        {
+            int randomIndex = Rand.Next(Global.AllEndpoints.Count);
+            var temp = Global.AllEndpoints[randomIndex];
+            if(temp.Id == Global.StartEndPoint.Id)
+            {
+                return PickRandomEndpoint();
+            }
+            return temp;
+        }
+
+        //TODO: make some believable file names.
+        public static string PickRandomFileName()
+        {
+            return GenerateRandomString(4) + ".data";
         }
     }
 }

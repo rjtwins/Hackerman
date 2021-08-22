@@ -135,10 +135,10 @@ namespace Game.Core.Endpoints
             return CurrentPath();
         }
 
-        internal string UploadFileToo(string path, Program p)
+        internal string UploadFileToo(string path, Program p, bool log = true)
         {
             string result = this.FileSystem.CopyFileToFonder(path, p);
-            if (result == "Done")
+            if (result == "Done" && log)
             {
                 this.ConnectionLog.Add(LogItemBuilder
                     .Builder()
@@ -149,6 +149,22 @@ namespace Game.Core.Endpoints
                     .TimeStamp(Global.GameTime));
             }
             return result;
+        }
+
+        internal string RemoveFileFrom(string path, Program p, bool log = true)
+        {
+            string result = this.FileSystem.RemoveFileFromFolder(path, p);
+            if(result == "Done" && log)
+            {
+                this.ConnectionLog.Add(LogItemBuilder
+                    .Builder()
+                    .FILE_DELETED()
+                    .From(this.ConnectedFrom)
+                    .User(this.CurrentUsername)
+                    .AccesLevel(this.AccessLevel)
+                    .TimeStamp(Global.GameTime));
+            }
+            throw new NotImplementedException();
         }
 
         internal string ConnectTo(string username, string password, Endpoint from)

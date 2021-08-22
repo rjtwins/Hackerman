@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Game.Core.FileSystem
 {
@@ -38,6 +39,12 @@ namespace Game.Core.FileSystem
                 return @"root:";
             }
             return Parent.ToString() + @"\" + this.Name;
+        }
+
+        internal void RemoveProgram(Program p)
+        {
+            p.Folder = null;
+            this.Programs.Remove(p.Name);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿//Internal
 using Core.Events;
+using Game.Core;
 using Game.Core.Console;
 using Game.Core.Endpoints;
 using Game.Core.Events;
@@ -18,6 +19,8 @@ namespace Game
         protected override void OnStartup(StartupEventArgs e)
         {
             //declaring globals
+            Global.GameState = new GameState();
+            Global.GameState.SetUserName("RJ");
             Global.App = this;
             Global.EventTicker = new EventTicker();
             Global.EndpointGenerator = new EndpointGenerator();
@@ -31,7 +34,6 @@ namespace Game
             Global.LocalSystem = new LocalSystem();
             Global.ActiveTraceTracker = new Core.ActiveTraceTracker();
             Global.PassiveTraceTracker = new Core.PassiveTraceTracker();
-            MissionDictionaryParser.ParseFromFiles();
 
             //TODO move non UI game flow to other class
             base.OnStartup(e);
@@ -77,6 +79,10 @@ namespace Game
         {
             Global.AllEndpoints = Global.EndpointGenerator.GenerateEndpoints(100);
             Global.EndPointMap.DisplayEndpoints();
+
+            MissionDictionaries.ParseFromFiles();
+            Global.MissionManager = new MissionManager();
+            Global.MissionManager.EvaluateMissionListings();
         }
     }
 }

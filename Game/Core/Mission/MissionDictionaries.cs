@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Game.Core.Mission
 {
-    public static class MissionDictionaryParser
+    public static class MissionDictionaries
     {
         public static List<string> SmallMissionGivers = new List<string>();
         public static List<string> BigMissionGivers = new List<string>();
@@ -32,7 +32,7 @@ namespace Game.Core.Mission
                     {
                         TypeSequenceListDict[missionType] = new List<string>();
                     }
-                    TypeSequenceListDict[missionType].Add(value.ToLower() + "_" + i + ".spd");
+                    TypeSequenceListDict[missionType].Add(value.ToLower() + "_" + i);
                     i++;
                     filePath = Environment.CurrentDirectory + "\\Core\\Mission\\Dictionaries\\" + value.ToLower() + i.ToString() + ".spd";
                 }

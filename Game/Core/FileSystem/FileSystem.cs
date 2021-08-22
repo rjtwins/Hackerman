@@ -12,7 +12,6 @@ namespace Game.Core.FileSystem
         public Folder CurrentFolder;
 
         public EndpointBackend ParrentEndpoint { protected set; get; }
-        public List<Program> SystemPrograms { private set; get; } = new List<Program>();
         public List<Folder> AllFolders { protected set; get; } = new List<Folder>();
 
         public FileSystem(EndpointBackend endpoint) : base("root")
@@ -25,17 +24,13 @@ namespace Game.Core.FileSystem
             GenerateStandardFolderStructure();
         }
 
-        //public SystemLog GetSystemLog()
-        //{
-
-        //}
-
         public List<LogItem> GetConnectionLog()
         {
             ConnectionLog l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
             if(l == null)
             {
                 GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
+                l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
             }
             return l.Log;
         }
@@ -46,6 +41,7 @@ namespace Game.Core.FileSystem
             if (l == null)
             {
                 GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
+                l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
             }
             l.Log = log;
         }
@@ -149,6 +145,25 @@ namespace Game.Core.FileSystem
                 return p;
             }
             return null;
+        }
+
+        internal string RemoveFileFromFolder(string path, Program p)
+        {
+            Folder f = null;
+            if (path == null)
+            {
+                f = CurrentFolder;
+            }
+            else if (path.Contains("root"))
+            {
+                f = GetFolderFromPath(path);
+            }
+            else
+            {
+                f = GetFolderFromPath(path, CurrentFolder);
+            }
+            f.RemoveProgram(p);
+            return "Done";
         }
 
         internal string NavigateTo(string f)
