@@ -19,6 +19,7 @@ namespace Game
         protected override void OnStartup(StartupEventArgs e)
         {
             //declaring globals
+            UTILS.LoadPasswordFile();
             Global.GameState = new GameState();
             Global.GameState.SetUserName("RJ");
             Global.App = this;

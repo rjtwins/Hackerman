@@ -1,4 +1,5 @@
-﻿using Game.Core.Endpoints;
+﻿using Game.Core.Console.LocalPrograms;
+using Game.Core.Endpoints;
 using Game.UI;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,12 @@ namespace Game.Core.Console
             CommandDictionary["cat"] = this.Concatenate;
             CommandDictionary["run"] = this.RunProgram;
             CommandDictionary["delete"] = this.Delete;
+            CommandDictionary["DictHack"] = this.DictHack;
+        }
+
+        private void DictHack(string userName)
+        {
+            ConsoleContent.ConsoleOutput.Add(DictionaryHack.Instance.StartHack(userName));
         }
 
         private void Delete(string obj)

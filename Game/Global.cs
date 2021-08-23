@@ -31,12 +31,15 @@ namespace Game
         public static EndpointGenerator EndpointGenerator;
         public static EventTicker EventTicker;
         public static Bounce Bounce;
-        public static Endpoint StartEndPoint;
+
         public static List<Endpoint> AllEndpoints = new();
         public static LocalSystem LocalSystem;
+        public static Endpoint StartEndPoint;
         public static Endpoint RemoteSystem;
+
         public static DateTime GameTime;
         public static bool GamePaused;
+
         public static ActiveTraceTracker ActiveTraceTracker;
         public static PassiveTraceTracker PassiveTraceTracker;
 

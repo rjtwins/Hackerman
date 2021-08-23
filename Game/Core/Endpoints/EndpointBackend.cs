@@ -12,7 +12,7 @@ namespace Game.Core.Endpoints
     public class EndpointBackend
     {
         public bool IsLocalEndpoint { protected set; get; } = false;
-        public List<LogItem> SystemLog = new List<LogItem>();
+        public List<LogItem> SystemLog = new();
         public List<LogItem> ConnectionLog
         {
             get
@@ -25,7 +25,8 @@ namespace Game.Core.Endpoints
             }
         }
 
-        protected Dictionary<string, AccessLevel> UsernamePasswordDict = new Dictionary<string, AccessLevel>();
+        public Dictionary<string, string> UsernamePasswordDict = new();
+        protected Dictionary<string, AccessLevel> UsernamePasswordAccessDict = new();
         public AccessLevel AccessLevel { protected set; get; } = AccessLevel.USER;
         protected string CurrentUsername;
         protected string CurrentPassword;
@@ -61,6 +62,12 @@ namespace Game.Core.Endpoints
             this.FileSystem = new FileSystem.FileSystem(this);
         }
 
+        public void AddUser(string userName, string password, AccessLevel accessLevel)
+        {
+            this.UsernamePasswordDict[userName] = password;
+            this.UsernamePasswordAccessDict[userName + password] = accessLevel;
+        }
+        
         internal void BounceTo(Endpoint from, Endpoint too)
         {
             if(from == null || too == null)
@@ -179,7 +186,7 @@ namespace Game.Core.Endpoints
 
             try
             {
-                this.AccessLevel = UsernamePasswordDict[username + password];
+                this.AccessLevel = UsernamePasswordAccessDict[username + password];
                 FileSystem.ConnectTo(this.AccessLevel);
                 LoggConnectionSucces(username, from, this.AccessLevel);
                 CurrentUsername = username;

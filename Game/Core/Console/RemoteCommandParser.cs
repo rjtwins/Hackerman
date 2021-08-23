@@ -8,6 +8,18 @@ namespace Game.Core.Console
 {
     public class RemoteCommandParser : ICommandParser
     {
+        private static readonly RemoteCommandParser instance = new RemoteCommandParser();
+
+        public static RemoteCommandParser Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
+
+
+
         private ConsoleContent ConsoleContent;
         public Endpoint AttachedSystem { private set; get; }
         private Endpoint ConnectingFrom;
@@ -18,7 +30,12 @@ namespace Game.Core.Console
         public bool GivingUsername { get; private set; } = false;
         public bool GivingPassword { get; private set; } = false;
 
-        public RemoteCommandParser(ConsoleContent c)
+        private RemoteCommandParser()
+        {
+
+        }
+
+        public void Setup(ConsoleContent c)
         {
             this.ConsoleContent = c;
             //this.AttachSystem(new Endpoint());
@@ -283,6 +300,10 @@ namespace Game.Core.Console
             this.AttachedSystem = too;
             Global.RemoteSystem = too;
             this.GivingUsername = true;
+            if(from == null || too == null)
+            {
+                this.ConsoleContent.ConsoleOutput.Add("Invalid address.\n");
+            }
             this.ConsoleContent.ConsoleOutput.Add("Connected to: " + too.IPAddress + "\nPlease input username and password.\n");
             this.ConsoleContent.ConsolePrefix = "LOGIN USERNAME:";
         }

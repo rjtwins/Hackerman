@@ -58,6 +58,11 @@ namespace Game.UI
             }
         }
 
+        public void AddLine(string Line)
+        {
+            ConsoleContent.ConsoleOutput.Add(Line);
+        }
+
         private void InputBlock_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Up)

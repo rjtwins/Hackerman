@@ -19,9 +19,9 @@ namespace Game.Core.Endpoints
         public Endpoint() : base()
         {
             //For testing:
-            UsernamePasswordDict["rootroot"] = AccessLevel.ROOT;
-            UsernamePasswordDict["guestguest"] = AccessLevel.USER;
-            UsernamePasswordDict["adminadmin"] = AccessLevel.ADMIN;
+            this.AddUser("root", "root", AccessLevel.ROOT);
+            this.AddUser("guest", "guest", AccessLevel.USER);
+            this.AddUser("admin", "admin", AccessLevel.ADMIN);
         }
     }
 }

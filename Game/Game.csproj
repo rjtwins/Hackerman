@@ -43,6 +43,7 @@
     <None Remove="Icons\WorldMapDensity.png" />
     <None Remove="Icons\WorldMapPixelHighRes.png" />
     <None Remove="Icons\WorldMapPixels.jpg" />
+    <None Remove="Misc\top100000.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Core\Mission\Dictionaries\steal0.spd">
@@ -58,6 +59,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Core\Mission\Dictionaries\smallNames.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Misc\top100000.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Fonts\clacon.ttf" />

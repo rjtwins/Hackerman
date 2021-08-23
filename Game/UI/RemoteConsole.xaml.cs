@@ -16,7 +16,7 @@ namespace Game.UI
     /// </summary>
     public partial class RemoteConsole : System.Windows.Controls.Page
     {
-        private ConsoleContent ConsoleContent = new ConsoleContent();
+        public ConsoleContent ConsoleContent = new ConsoleContent();
         private RemoteCommandParser CommandParser;
         private int historyIndex = 0;
 
@@ -25,7 +25,8 @@ namespace Game.UI
             InitializeComponent();
             DataContext = ConsoleContent;
             Loaded += ConsolePageLoaded;
-            this.CommandParser = new RemoteCommandParser(ConsoleContent);
+            this.CommandParser = RemoteCommandParser.Instance;
+            this.CommandParser.Setup(ConsoleContent);
             ConsoleContent.AttachCommandParser(CommandParser);
             ConsoleContent.ConsoleOutput.Add("Remote Console [Version 11.0.19042.1110]");
             ConsoleContent.ConsoleOutput.Add("(c) TracON LLC. All Rights Reserved\n");
@@ -57,6 +58,15 @@ namespace Game.UI
                 Scroller.ScrollToBottom();
                 historyIndex = ConsoleContent.History.Count - 1;
             }
+        }
+
+        public void ExternalAfterAddAction(bool focus = false)
+        {
+            if (focus)
+            {
+                InputBlock.Focus();
+            }
+            Scroller.ScrollToBottom();
         }
 
         private void InputBlock_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -94,6 +104,16 @@ namespace Game.UI
                 historyIndex = Math.Min(historyIndex + 1, ConsoleContent.History.Count - 1);
             }
             SetCaretToLast(sender as TextBox);
+        }
+
+        public void ClearInputBlock()
+        {
+            this.InputBlock.Text = string.Empty;
+        }
+
+        public void ShowExternalInput(string input)
+        {
+            this.InputBlock.Text = input;
         }
 
         public void SetCaretToLast(TextBox t)
@@ -171,6 +191,13 @@ namespace Game.UI
             CMDP.ParseCommand(consoleInput, Prefix);
             //consoleOutput.Add("\n");
 
+            ConsoleInput = String.Empty;
+        }
+
+        public void RunExternalCommand(string Command)
+        {
+            ConsoleOutput.Add(Command);
+            CMDP.ParseCommand(Command, Prefix);
             ConsoleInput = String.Empty;
         }
 
