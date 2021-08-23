@@ -1,6 +1,7 @@
 ﻿using Game.Core.Console;
 using Game.Core.Dialog;
 using Game.Core.Mission;
+using Game.Core.Mission.MissionTypes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +27,7 @@ namespace Game.UI
     /// </summary>
     public partial class IRC : Page , INotifyPropertyChanged
     {
+        //TODO seperate command from UI.
         public string Prefix { set; get; }
         //private ObservableCollection<StackPanel> iRCOutput = new ObservableCollection<StackPanel>();
 
@@ -37,10 +39,54 @@ namespace Game.UI
         {
             this.CommandDict["join"] = SetChannel;
             this.CommandDict["leave"] = LeaveChannel;
+            this.CommandDict["DCC"] = DCC;
             InitializeComponent();
             Loaded += PageLoaded;
             DataContext = this;
 
+        }
+
+        private string DCC(string commandBody)
+        {
+            string[] splitCommandBody = commandBody.Split(' ');
+            if(splitCommandBody.Length > 2 || splitCommandBody.Length == 0)
+            {
+                return "DCC invalid number of arguments, use DDC command filename";
+            }
+            //Get or Send commands
+            if (commandBody.StartsWith("Send"))
+            {
+                if(Global.StartEndPoint.GetFile(null, splitCommandBody[1]) == null)
+                {
+                    return "DCC file not found.";
+                }
+                if (!CurrentChannel.Mission.CheckFileNeeded(splitCommandBody[1]))
+                {
+                    switch (CurrentChannel.Mission.MissionType)
+                    {
+                        case MissionType.STEAL:
+                            return "This is not the file we requested.";
+                        case MissionType.STEALMULTIPLE:
+                            return "This is not a file we requested.";
+                        default:
+                            return "This is not a file we requested.";
+                    }
+                }
+                AddMessage(CurrentChannel.ChannelName, "", "DDC file send.");
+                CurrentChannel.Mission.FileUploaded(splitCommandBody[1]);
+                CurrentChannel.DialogResolver.Next();
+                return "";
+            }
+            else if (commandBody.StartsWith("Get"))
+            {
+                if (CurrentChannel.Mission.GetFile())
+                {
+                    AddMessage(CurrentChannel.ChannelName, "", "DDC file received.");
+                    return "";
+                }
+                return "DDC no file in queue.";
+            }
+            return "DCC command no recognized.";
         }
 
         private void PageLoaded(object sender, RoutedEventArgs e)
@@ -254,12 +300,12 @@ namespace Game.UI
                 this.IDChannelDict.Remove(channelName);
             }
         }
-        public void RemoveJobListing(Mission mission)
+        public void RemoveJobListing(MissionTemplate mission)
         {
             this.RemoveChannel(mission.MissionChannel);
             this.IDChannelDict["jobs"].Messages.Remove(this.GuidJobListingDict[mission.id]);
         }
-        public void AddJobListing(Mission mission)
+        public void AddJobListing(MissionTemplate mission)
         {
             this.AddHiddenChannel(mission.IRCChannel);
             string listingMessage = mission.DialogResolver.SetInfoGetListing(mission.Contact, mission.Target, mission.Reward) +
@@ -300,7 +346,7 @@ namespace Game.UI
             }
             if(SplitText.Length > 1)
             {
-                commandBody = SplitText[1];
+                commandBody = string.Join(' ', SplitText[1..SplitText.Length]);
             }
             return toRun(commandBody);
         }

@@ -1,4 +1,5 @@
 ﻿using Game.Core.Events;
+using Game.Core.Mission.MissionTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace Game.Core.Mission
 {
     public class MissionManager
     {
-        public List<Mission> ActiveListings = new List<Mission>();
-        public List<Mission> AcceptedMissions = new List<Mission>();
+        public List<MissionTemplate> ActiveListings = new List<MissionTemplate>();
+        public List<MissionTemplate> AcceptedMissions = new List<MissionTemplate>();
         private readonly Random Rand = new Random();
 
         public MissionManager()
@@ -18,17 +19,17 @@ namespace Game.Core.Mission
 
         }
 
-        public void AcceptMission(Mission mission)
+        public void AcceptMission(MissionTemplate mission)
         {
             this.ActiveListings.Remove(mission);
             this.AcceptedMissions.Add(mission);
-            mission.Status = Mission.MissionStatus.ACCEPTED;
+            mission.Status = MissionTemplate.MissionStatus.ACCEPTED;
         }
 
         public void EvaluateMissionListings()
         {
-            List<Mission> toRemove = new List<Mission>();
-            foreach(Mission m in this.ActiveListings)
+            List<MissionTemplate> toRemove = new List<MissionTemplate>();
+            foreach(MissionTemplate m in this.ActiveListings)
             {
                 if (Mission48HoursOld(m))
                 {
@@ -56,12 +57,12 @@ namespace Game.Core.Mission
                 .RegisterWithVoid();
         }
 
-        private static bool Mission48HoursOld(Mission m)
+        private static bool Mission48HoursOld(MissionTemplate m)
         {
             return Global.GameTime > m.ListingDate.AddHours(48);
         }
 
-        internal void RejectMission(Mission mission)
+        internal void RejectMission(MissionTemplate mission)
         {
             if (this.ActiveListings.Contains(mission))
             {
@@ -72,7 +73,7 @@ namespace Game.Core.Mission
                 this.AcceptedMissions.Remove(mission);
             }
 
-            mission.Status = Mission.MissionStatus.REJECTED;
+            mission.Status = MissionTemplate.MissionStatus.REJECTED;
             //Remove the listing from the UI after 10
             Task.Run(delegate {
                 System.Threading.Thread.Sleep(10000);

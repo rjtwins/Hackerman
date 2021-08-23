@@ -47,20 +47,19 @@ namespace Game.Core.Console
             throw new NotImplementedException();
         }
 
-        private void MakeConnection()
+        //Make a connection FROM the current bounce network.
+        private void MakeConnection(string commandBody = null)
         {
+            if(System.Net.IPAddress.TryParse(commandBody, out System.Net.IPAddress IP))
+            {
+                Global.Bounce.AddBounce(commandBody);
+            }
             (Endpoint from, Endpoint too, bool Succes) =  Global.Bounce.MakeConnection();
             if (!Succes)
             {
                 return;
             }
             AttachSystem(from, too);
-        }
-
-        private void ParseBounceCommand(string commandBody)
-        {
-            ConsoleContent.ConsoleOutput.Add(Global.LocalSystem.Bouncer.ParseCommand(commandBody));
-
         }
 
         private void Download(string commandBody)
@@ -70,7 +69,13 @@ namespace Game.Core.Console
             if(splitCommand.Length == 1)
             {
                 p = this.AttachedSystem.GetFile(null, commandBody);
+                if(p == null)
+                {
+                    ConsoleContent.ConsoleOutput.Add("File \"" + commandBody + "\" not found.\n");
+                    return;
+                }
                 Global.StartEndPoint.UploadFileToo(null, p);
+                ConsoleContent.ConsoleOutput.Add("File \"" + commandBody + "\" downloaded.\n");
                 return;
             }
 
@@ -92,7 +97,14 @@ namespace Game.Core.Console
 
             try
             {
-                Global.RemoteSystem.UploadFileToo(splitCommand[1], P);
+                if(splitCommand.Length < 2)
+                {
+                    Global.RemoteSystem.UploadFileToo(null, P);
+                }
+                else
+                {
+                    Global.RemoteSystem.UploadFileToo(splitCommand[1], P);
+                }
             }
             catch (Exception ex)
             {
@@ -149,7 +161,7 @@ namespace Game.Core.Console
             }
             if(this.AttachedSystem == null && commandType == "connect")
             {
-                MakeConnection();
+                MakeConnection(commandBody);
                 return;
             }
 

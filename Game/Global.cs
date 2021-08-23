@@ -4,6 +4,7 @@ using Game.Core.Console;
 using Game.Core.Dialog;
 using Game.Core.Endpoints;
 using Game.Core.Mission;
+using Game.Core.Mission.MissionTypes;
 using Game.UI;
 using System;
 using System.Collections.Generic;
@@ -118,6 +119,7 @@ namespace Game
         public string ChannelName;
         public List<StackPanel> Messages;
         public TextBlock ChannelNameTextBlock;
+        public MissionTemplate Mission;
         public GenericMissionDialogResolver DialogResolver { get; set; }
     }
 }

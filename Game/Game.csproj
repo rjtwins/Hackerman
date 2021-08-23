@@ -18,6 +18,8 @@
     <None Remove="Core\Mission\Dictionaries\bigNames.txt" />
     <None Remove="Core\Mission\Dictionaries\example.spd" />
     <None Remove="Core\Mission\Dictionaries\smallNames.txt" />
+    <None Remove="Core\Mission\Dictionaries\steal0.spd" />
+    <None Remove="Core\Mission\Dictionaries\upload0.spd" />
     <None Remove="Fonts\clacon.ttf" />
     <None Remove="Fonts\Microsoft Sans Serif.ttf" />
     <None Remove="Fonts\Nintendo-DS-BIOS.ttf" />
@@ -43,7 +45,13 @@
     <None Remove="Icons\WorldMapPixels.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Core\Mission\Dictionaries\steal_0.spd">
+    <Content Include="Core\Mission\Dictionaries\steal0.spd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Core\Mission\Dictionaries\upload0.spd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Core\Mission\Dictionaries\stealmultiple0.spd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Core\Mission\Dictionaries\bigNames.txt">

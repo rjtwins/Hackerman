@@ -1,0 +1,148 @@
+#A dialog flow must always begin with >begin start
+#Text in the start block will be in the chat when the users joins/opens/sees the chat.
+#
+#+name indicates a block of text to be shown with no input in between.
+#To indicate who is doing the dialog use @talker
+#To have a pause between messages use %sec for a delay in secondes.
+#To indicate what block to show next use >next block_name.
+#
+#The choise variable will receive a numeric choise in string in between each block
+#
+#To precess a choise do the following:
+#
+#+example
+#You have 3 choises
+#choise 1
+#choise 2
+#choise 3
+#+>next +exampleChoises
+#
+#+exampleChoises
+#+
+#>{ifeq $choise "1"}next exampleChosen1{/}
+#>{ifeq $choise "2"}next exampleChosen2{/}
+#>{ifeq $choise "3"}next exampleChosen3{/}
+#>skip
+#
+#If the user inputs a choise outside of the range of possible choises it will loop back until they do.
+#
+#To indicate a users final choise in a dialog use 
+#>set $result resultnumber
+#
+#To indicate the dialog has ended use:
+#>set $endOfConvo true
+#
+################################################################################################################
+>begin start
++listing
+Gain acces and steal multiple files.
++>next start
+
++start
+@{$contact}
+Hey, I've got a job for you.
++>next onUserObserve
+
++onUserObserve
+%3
+@{$contact}
+I want you to hack into a machine owned by {$target} and steal some files.
+The job will get you {$reward}
+%1
+@PLAYER
+1:Allright I'll take the job.
+2:No.
+3:How secure is the target?
++> next startChoise
+
++startChoise
+~~skip~~
++
+>{ifeq $choise "1"}set $missionAccepted true; next accept{/}
+>{ifeq $choise "2"}set $missionRejected true; next reject{/}
+>{ifeq $choise "3"}next moreInfo{/}
+>skip
+
++accept
+@PLAYER
+Allright I'll take the job.
+%3
+@{$contact}
+Let me get you the details.
+%5
+@{$contact}
+I need you to get the following files:
+{$filesToSteal}
+Here is the target's IP, {$targetIp}. 
+DCC Send me the files when you are done.
+%1
+@{$contact}
+Good luck!
+%1
+@PLAYER
+1:I'm sorry but I have to cancel the job.
++
+>next acceptChoise
+
++acceptChoise
+~~skip~~
++
+>{ifeq $choise "1"}set $missionRejected true; next jobCancel{/}
+>skip
+
++missionCompleted
+%3
+@{$contact}
+Allright let me check the file hold on.
++
+>set $checkMissionCompleted true
+>next jobDone2
+
++jobDone2
+{ifeq $missionCompleted true}
+%10
+@{$contact}
+I can confirm the transfer was succesfull.
+Sending payment now.
+{/}
+{ifeq $missionCompleted false}
+%10
+@{$contact}
+That is not the right file.
+{/}
++
+>{ifeq $missionCompleted true}set $endOfConvo true; next end{/}
+>{ifeq $missionCompleted false}next acceptChoise{/}
+
++jobCancel
+%3
+@{$contact}
+Allright I guess I'll have to find someone else then.
++
+>set $endOfConvo true
+>next end
+
++reject
+@PLAYER
+No.
+%4
+@{$contact}
+Allright I'll go find somebody else.
++
+>set $missionRejected true
+>set $endOfConvo true
+> next end
+
++moreInfo
+@PLAYER
+How secure is the target?
+%4
+@{$contact}
+Nothing serious just a personal computer with a password.
++
+> next startChoise
+
++end
+@RJ
+this should never be seen!
++

@@ -2,25 +2,22 @@
 using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Game.Core.Mission
+namespace Game.Core.Mission.MissionTypes
 {
-    public class Mission
+    public abstract class MissionTemplate
     {
         public enum MissionStatus { ONOFFER, ACCEPTED, COMPLETED, REJECTED };
 
         public static Dictionary<int, MissionType[]> DifficultyMissionTypeDict = new Dictionary<int, MissionType[]>()
         {
-            { 0, new MissionType[] {MissionType.STEAL} },
+            { 0, new MissionType[] {MissionType.STEAL, MissionType.STEALMULTIPLE, MissionType.UPLOAD} },
             { 1, new MissionType[] {MissionType.DELETEMULTIPLE, MissionType.DELETEALL } },
             { 2, new MissionType[] {MissionType.CHANGEINFO, MissionType.FRAME } },
         };
 
 
-        public Mission()
+        public MissionTemplate()
         {
             this.id = Guid.NewGuid();
             this.ListingDate = Global.GameTime;
@@ -45,19 +42,16 @@ namespace Game.Core.Mission
         internal Endpoint TargetEndpoint;
 
 
-        public virtual bool CheckMissionCompleted()
-        {
-            return false;
-        }
+        public abstract bool CheckMissionCompleted();
 
-        public virtual void Setup()
-        {
-            //do nothing
-        }
+        public abstract void Setup();
 
-        public virtual void RemoveMission()
-        {
-            //Do nothing
-        }
+        public abstract void RemoveMission();
+
+        internal abstract bool CheckFileNeeded(string v);
+
+        internal abstract void FileUploaded(string v);
+
+        internal abstract bool GetFile();
     }
 }

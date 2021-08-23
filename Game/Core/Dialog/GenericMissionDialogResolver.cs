@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Game.Core.Mission;
 using Game.Core.Events;
+using Game.Core.Mission.MissionTypes;
 
 namespace Game.Core.Dialog
 {
@@ -15,8 +16,8 @@ namespace Game.Core.Dialog
         //TODO: Make the dialog show the target ip and name
         //TODO: Look into registering commands with the sequence to check for things instead of relying on flags.
         Sequence Sequence;
-        VariableRef ChoiseVariable = new VariableRef("choise");
-        VariableRef EndOfConvoVariable = new VariableRef("endOfConvo");
+        VariableRef _ChoiseVariable = new VariableRef("choise");
+        VariableRef _EndOfConvoVariable = new VariableRef("endOfConvo");
         VariableRef _DialogResult = new VariableRef("result");
         VariableRef _Contact = new VariableRef("contact");
         VariableRef _Target = new VariableRef("target");
@@ -26,6 +27,7 @@ namespace Game.Core.Dialog
         VariableRef _MissionRejected = new VariableRef("missionRejected");
         VariableRef _CheckMissionCompleted = new VariableRef("checkMissionCompleted");
         VariableRef _TargetIp = new VariableRef("targetIp");
+        VariableRef _FilesToSteal = new VariableRef("filesToSteal");
 
         public int DialogResult = 99;
         string Contact = string.Empty;
@@ -35,7 +37,7 @@ namespace Game.Core.Dialog
         public int Choise;
         public bool EndOfConvo = false;
         private string AttachedChannelName;
-        public Mission.Mission Mission;
+        public MissionTemplate Mission;
         private bool Started = false;
 
         public GenericMissionDialogResolver(string attachedChannelName)
@@ -58,16 +60,14 @@ namespace Game.Core.Dialog
             }
         }
 
+        internal void DisplayFileNotAccepted(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SelectSequenceFromMissionDictionaries(string sequenceName)
         {
-            try
-            {
-                Sequence.LoadAndStartDocument("Core/Mission/Dictionaries/" + sequenceName + ".spd");
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
+            Sequence.LoadAndStartDocument("Core/Mission/Dictionaries/" + sequenceName + ".spd");
         }
 
         //public void SetContact(string contact)
@@ -175,9 +175,15 @@ namespace Game.Core.Dialog
             return Sequence.ExecuteCurrentLine().BuildString(true, false);
         }
 
+        public void SetFilesToSteal(string files)
+        {
+            Sequence.SetVariable(_FilesToSteal, files);
+        }
+
         public void MissionCompleted()
         {
             this.Sequence.SetVariable(_MissionCompleted, true);
+            this.Sequence.SetNextLine("missionCompleted");
         }
 
         public void SetupDialog()
@@ -185,8 +191,8 @@ namespace Game.Core.Dialog
             this.EndOfConvo = false;
             Sequence.SetNextLine("start");
             Sequence.StartNextLine();
-            Sequence.SetVariable(ChoiseVariable, 0);
-            Sequence.SetVariable(EndOfConvoVariable, false);
+            Sequence.SetVariable(_ChoiseVariable, 0);
+            Sequence.SetVariable(_EndOfConvoVariable, false);
             Sequence.SetVariable(_DialogResult, -1);
             Sequence.SetVariable(_MissionCompleted, false);
             Sequence.SetVariable(_MissionAccepted, false);
@@ -205,10 +211,10 @@ namespace Game.Core.Dialog
             Started = true;
         }
 
-        public void Next(int choise)
+        public void Next(int choise = 0)
         {
             this.PreviousLineName = Sequence.CurrentLine.Value.Name;
-            if ((bool)Sequence.GetVariable(EndOfConvoVariable))
+            if ((bool)Sequence.GetVariable(_EndOfConvoVariable))
             {
                 this.EndOfConvo = true;
                 
@@ -217,7 +223,7 @@ namespace Game.Core.Dialog
 
             Sequence.StartNextLine();
             this.Choise = choise;
-            Sequence.SetVariable(ChoiseVariable, choise.ToString());
+            Sequence.SetVariable(_ChoiseVariable, choise.ToString());
             Parse(Sequence, 0);
 
             //Chick mission completed
@@ -227,7 +233,6 @@ namespace Game.Core.Dialog
                 {
                     Sequence.SetVariable(_MissionCompleted, true);
                 }
-                Next(0);
             }
 
             //Check for mission accepted

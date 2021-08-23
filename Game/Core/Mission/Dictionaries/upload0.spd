@@ -1,0 +1,120 @@
+#        VariableRef _ChoiseVariable = new VariableRef("choise");
+#        VariableRef _EndOfConvoVariable = new VariableRef("endOfConvo");
+#        VariableRef _DialogResult = new VariableRef("result");
+#        VariableRef _Contact = new VariableRef("contact");
+#        VariableRef _Target = new VariableRef("target");
+#        VariableRef _Reward = new VariableRef("reward");
+#        VariableRef _MissionCompleted = new VariableRef("missionCompleted");
+#        VariableRef _MissionAccepted = new VariableRef("missionAccepted");
+#        VariableRef _MissionRejected = new VariableRef("missionRejected");
+#        VariableRef _CheckMissionCompleted = new VariableRef("checkMissionCompleted");
+#        VariableRef _TargetIp = new VariableRef("targetIp");
+#        VariableRef _FilesToSteal = new VariableRef("filesToSteal");
+############################################################################################################################################
+>begin start
++listing
+Gain acces and upload a file.
++>next start
+
++start
+@{$contact}
+Hey, I've got a job for you.
++>next onUserObserve
+
++onUserObserve
+%3
+@{$contact}
+I want you to hack into a machine owned by {$target} and upload a file.
+The job will get you {$reward}
+%1
+@PLAYER
+1:Allright I'll take the job.
+2:No.
+3:How secure is the target?
++> next startChoise
+
++startChoise
+~~skip~~
++
+>{ifeq $choise "1"}set $missionAccepted true; next accept{/}
+>{ifeq $choise "2"}set $missionRejected true; next reject{/}
+>{ifeq $choise "3"}next moreInfo{/}
+>skip
+
++accept
+@PLAYER
+Allright I'll take the job.
+%3
+@{$contact}
+Let me get you the details.
+%5
+@{$contact}
+Here is the target's IP, {$targetIp}. 
+DCC Get the files.
+%1
+@{$contact}
+Good luck!
+%1
+@PLAYER
+1:File uploaded.
+2:I'm sorry but I have to cancel the job.
++
+>next acceptChoise
+
++acceptChoise
+~~skip~~
++
+>{ifeq $choise "1"}set $checkMissionCompleted true; next missionCompleted{/}
+>{ifeq $choise "2"}set $missionRejected true; next jobCancel{/}
+>skip
+
++missionCompleted
+%3
+@{$contact}
+Allright let me check the file hold on.
+%10
+{ifeq $missionCompleted true}
+@{$contact}
+I can confirm the transfer was succesfull.
+Sending payment now.
+{/}
+{ifeq $missionCompleted false}
+@{$contact}
+That is not the right file.
+{/}
++
+>{ifeq $missionCompleted true}set $endOfConvo true; next end{/}
+>{ifeq $missionCompleted false}next accept{/}
+
++jobCancel
+%3
+@{$contact}
+Allright I guess I'll have to find someone else then.
++
+>set $endOfConvo true
+>next end
+
++reject
+@PLAYER
+No.
+%4
+@{$contact}
+Allright I'll go find somebody else.
++
+>set $missionRejected true
+>set $endOfConvo true
+> next end
+
++moreInfo
+@PLAYER
+How secure is the target?
+%4
+@{$contact}
+Nothing serious just a personal computer with a password.
++
+> next startChoise
+
++end
+@RJ
+this should never be seen!
++

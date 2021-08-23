@@ -35,7 +35,7 @@
 ################################################################################################################
 >begin start
 +listing
-Just a quick job.
+Gain acces and steal a file.
 +>next start
 
 +start
@@ -46,7 +46,7 @@ Hey, I've got a job for you.
 +onUserObserve
 %3
 @{$contact}
-I want you to hack into {$target} and transfer X amount from Y into Z.
+I want you to hack into a machine owned by {$target} and steal some files.
 The job will get you {$reward}
 %1
 @PLAYER
@@ -71,28 +71,28 @@ Allright I'll take the job.
 Let me get you the details.
 %5
 @{$contact}
-Here is the IP, {$targetIp}. Get back to me when you're done.
+I need you to get the following file {$filesToSteal}.
+Here is the target's IP, {$targetIp}. 
+DCC Send me the file when you are done.
 %1
 @{$contact}
 Good luck!
 %1
 @PLAYER
-1:Job's done the money is wired.
-2:I'm sorry but I have to cancel the job.
+1:I'm sorry but I have to cancel the job.
 +
 >next acceptChoise
 
 +acceptChoise
 ~~skip~~
 +
->{ifeq $choise "1"}next jobDone{/}
->{ifeq $choise "2"}set $missionRejected true; next jobCancel{/}
+>{ifeq $choise "1"}set $missionRejected true; next jobCancel{/}
 >skip
 
-+jobDone
++missionCompleted
 %3
 @{$contact}
-Allright let me check hold on.
+Allright let me check the file hold on.
 +
 >set $checkMissionCompleted true
 >next jobDone2
@@ -107,7 +107,7 @@ Sending payment now.
 {ifeq $missionCompleted false}
 %10
 @{$contact}
-I don't see the transfer.
+That is not the right file.
 {/}
 +
 >{ifeq $missionCompleted true}set $endOfConvo true; next end{/}

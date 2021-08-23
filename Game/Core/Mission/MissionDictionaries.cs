@@ -32,7 +32,7 @@ namespace Game.Core.Mission
                     {
                         TypeSequenceListDict[missionType] = new List<string>();
                     }
-                    TypeSequenceListDict[missionType].Add(value.ToLower() + "_" + i);
+                    TypeSequenceListDict[missionType].Add(value.ToLower() + i);
                     i++;
                     filePath = Environment.CurrentDirectory + "\\Core\\Mission\\Dictionaries\\" + value.ToLower() + i.ToString() + ".spd";
                 }

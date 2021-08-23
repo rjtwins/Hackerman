@@ -138,7 +138,7 @@ namespace Game.Core.Endpoints
         internal string UploadFileToo(string path, Program p, bool log = true)
         {
             string result = this.FileSystem.CopyFileToFonder(path, p);
-            if (result == "Done" && log)
+            if (result == "Done" && log && !this.IsLocalEndpoint)
             {
                 this.ConnectionLog.Add(LogItemBuilder
                     .Builder()

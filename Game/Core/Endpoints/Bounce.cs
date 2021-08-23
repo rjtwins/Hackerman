@@ -6,6 +6,17 @@ namespace Game.Core.Endpoints
     {
         public List<Endpoint> BounceList { private set; get; } = new List<Endpoint>();
 
+        public void AddBounce(string endpointIP)
+        {
+            foreach (var e in Global.AllEndpoints)
+            {
+                if(endpointIP == e.IPAddress)
+                {
+                    AddBounce(e);
+                    return;
+                }
+            }
+        }
         public void AddBounce(Endpoint endpoint)
         {
             if (BounceList.Contains(endpoint))

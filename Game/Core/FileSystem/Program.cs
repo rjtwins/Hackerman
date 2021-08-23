@@ -10,7 +10,7 @@ namespace Game.Core.FileSystem
         public bool Executable = false;
         public Guid Id { private set; get; }
 
-        public Program(string name, bool executable)
+        public Program(string name, bool executable = false)
         {
             this.Name = name;
             this.Executable = executable;

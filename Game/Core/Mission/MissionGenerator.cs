@@ -1,5 +1,6 @@
 ﻿using Game.Core.Dialog;
 using Game.Core.Endpoints;
+using Game.Core.Mission.MissionTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,24 +15,24 @@ namespace Game.Core.Mission
     public static class MissionGenerator
     {
         private static Random Rand = new Random();
-        public static Mission GenerateMission(int dificulty)
+        public static MissionTemplate GenerateMission(int dificulty)
         {
-            MissionType[] temp = Mission.DifficultyMissionTypeDict[dificulty];
+            MissionType[] temp = MissionTemplate.DifficultyMissionTypeDict[dificulty];
             return MissionGenerator.GenerateMission(temp[Rand.Next(temp.Length)], dificulty);
         }
 
         //TODO finish this:
         //TODO realistic moneys
-        public static Mission GenerateMission(MissionType missionType, int dificulty)
+        public static MissionTemplate GenerateMission(MissionType missionType, int dificulty)
         {
-            Mission m  = null;
+            MissionTemplate m  = null;
             switch (missionType)
             {
                 case MissionType.STEAL:
                     m = new StealMission(1);
                     break;
                 case MissionType.STEALMULTIPLE:
-                    m = new StealMission(Rand.Next(5));
+                    m = new StealMission(Rand.Next(2,5));
                     break;
                 case MissionType.STEALALL:
                     break;
@@ -46,8 +47,10 @@ namespace Game.Core.Mission
                 case MissionType.DELETEALL:
                     break;
                 case MissionType.UPLOAD:
+                    m = new UploadMission(1);
                     break;
                 case MissionType.UPLOADMULTIPLE:
+                    m = new UploadMission(Rand.Next(2, 5));
                     break;
                 case MissionType.UPLOADRUN:
                     break;
@@ -60,10 +63,10 @@ namespace Game.Core.Mission
                 case MissionType.CHANGEINFO:
                     break;
                 default:
-                    m = new Mission();
-                    break;
+                    throw new Exception("Mission type provided in GenerateMission(MissionType missionType, int dificulty) was not a valid mission type");
             }
 
+            //Make this more consise 
             m.MissionType = missionType;
             m.Difficulty = dificulty;
             m.Contact = PickRandomContact(missionType, dificulty);
@@ -72,10 +75,11 @@ namespace Game.Core.Mission
             m.Reward = Rand.Next(Math.Max(dificulty * 1000 - 1000, 0), dificulty * 1000 + 1000);
             m.RepReward = dificulty;
             m.MissionChannel = UTILS.GenerateRandomString(7);
-            m.Status = Mission.MissionStatus.ONOFFER;
+            m.Status = MissionTemplate.MissionStatus.ONOFFER;
             GenericMissionDialogResolver dialogResolver = new GenericMissionDialogResolver(m.MissionChannel);
             dialogResolver.SelectSequenceFromMissionDictionaries(PickRandomSequeceWithMissionType(missionType));
             IRCChannel iRCChannel = new IRCChannel(m.MissionChannel, dialogResolver);
+            iRCChannel.Mission = m;
             m.DialogResolver = dialogResolver;
             m.IRCChannel = iRCChannel;
             m.DialogResolver.Mission = m;
