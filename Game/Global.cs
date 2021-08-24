@@ -43,7 +43,8 @@ namespace Game
         public static ActiveTraceTracker ActiveTraceTracker;
         public static PassiveTraceTracker PassiveTraceTracker;
 
-        
+        //CONFIG:
+        public static readonly int RandomUsersPerEndpoint = 3;
     }
     public enum EndpointType 
     { 
@@ -124,5 +125,6 @@ namespace Game
         public TextBlock ChannelNameTextBlock;
         public MissionTemplate Mission;
         public GenericMissionDialogResolver DialogResolver { get; set; }
+        public Dictionary<string, System.Drawing.Color> SenderColorDict = new();
     }
 }

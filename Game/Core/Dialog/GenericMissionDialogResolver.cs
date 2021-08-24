@@ -122,7 +122,7 @@ namespace Game.Core.Dialog
                     int delay = int.Parse(s);
                     if (!string.IsNullOrWhiteSpace(result))
                     {
-                        Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
+                        Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, user, result);
                     }
                     result = string.Empty;
                     Task.Factory.StartNew(() => this.ContinueAfterDelay(delay, i + 1, Sequence));
@@ -137,7 +137,7 @@ namespace Game.Core.Dialog
                     }
                     if(!string.IsNullOrEmpty(result) && !string.IsNullOrWhiteSpace(result))
                     {
-                        Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
+                        Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, user, result);
                         result = string.Empty;
                     }
                     s = s.Remove(0, 1);
@@ -160,7 +160,7 @@ namespace Game.Core.Dialog
                 }
                 result += s + "\n";
             }
-            Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, Global.GameTime + " : " + user, result);
+            Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, user, result);
         }
 
         public string SetInfoGetListing(string contact, string target, int reward)

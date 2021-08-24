@@ -20,8 +20,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=.}" 
-                                       FontSize="20" TextWrapping="Wrap" TextTrimming="WordEllipsis"
-                                       FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" Foreground="#FFC7C7C7"/>
+                                       FontSize="10" TextWrapping="Wrap" TextTrimming="WordEllipsis"
+                                       FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" Foreground="#FFC7C7C7"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -31,11 +31,11 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Margin="5,0,4,0" Grid.Column="0" Text="{Binding ConsolePrefix, Mode=TwoWay}" Background="Black" Foreground="#FFC7C7C7"
-                               FontSize="20" UseLayoutRounding="True" OpacityMask="Black"
-                               FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS"/>
+                               FontSize="10" UseLayoutRounding="True" OpacityMask="Black"
+                               FontFamily="pack://application:,,,/Fonts/#Joystix Monospace"/>
                     <TextBox Grid.Column="1" BorderThickness="0" BorderBrush="#00000000" Text="{Binding ConsoleInput, Mode=TwoWay}" Background="Black" Foreground="#FFC7C7C7"
                              Name="InputBlock" SelectionBrush="#00000000" SelectionTextBrush="#00000000" PreviewKeyDown="InputBlock_PreviewKeyDown" Opacity="1"
-                             FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20"/>
+                             FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10"/>
                 </Grid>
             </StackPanel>
         </ScrollViewer>

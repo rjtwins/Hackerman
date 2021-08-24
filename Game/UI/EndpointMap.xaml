@@ -3,22 +3,55 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="clr-namespace:Game.UI"
+      xmlns:local="clr-namespace:Game.UI" xmlns:wpfautogrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
       mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="257" d:DesignWidth="498"
       Title="EndpointMap">
-
-    <Grid Background="#FF00007F">
+    <Page.Resources>
+    </Page.Resources>
+    <Grid Background="Silver" Margin="0,0,0,0" ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Border x:Name="MapBorder" Grid.Column="4" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-1,0,0,0" MinWidth="1" MinHeight="1" SizeChanged="map_SizeChanged">
-                <Canvas x:Name="map" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinHeight="1" MinWidth="1" ScrollViewer.VerticalScrollBarVisibility="Disabled" Loaded="Map_Loaded">
-                    <Canvas.Background>
-                    <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png"></ImageBrush>
-                    </Canvas.Background>
-                </Canvas>
-        </Border>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ContentControl Style="{StaticResource ControllBox}" Grid.Column="0" Grid.ColumnSpan="1" Uid="IP Status" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,10,0">
+                    <RadioButton Name="RadioButtonShow" Margin="0,5,0,5" Checked="RadioButtonShow_Checked">
+                        Show
+                    </RadioButton>
+                    <RadioButton Name="RadioButtonHide" Margin="0,5,0,5" Checked="RadioButtonHide_Checked">
+                        Hide
+                    </RadioButton>
+                </StackPanel>
+            </ContentControl>
+            <ContentControl Style="{StaticResource ControllBox}" Grid.Column="1" Grid.ColumnSpan="1" Uid="Filter" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0,10,0" TextChanged="TextBox_TextChanged">
+
+                </TextBox>
+            </ContentControl>
+        </Grid>
+        <ContentControl Style="{StaticResource InlayedBorder}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+            <ContentControl.Background>
+                <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png"/>
+            </ContentControl.Background>
+            <Grid x:Name="MapBorder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-1,0,0,0" MinWidth="1" MinHeight="1"
+          ClipToBounds="True">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png"/>
+                </Grid.Background>
+                <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Fill" Panel.ZIndex="10">
+                    <Canvas TextElement.FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" TextElement.FontSize="5" x:Name ="Map"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="498" Height="257">
+                    </Canvas>
+                </Viewbox>
+            </Grid>
+        </ContentControl>
     </Grid>
 </Page>

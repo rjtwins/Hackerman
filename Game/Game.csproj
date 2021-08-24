@@ -21,6 +21,7 @@
     <None Remove="Core\Mission\Dictionaries\steal0.spd" />
     <None Remove="Core\Mission\Dictionaries\upload0.spd" />
     <None Remove="Fonts\clacon.ttf" />
+    <None Remove="Fonts\joystix monospace.ttf" />
     <None Remove="Fonts\Microsoft Sans Serif.ttf" />
     <None Remove="Fonts\Nintendo-DS-BIOS.ttf" />
     <None Remove="Fonts\PixelOperator.ttf" />
@@ -29,6 +30,7 @@
     <None Remove="Icons\OtherIcons\005-chat-1.png" />
     <None Remove="Icons\OtherIcons\014-programing-1.png" />
     <None Remove="Icons\OtherIcons\015-configuration.png" />
+    <None Remove="Icons\OtherIcons\side-menu.png" />
     <None Remove="Icons\UIPixels\BlackBlackConer.png" />
     <None Remove="Icons\UIPixels\BlackWhiteCorner.jpg" />
     <None Remove="Icons\UIPixels\MapBlackBorder.png" />
@@ -37,12 +39,10 @@
     <None Remove="Icons\UIPixels\WhiteWhiteCorner.png" />
     <None Remove="Icons\UIPixels\WindowBorder.PNG" />
     <None Remove="Icons\UIPixels\WindowBorder.svg" />
-    <None Remove="Icons\win98_icons\console_prompt.ico" />
-    <None Remove="Icons\win98_icons\windows.ico" />
-    <None Remove="Icons\win98_icons\world_star.ico" />
     <None Remove="Icons\WorldMapDensity.png" />
     <None Remove="Icons\WorldMapPixelHighRes.png" />
     <None Remove="Icons\WorldMapPixels.jpg" />
+    <None Remove="Misc\names.txt" />
     <None Remove="Misc\top100000.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -61,10 +61,14 @@
     <Content Include="Core\Mission\Dictionaries\smallNames.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Misc\names.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Misc\top100000.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Fonts\clacon.ttf" />
+    <Resource Include="Fonts\joystix monospace.ttf" />
     <Resource Include="Fonts\Microsoft Sans Serif.ttf" />
     <Resource Include="Fonts\Nintendo-DS-BIOS.ttf" />
     <Resource Include="Fonts\PixelOperator.ttf" />
@@ -73,6 +77,7 @@
     <Resource Include="Icons\OtherIcons\005-chat-1.png" />
     <Resource Include="Icons\OtherIcons\014-programing-1.png" />
     <Resource Include="Icons\OtherIcons\015-configuration.png" />
+    <Resource Include="Icons\OtherIcons\side-menu.png" />
     <Resource Include="Icons\UIPixels\BlackBlackConer.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -83,11 +88,6 @@
     <Resource Include="Icons\UIPixels\WhiteWhiteCorner.png" />
     <Resource Include="Icons\UIPixels\WindowBorder.PNG" />
     <Resource Include="Icons\UIPixels\WindowBorder.svg" />
-    <Resource Include="Icons\win98_icons\console_prompt.ico" />
-    <Resource Include="Icons\win98_icons\windows.ico" />
-    <Resource Include="Icons\win98_icons\world_star.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\WorldMap.png" />
@@ -97,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+    <PackageReference Include="WpfAutoGrid" Version="1.4.0" />
     <PackageReference Include="xbloom.Spin" Version="0.1.1-beta7" />
   </ItemGroup>
   <ItemGroup>

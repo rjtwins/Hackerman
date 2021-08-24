@@ -32,9 +32,10 @@ namespace Game.UI
         //private ObservableCollection<StackPanel> iRCOutput = new ObservableCollection<StackPanel>();
 
         public IRCChannel CurrentChannel;
-        public Dictionary<string, IRCChannel> IDChannelDict = new Dictionary<string, IRCChannel>();
-        Dictionary<string, Func<string, string>> CommandDict = new Dictionary<string, Func<string, string>>();
-        Dictionary<Guid, StackPanel> GuidJobListingDict = new Dictionary<Guid, StackPanel>();
+        public Dictionary<string, IRCChannel> IDChannelDict = new();
+        Dictionary<string, Func<string, string>> CommandDict = new();
+        Dictionary<Guid, StackPanel> GuidJobListingDict = new();
+
         public IRC()
         {
             this.CommandDict["join"] = SetChannel;
@@ -43,7 +44,6 @@ namespace Game.UI
             InitializeComponent();
             Loaded += PageLoaded;
             DataContext = this;
-
         }
 
         private string DCC(string commandBody)
@@ -132,29 +132,56 @@ namespace Game.UI
         public StackPanel AddMessage(string channelName, string sender, string message)
         {
             StackPanel stp = new StackPanel();
+            TextBlock timeStampBlock = new TextBlock();
             TextBlock nameBlock = new TextBlock();
             TextBlock messageBlock = new TextBlock();
             messageBlock.TextWrapping = TextWrapping.Wrap;
             messageBlock.Text = message;
             messageBlock.Background = Brushes.Black;
             messageBlock.Foreground = Brushes.White;
-            nameBlock.Width = 150;
+            messageBlock.HorizontalAlignment = HorizontalAlignment.Left;
+            messageBlock.VerticalAlignment = VerticalAlignment.Top;
+            //timeStampBlock.Width;
+            timeStampBlock.TextWrapping = TextWrapping.Wrap;
+            timeStampBlock.Text = Global.GameTime.ToString("MM-dd HH:mm:ss") + ":";
+            timeStampBlock.Background = Brushes.Black;
+            timeStampBlock.Foreground = Brushes.White;
+            timeStampBlock.Margin = new Thickness(0, 0, 1, 0);
+            timeStampBlock.HorizontalAlignment = HorizontalAlignment.Left;
+            timeStampBlock.VerticalAlignment = VerticalAlignment.Top;
+            nameBlock.Width = 50;
             nameBlock.TextWrapping = TextWrapping.Wrap;
             nameBlock.Text = sender;
             nameBlock.Background = Brushes.Black;
             nameBlock.Foreground = Brushes.White;
             nameBlock.Margin = new Thickness(0, 0, 10, 0);
+            nameBlock.HorizontalAlignment = HorizontalAlignment.Left;
+            nameBlock.VerticalAlignment = VerticalAlignment.Top;
+            stp.Children.Add(timeStampBlock);
             stp.Children.Add(nameBlock);
             stp.Children.Add(messageBlock);
             stp.VerticalAlignment = VerticalAlignment.Stretch;
             stp.HorizontalAlignment = HorizontalAlignment.Stretch;
-
             stp.Orientation = Orientation.Horizontal;
-
+            System.Drawing.Color senderColor;
+            
             if (!IDChannelDict.TryGetValue(channelName, out IRCChannel toWriteTo))
             {
                 return stp;
             }
+
+            if (toWriteTo.SenderColorDict.ContainsKey(sender))
+            {
+                senderColor = toWriteTo.SenderColorDict[sender];
+            }
+            else
+            {
+                senderColor = UTILS.PickRandomColor(toWriteTo.SenderColorDict.Values.ToList());
+                toWriteTo.SenderColorDict[sender] = senderColor;
+            }
+            nameBlock.Foreground = new SolidColorBrush(Color.FromArgb(senderColor.A, senderColor.R, senderColor.G, senderColor.B));
+
+
             if (IsCurrentChannel(toWriteTo))
             {
                 IRCOutput.Children.Add(stp);
@@ -163,6 +190,7 @@ namespace Game.UI
             toWriteTo.Messages.Add(stp);
             toWriteTo.ChannelNameTextBlock.Foreground = Brushes.Red;
             toWriteTo.ChannelNameTextBlock.Background = Brushes.Black;
+
 
             bool IsCurrentChannel(IRCChannel toWriteTo)
             {
@@ -309,7 +337,7 @@ namespace Game.UI
         {
             this.AddHiddenChannel(mission.IRCChannel);
             string listingMessage = mission.DialogResolver.SetInfoGetListing(mission.Contact, mission.Target, mission.Reward) +
-                "\nJoin " + mission.MissionChannel + " for more info.";
+                "\nJoin " + mission.MissionChannel + " for more info.\n";
             mission.DialogResolver.SetupDialog();
             GuidJobListingDict[mission.id] = this.AddMessage("jobs", mission.Contact, listingMessage);
         }

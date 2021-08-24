@@ -60,10 +60,10 @@ namespace Game.Core.FileSystem
             GetFolderFromPath(@"root\users\admin\userinfo").AddProgram(new TextFile("users.info"));
         }
 
-        internal string CopyFileToFonder(string folderPath, Program p)
+        internal string CopyFileToFonder(string folderPath, Program p, string user)
         {
             Folder f = null;
-            if(folderPath == null)
+            if (folderPath == null)
             {
                 f = CurrentFolder;
             }
@@ -75,8 +75,19 @@ namespace Game.Core.FileSystem
             {
                 f = GetFolderFromPath(folderPath, CurrentFolder);
             }
-            AddFileToFolder(p.Copy(), f, false);
-            return "Done";
+            if (CheckUserAcces(user, f))
+            {
+                AddFileToFolder(p.Copy(), f, false);
+                return "Done";
+            }
+            AccesLevelException(f);
+            return "ERROR";
+        }
+
+        private static void AccesLevelException(Folder f)
+        {
+            string accesLevelString = UTILS.AccessLevelString(f.AccessLevel);
+            throw new Exception("Access Denied.\nPlease relog as " + accesLevelString + " to open this folder.\n");
         }
 
         internal void ResetConnection()
@@ -90,13 +101,13 @@ namespace Game.Core.FileSystem
             return this.CurrentFolder.ToString();
         }
 
-        internal void ConnectTo(AccessLevel accessLevel)
+        internal void ConnectTo(AccessLevel accessLevel, string username)
         {
             this.UserAccessLevel = accessLevel;
             switch (accessLevel)
             {
                 case AccessLevel.USER:
-                    this.CurrentFolder = GetFolderFromPath(@"root\users");
+                    this.CurrentFolder = GetFolderFromPath(@"root\users\" + username);
                     break;
 
                 case AccessLevel.ADMIN:
@@ -121,7 +132,7 @@ namespace Game.Core.FileSystem
             return "File not found.";
         }
 
-        internal Program GetFileFromPath(string folderPath, string fileName)
+        internal Program GetFileFromPath(string folderPath, string fileName, string user = null)
         {
             //Ugly else if chain but gwatever
             Folder f = null;
@@ -140,14 +151,19 @@ namespace Game.Core.FileSystem
             {
                 f = GetFolderFromPath(folderPath, this.CurrentFolder);
             }
-            if(f.Programs.TryGetValue(fileName, out Program p))
+            if (!CheckUserAcces(user, f))
             {
-                return p;
+                AccesLevelException(f);
             }
-            return null;
+
+            if(!f.Programs.TryGetValue(fileName, out Program p))
+            {
+                return null;
+            }
+            return p;
         }
 
-        internal string RemoveFileFromFolder(string path, Program p)
+        internal string RemoveFileFromFolder(string path, Program p, string user = null)
         {
             Folder f = null;
             if (path == null)
@@ -162,11 +178,16 @@ namespace Game.Core.FileSystem
             {
                 f = GetFolderFromPath(path, CurrentFolder);
             }
+            if(!CheckUserAcces(user, f))
+            {
+                AccesLevelException(f);
+            }
+
             f.RemoveProgram(p);
             return "Done";
         }
 
-        internal string NavigateTo(string f)
+        internal string NavigateTo(string f, string user)
         {
             //Debug.WriteLine("Attempting to navigate to: " + f);
             Folder tempFolder = null;
@@ -179,13 +200,23 @@ namespace Game.Core.FileSystem
             {
                 tempFolder = GetFolderFromPath(f, CurrentFolder);
             }
-            if (((int)tempFolder.AccessLevel) <= (int)UserAccessLevel)
+            if (CheckUserAcces(user, tempFolder))
             {
                 CurrentFolder = tempFolder;
                 return CurrentFolder.ToString();
             }
             accesLevelString = UTILS.AccessLevelString(tempFolder.AccessLevel);
             throw new Exception("Access Denied.\nPlease relog as " + accesLevelString + " to open this folder.\n");
+        }
+
+        private bool CheckUserAcces(string user, Folder folder)
+        {
+            if(user == null)
+            {
+                return true;
+            }
+            return ((int)folder.AccessLevel) <= (int)UserAccessLevel &&
+                            (folder.Owner == user || UserAccessLevel == AccessLevel.ADMIN || UserAccessLevel == AccessLevel.ROOT);
         }
 
         internal string ListFromCurrentFolder()
@@ -202,6 +233,13 @@ namespace Game.Core.FileSystem
             return string.Join('\n', folderFileList);
         }
 
+        /// <summary>
+        /// Do not call this externally!
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="f"></param>
+        /// <param name="o"></param>
+        /// <param name="user"></param>
         public void AddFileToFolder(Program p, Folder f, bool o)
         {
             if (!this.AllFolders.Contains(f) && this.AllFolders.Count != 0)
@@ -212,6 +250,11 @@ namespace Game.Core.FileSystem
             {
                 throw new Exception("This file already exists");
             }
+            //if(!CheckUserAcces(user, f))
+            //{
+            //    AccesLevelException(f);
+            //}
+
             f.AddProgram(p);
         }
 
@@ -273,6 +316,10 @@ namespace Game.Core.FileSystem
                     throw new Exception("The system cannot find the path specified to.");
                 }
             }
+            //if(!CheckUserAcces(user, F))
+            //{
+            //    AccesLevelException(F);
+            //}
             return F;
         }
 

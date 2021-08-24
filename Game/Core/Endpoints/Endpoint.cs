@@ -22,6 +22,11 @@ namespace Game.Core.Endpoints
             this.AddUser("root", "root", AccessLevel.ROOT);
             this.AddUser("guest", "guest", AccessLevel.USER);
             this.AddUser("admin", "admin", AccessLevel.ADMIN);
+
+            for (int i = 0; i < Global.RandomUsersPerEndpoint; i++)
+            {
+                this.AddUser(UTILS.PickRandomName(), UTILS.PickRandomPassword(), AccessLevel.USER);
+            }
         }
     }
 }

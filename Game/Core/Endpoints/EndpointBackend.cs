@@ -66,6 +66,12 @@ namespace Game.Core.Endpoints
         {
             this.UsernamePasswordDict[userName] = password;
             this.UsernamePasswordAccessDict[userName + password] = accessLevel;
+            Folder newFolder = FileSystem.MakeFolderFromPath(@"root\users\" + userName);
+            if(newFolder != null)
+            {
+                newFolder.AccessLevel = accessLevel;
+                newFolder.Owner = userName;
+            }
         }
         
         internal void BounceTo(Endpoint from, Endpoint too)
@@ -128,7 +134,7 @@ namespace Game.Core.Endpoints
 
         internal Program GetFile(string folderPath, string fileName)
         {
-            return this.FileSystem.GetFileFromPath(folderPath, fileName);
+            return this.FileSystem.GetFileFromPath(folderPath, fileName, CurrentUsername);
         }
 
         internal string TryPrintFile(string command)
@@ -138,13 +144,13 @@ namespace Game.Core.Endpoints
 
         internal string NavigateTo(string command)
         {
-            FileSystem.NavigateTo(command);
+            FileSystem.NavigateTo(command, CurrentUsername);
             return CurrentPath();
         }
 
         internal string UploadFileToo(string path, Program p, bool log = true)
         {
-            string result = this.FileSystem.CopyFileToFonder(path, p);
+            string result = this.FileSystem.CopyFileToFonder(path, p, CurrentUsername);
             if (result == "Done" && log && !this.IsLocalEndpoint)
             {
                 this.ConnectionLog.Add(LogItemBuilder
@@ -160,7 +166,7 @@ namespace Game.Core.Endpoints
 
         internal string RemoveFileFrom(string path, Program p, bool log = true)
         {
-            string result = this.FileSystem.RemoveFileFromFolder(path, p);
+            string result = this.FileSystem.RemoveFileFromFolder(path, p, CurrentUsername);
             if(result == "Done" && log)
             {
                 this.ConnectionLog.Add(LogItemBuilder
@@ -187,7 +193,7 @@ namespace Game.Core.Endpoints
             try
             {
                 this.AccessLevel = UsernamePasswordAccessDict[username + password];
-                FileSystem.ConnectTo(this.AccessLevel);
+                FileSystem.ConnectTo(this.AccessLevel, username);
                 LoggConnectionSucces(username, from, this.AccessLevel);
                 CurrentUsername = username;
                 CurrentPassword = password;

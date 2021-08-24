@@ -13,8 +13,18 @@ namespace Game
 {
     public static class UTILS
     {
-        private readonly static Random Rand = new Random();
-        public static List<string> PasswordList = new List<string>();
+        private readonly static Random Rand = new();
+        public static List<string> PasswordList = new();
+        public static List<string> NameList = new();
+
+        public static Color[] GlobalExcludedColors = new Color[]
+        {
+            Color.Black,
+            Color.Gray,
+            Color.DarkGray,
+            Color.DarkSlateGray
+        };
+
         public static int[,] getBoolBitmap(uint treshold, Bitmap b)
         {
             int[,] ar = new int[b.Width, b.Height];
@@ -54,13 +64,39 @@ namespace Game
             }
         }
 
+        /// <summary>
+        /// Recursivly pick a color and check if its not in the exluded list
+        /// </summary>
+        /// <param name="toExclude"></param>
+        /// <returns></returns>
+        public static Color PickRandomColor(List<Color> toExclude = null)
+        {
+            KnownColor[] names = (KnownColor[])Enum.GetValues(typeof(KnownColor));
+            KnownColor randomColorName = names[Rand.Next(names.Length)];
+            Color randomColor = Color.FromKnownColor(randomColorName);
+            if (GlobalExcludedColors.Contains<Color>(randomColor))
+            {
+                return PickRandomColor(toExclude);
+            }
+            if (toExclude.Contains(randomColor))
+            {
+                return PickRandomColor(toExclude);
+            }
+            return randomColor;
+        }
+
         internal static string GetPasswordByIndex(int index)
         {
             return PasswordList[index];
         }
-        internal static string PickrandomPassword()
+        internal static string PickRandomPassword()
         {
             return PasswordList[UTILS.Rand.Next(PasswordList.Count)];
+        }
+
+        internal static string PickRandomName()
+        {
+            return NameList[UTILS.Rand.Next(NameList.Count)];
         }
 
         public static string GenerateRandomString(int n)
@@ -77,21 +113,9 @@ namespace Game
             return new String(stringChars);
         }
 
-        public static void LoadPasswordFile()
+        public static void LoadPasswordAndUsernameFile()
         {
-            UTILS.PasswordList.Add("");
-            //StreamReader reader = File.OpenText(Resources.top100000);
-            //Task<string>[] taskArray = new Task<string>[100000];
-            //for (int i = 0; i < 100000; i++)
-            //{
-            //    taskArray[i] = reader.ReadLineAsync();
-            //}
-            //Task.WaitAll(taskArray);
-            //for (int i = 0; i < taskArray.Length; i++)
-            //{
-            //    UTILS.PasswordList.Add(taskArray[i].Result);
-            //}
-
+            //Passwords
             using (FileStream fs = File.Open(Environment.CurrentDirectory + "\\Misc\\top100000.txt", FileMode.Open ))
             using (BufferedStream bs = new BufferedStream(fs))
             using (StreamReader sr = new StreamReader(bs))
@@ -102,6 +126,17 @@ namespace Game
                     UTILS.PasswordList.Add(s);
                 }
             }
+            using (FileStream fs = File.Open(Environment.CurrentDirectory + "\\Misc\\names.txt", FileMode.Open))
+            using (BufferedStream bs = new BufferedStream(fs))
+            using (StreamReader sr = new StreamReader(bs))
+            {
+                string s;
+                while ((s = sr.ReadLine()) != null)
+                {
+                    UTILS.NameList.Add(s);
+                }
+            }
+            //Usernames
         }
 
         public static Endpoint PickRandomEndpoint()

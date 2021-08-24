@@ -71,7 +71,7 @@ namespace Game.Core.Console
             {
                 Global.Bounce.AddBounce(commandBody);
             }
-            (Endpoint from, Endpoint too, bool Succes) =  Global.Bounce.MakeConnection();
+            (Endpoint from, Endpoint too, bool Succes) = Global.Bounce.MakeConnection();
             if (!Succes)
             {
                 return;

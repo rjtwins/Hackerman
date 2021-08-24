@@ -8,59 +8,9 @@
         Title="MainWindow" Height="600" Width="800" WindowState="Normal" WindowStyle="SingleBorderWindow" Visibility="Visible" ShowInTaskbar="False" Background="#FF30363D" Foreground="#FFD6DFE9">
     <Window.Resources>
 
-        <Style x:Key="TitleText" TargetType="{x:Type s:TaskBarButton}">
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="FontFamily" Value="Comic Sans MS"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
-
         <!-- MoveThumb Template -->
         <ControlTemplate x:Key="MoveThumbTemplate" TargetType="{x:Type s:MoveThumb}">
             <Rectangle Fill="Transparent" />
-        </ControlTemplate>
-
-        <ControlTemplate x:Key="TaskBarButtonTemplate" TargetType="{x:Type s:TaskBarButton}">
-            <ControlTemplate.Resources>
-                <Sys:Boolean x:Key="Depressed">false</Sys:Boolean>
-            </ControlTemplate.Resources>
-            <Grid Background="Silver">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="1"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="1"/>
-                </Grid.RowDefinitions>
-                <!--//TODO change on click-->
-                <Image x:Name="Image" Grid.Column="3" Grid.Row="3"/>
-                <Rectangle x:Name="r1" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7"/>
-                <Rectangle x:Name="r2" Fill="White" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5"/>
-                <Rectangle x:Name="r3" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3"/>
-
-                <Rectangle x:Name="r4" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.RowSpan="7" />
-                <Rectangle x:Name="r5" Fill="White" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4" />
-                <Rectangle x:Name="r6" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" />
-
-                <Rectangle x:Name="r7" Fill="Black" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="7"/>
-                <Rectangle x:Name="r8" Fill="Gray" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5"/>
-                <Rectangle x:Name="r9" Fill="Silver" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="3"/>
-
-                <Rectangle x:Name="r10" Fill="Silver" Grid.Column="4" Grid.Row="3" Grid.RowSpan="2" />
-                <Rectangle x:Name="r11" Fill="Gray" Grid.Column="5" Grid.Row="2" Grid.RowSpan="3" />
-                <Rectangle x:Name="r12" Fill="Black" Grid.Column="6" Grid.Row="1" Grid.RowSpan="7" />
-
-            </Grid>
         </ControlTemplate>
 
 
@@ -146,14 +96,15 @@
 
     <Grid Background="Teal" MouseUp="WindowContentControlMouseUp">
         <Grid.ColumnDefinitions>
-
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#FF3A434B">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="#FF3A434B" Grid.ColumnSpan="2">
 
             <TextBlock x:Name="GameSpeedTextBlock" Text="1" Margin="5,0,5,0"/>
             <Button Name="DecreaseGameSpeedButton" Click="DecreaseGameSpeedButton_Click" HorizontalAlignment="Center" VerticalAlignment="Stretch" >
@@ -166,31 +117,76 @@
                 <TextBlock Text="&gt;&gt;"/>
             </Button>
         </StackPanel>
-        <Border Grid.Row="2" BorderBrush="#FF0C0B0B" Background="Silver" BorderThickness="0,0,0,0" Margin="0,0,0,0" Padding="0,0,0,0" Height="42">
+        <Border Grid.Row="2" BorderBrush="#FF0C0B0B" Background="Silver" BorderThickness="0,0,0,0" Margin="0,0,0,0" Padding="0,0,0,0" Height="42" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="70"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <Menu Name="Start" HorizontalAlignment="Left" Grid.Column="0" Margin="2,2,2,2">
-                    <MenuItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Menu DockPanel.Dock="Top" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <MenuItem Header="" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <MenuItem.Background>
-                            <ImageBrush ImageSource="/Icons/win98_icons/windows.ico" TileMode="None"/>
+                            <ImageBrush ImageSource="/Icons/OtherIcons/side-menu.png"/>
                         </MenuItem.Background>
-                        <MenuItem.Header>
-                            test
-                        </MenuItem.Header>
-                        <MenuItem Header="1"/>
-                        <MenuItem Header="2"/>
-                        <MenuItem Header="3"/>
+                        <MenuItem Header="_New" />
+                        <MenuItem Header="_Open" />
+                        <MenuItem Header="_Save" />
+                        <Separator />
+                        <MenuItem Header="_Exit" />
                     </MenuItem>
                 </Menu>
-                <StackPanel Name="TaskBar" Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Column="1">
-                    <s:TaskBarButton x:Uid="/Icons/win98_icons/world_star.ico"  x:Name="BounceTaskButton" Click="BounceTaskButton_Click" Template="{StaticResource TaskBarButtonTemplate}" Width="36" Loaded="BounceTaskButton_Loaded"/>
-                    <s:TaskBarButton x:Uid="/Icons/win98_icons/world_star.ico" x:Name="ZeeChatTaskButton" Click="ZeeChatTaskButton_Click" Template="{StaticResource TaskBarButtonTemplate}" Width="36"/>
-                    <s:TaskBarButton x:Uid="/Icons/win98_icons/world_star.ico" x:Name="TracONTaskButton" Click="TracONTaskButton_Click" Template="{StaticResource TaskBarButtonTemplate}" Width="36"/>
-                    <s:TaskBarButton x:Uid="/Icons/win98_icons/world_star.ico" x:Name="PromptTaskButton" Click="PromptTaskButton_Click" Template="{StaticResource TaskBarButtonTemplate}" Width="36"/>
+                <StackPanel Name="TaskBar" Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Column="1" TextElement.FontFamily="pack://application:,,,/Fonts/#Joystix Monospace">
+                    <ContentControl x:Name="BounceTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0">
+                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
+                            <Grid HorizontalAlignment="Stretch" Margin="-30,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Source="/Icons/OtherIcons/001-network.png" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="Bounce" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" Margin="0,0,0,0"/>
+                            </Grid>
+                        </ToggleButton>
+                    </ContentControl>
+                    <ContentControl x:Name="ZeeChatTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0">
+                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click" Margin="0,0,0,0">
+                            <Grid HorizontalAlignment="Stretch" Margin="-1,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Source="/Icons/OtherIcons/005-chat-1.png" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="Zee Chat" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" Margin="0,0,0,0"/>
+                                
+                            </Grid>
+                        </ToggleButton>
+                    </ContentControl>
+                    <ContentControl x:Name="LocalConsoleTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0">
+                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
+                            <Grid HorizontalAlignment="Stretch" Margin="-69,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Source="/Icons/OtherIcons/014-programing-1.png" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="CMD" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" Margin="0,0,0,0"/>
+
+                            </Grid>
+                        </ToggleButton>
+                    </ContentControl>
+                    <ContentControl x:Name="RemoteConsoleTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0">
+                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
+                            <Grid HorizontalAlignment="Stretch" Margin="-29,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Source="/Icons/OtherIcons/015-configuration.png" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="TracON" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18" Margin="0,0,0,0"/>
+                            </Grid>
+                        </ToggleButton>
+                    </ContentControl>
                 </StackPanel>
                 <StackPanel Name="Tray" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
                     <Border BorderThickness="1,1,1,1" Background="Silver" Margin="0,2,2,2" Padding="0,1,0,1" HorizontalAlignment="Center" VerticalAlignment="Stretch">
@@ -206,7 +202,7 @@
             </Grid>
         </Border>
 
-        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Teal" Margin="0,0,0,0">
+        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Teal" Margin="0,0,0,0" Grid.ColumnSpan="2">
 
             <ContentControl
             x:Name="MapControl"
@@ -256,7 +252,7 @@
                                                ScrollViewer.VerticalScrollBarVisibility="Disabled" 
                                                Panel.ZIndex="11" VerticalAlignment="Center" 
                                                HorizontalAlignment="Center" Height="21" Width="21" />
-                                    <TextBlock Grid.Column="1" Text="Bounce Visual Assistant" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
+                                    <TextBlock Grid.Column="1" Text="Bounce Visual Assistant" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
 
                                     </TextBlock>
                                     <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
@@ -269,10 +265,10 @@
                                         </s:MaxButton>
                                     </StackPanel>
                                 </Grid>
-
                             </Grid>
-                            <ContentControl x:Name="MapControlFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
-                            </ContentControl>
+                            <Frame x:Name="MapControlFrame" Grid.Column="0" Grid.Row="1"/>
+                            <!--<ContentControl x:Name="MapControlFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
+                            </ContentControl-->
                         </Grid>
                     </Border>
                 </Border>
@@ -326,7 +322,7 @@
                                                ScrollViewer.VerticalScrollBarVisibility="Disabled" 
                                                Panel.ZIndex="11" VerticalAlignment="Center" 
                                                HorizontalAlignment="Center" Height="21" Width="21" />
-                                    <TextBlock Grid.Column="1" Text="TracON Remote Shell" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
+                                    <TextBlock Grid.Column="1" Text="TracON Remote Shell" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
 
                                     </TextBlock>
 
@@ -397,7 +393,7 @@
                                                ScrollViewer.VerticalScrollBarVisibility="Disabled" 
                                                Panel.ZIndex="11" VerticalAlignment="Center" 
                                                HorizontalAlignment="Center" Height="21" Width="21" />
-                                    <TextBlock Grid.Column="1" Text="Apature Command Prompt" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
+                                    <TextBlock Grid.Column="1" Text="Apature Command Prompt" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
 
                                     </TextBlock>
 
@@ -469,7 +465,7 @@
                                                ScrollViewer.VerticalScrollBarVisibility="Disabled" 
                                                Panel.ZIndex="11" VerticalAlignment="Center" 
                                                HorizontalAlignment="Center" Height="21" Width="21" />
-                                    <TextBlock Grid.Column="1" Text="Zee Chat IRC" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Nintendo DS BIOS" FontSize="20" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
+                                    <TextBlock Grid.Column="1" Text="Zee Chat IRC" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
                                        
                                     </TextBlock>
 

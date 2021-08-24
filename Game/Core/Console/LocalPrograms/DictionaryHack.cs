@@ -104,7 +104,7 @@ namespace Game.Core.Console.LocalPrograms
             else if (RCP.GivingPassword)
             {
                 //Give password
-                string randomPassword = UTILS.PickrandomPassword();
+                string randomPassword = UTILS.PickRandomPassword();
                 Global.App.Dispatcher.Invoke(() => {
                     //Password
                     Global.RemoteConsole.ConsoleContent.RunExternalCommand(this.PasswordToGet);

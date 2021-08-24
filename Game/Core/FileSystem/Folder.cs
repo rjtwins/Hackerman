@@ -10,6 +10,7 @@ namespace Game.Core.FileSystem
         public FileSystem ParentFileSystem { protected set; get; }
         public Folder Parent { protected set; get; }
 
+        public string Owner { set; get; } = string.Empty;
         public Dictionary<string, Folder> Folders { protected set; get; } = new Dictionary<string, Folder>();
         public Dictionary<string, Program> Programs { private set; get; } = new Dictionary<string, Program>();
 
@@ -19,6 +20,11 @@ namespace Game.Core.FileSystem
             this.Parent = parent;
             this.ParentFileSystem = parent.ParentFileSystem;
             this.ParentFileSystem.AllFolders.Add(this);
+        }
+
+        public bool IsOwner(string owner)
+        {
+            return this.Owner == owner;
         }
 
         public void AddProgram(Program p)
