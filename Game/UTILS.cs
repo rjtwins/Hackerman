@@ -18,7 +18,6 @@ namespace Game
         public static int[,] getBoolBitmap(uint treshold, Bitmap b)
         {
             int[,] ar = new int[b.Width, b.Height];
-
             for (int y = 0; y < b.Height; y++)
             {
                 for (int x = 0; x < b.Width; x++)

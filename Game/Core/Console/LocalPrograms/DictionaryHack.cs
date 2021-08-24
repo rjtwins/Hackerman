@@ -11,7 +11,7 @@ namespace Game.Core.Console.LocalPrograms
     {
         private static readonly DictionaryHack instance = new DictionaryHack();
         private string PasswordToGet = string.Empty;
-        private int HackTime = 5000;
+        private int HackTime = 100;
         public static DictionaryHack Instance
         {
             get
@@ -56,8 +56,6 @@ namespace Game.Core.Console.LocalPrograms
             Debug.WriteLine("Starting dict hack");
             Debug.WriteLine(this.PasswordToGet);
             Debug.WriteLine(this.HackTime);
-
-
 
             System.Threading.Thread.Sleep(500);
 
