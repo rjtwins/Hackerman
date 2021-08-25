@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,8 @@ namespace Game.UI
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
+        private List<ContentControl> ContentControlElements = new();
+
         public MainWindow()
         {
             Global.MainWindow = this;
@@ -28,11 +31,10 @@ namespace Game.UI
             this.MapControlFrame.Navigate(Global.EndPointMap);
             (this.IRCFrame.Template.FindName("PageFrame", this.IRCFrame) as System.Windows.Controls.Frame).Navigate(Global.IRCWindow);
 
-            //this.BounceTaskButton.IsChecked = false;
-            //this.PromptTaskButton.IsChecked = false;
-            //this.TracONTaskButton.IsChecked = false;
-            //this.ZeeChatTaskButton.IsChecked = false;
-            //this.DebugControlFrame.Navigate(new DebugPage());
+            ContentControlElements.Add(RemoteConsole);
+            ContentControlElements.Add(LocalConsole);
+            ContentControlElements.Add(MapControl);
+            ContentControlElements.Add(IRC);
         }
 
         internal void UpdateDateTime()
@@ -41,10 +43,10 @@ namespace Game.UI
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    string text = string.Empty;
-                    text += Global.GameTime.Hour + ":" + Global.GameTime.Minute + "\n"
-                    + Global.GameTime.Day + "-" + Global.GameTime.Month + "-" + Global.GameTime.Year;
-                    this.GameTimeTextBlock.Text = text;
+                    string text1 = Global.GameTime.Hour + ":" + Global.GameTime.Minute;
+                    string text2 = Global.GameTime.Day + "-" + Global.GameTime.Month + "-" + Global.GameTime.Year;
+                    this.GameTimeDDMMYYextBlock.Text = text2;
+                    this.GameTimeHHMMTextBlock.Text =text1;
                 });
                 
             }
@@ -163,32 +165,40 @@ namespace Game.UI
             if (c.Name == RemoteConsole.Name)
             {
                 (this.RemoteConsole.FindName("RemoteGradientGrid") as Grid).Background = B;
+                SetOntop(RemoteConsole);
             }
             if (c.Name == LocalConsole.Name)
             {
                 (this.LocalConsole.FindName("LocalGradientGrid") as Grid).Background = B;
+                SetOntop(LocalConsole);
             }
             if (c.Name == MapControl.Name)
             {
                 (this.MapControl.FindName("GradientGrid") as Grid).Background = B;
+                SetOntop(MapControl);
             }
             if (c.Name == IRC.Name)
             {
                 (this.IRC.FindName("IRCGradientGrid") as Grid).Background = B;
+                SetOntop(IRC);
             }
-
         }
 
-        private void MapControl_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void SetOntop(ContentControl contentControl)
         {
-
+            int maxZ = 0;
+            ContentControl maxZContentControl;
+            foreach(ContentControl c in this.ContentControlElements)
+            {
+                maxZ = Math.Max(maxZ, Canvas.GetZIndex(c));
+            }
+            Canvas.SetZIndex(contentControl, maxZ + 1);
         }
 
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
             ToggleButton toggleButton = sender as ToggleButton;
             ContentControl contentControl = toggleButton.Parent as ContentControl;
-            Debug.WriteLine("Togglebutton is checked" + toggleButton.IsChecked.ToString());
             if (toggleButton.IsChecked == true)
             {
                 contentControl.Style = FindResource("TaskBarButtonBoxInverted") as Style;
@@ -241,6 +251,39 @@ namespace Game.UI
                 }
                 this.RemoteConsole.Visibility = Visibility.Visible;
                 this.RemoteConsole.IsEnabled = true;
+            }
+        }
+
+        private void MenuButtonClick(object sender, RoutedEventArgs e)
+        {
+            ToggleButton toggleButton = sender as ToggleButton;
+            ContentControl contentControl = toggleButton.Parent as ContentControl;
+
+            if (toggleButton.IsChecked == true)
+            {
+                this.StartMenuMenu.Visibility = Visibility.Visible;
+                contentControl.Style = FindResource("TaskBarButtonBoxInverted") as Style;
+            }
+            else
+            {
+                this.StartMenuMenu.Visibility = Visibility.Collapsed;
+                contentControl.Style = FindResource("TaskBarButtonBox") as Style;
+            }
+        }
+
+        private void Window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Control c = e.Source as Control;
+            if(c == null)
+            {
+                StartMenuMenu.Visibility = Visibility.Collapsed;
+                (StartMenu.Content as ToggleButton).IsChecked = false;
+                return;
+            }
+            if(c.Name != "StartMenuMenu")
+            {
+                StartMenuMenu.Visibility = Visibility.Collapsed;
+                (StartMenu.Content as ToggleButton).IsChecked = false;
             }
         }
     }

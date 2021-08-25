@@ -39,7 +39,6 @@ namespace Game.UI
             this.Map_Loaded(sender, e);
         }
 
-
         public void FilterOnEndpoint(string Ip)
         {
             foreach (Endpoint e in this.DrawnEndpointsDict.Values)
