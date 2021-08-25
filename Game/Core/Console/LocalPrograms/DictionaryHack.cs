@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace Game.Core.Console.LocalPrograms
 {
+    //TODO: Add software level
+    //TODO: Password dificulty
     public class DictionaryHack
     {
         public bool Running { get; private set; }
         private static readonly DictionaryHack instance = new DictionaryHack();
         private string PasswordToGet = string.Empty;
-        private double HackTime = 1000; // in attempts before getting the password
+        private double HackTime = 100; // in attempts before getting the password
         public static DictionaryHack Instance
         {
             get
@@ -138,22 +140,8 @@ namespace Game.Core.Console.LocalPrograms
                 }
                 Global.EventTicker.SleepSecondes(1);
             }
-            //if (RCP.GivingPassword)
-            //{
-            //    Global.App.Dispatcher.Invoke(() => {
-            //        Global.RemoteConsole.ConsoleContent.RunExternalCommand(randomPassword);
-            //        Global.RemoteConsole.ExternalAfterAddAction();
-            //        Global.RemoteConsole.ShowExternalInput(randomPassword);
-            //    });
-            //}
-            //else //Giving username
-            //{
-            //    Global.App.Dispatcher.Invoke(() => {
-            //        Global.RemoteConsole.ConsoleContent.RunExternalCommand(userName);
-            //        Global.RemoteConsole.ExternalAfterAddAction();
-            //        Global.RemoteConsole.ShowExternalInput(userName);
-            //    });
-            //}
+            this.PasswordToGet = string.Empty;
+            this.Running = false;
         }
 
         private void HackSuccesfull(string userName)

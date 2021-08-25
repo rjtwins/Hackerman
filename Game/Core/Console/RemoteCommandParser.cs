@@ -54,6 +54,13 @@ namespace Game.Core.Console
             CommandDictionary["upload"] = this.Upload;
             CommandDictionary["download"] = this.Download;
             CommandDictionary["delete"] = this.Delete;
+            CommandDictionary["users"] = this.PrintUsers;
+        }
+
+        private void PrintUsers(string obj)
+        {
+            string result = AttachedSystem.PrintUsers();
+            ConsoleContent.ConsoleOutput.Add(result);
         }
 
         private void Delete(string obj)

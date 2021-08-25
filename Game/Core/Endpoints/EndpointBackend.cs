@@ -61,6 +61,15 @@ namespace Game.Core.Endpoints
             iPAddress = new IPAddress(data);
             this.FileSystem = new FileSystem.FileSystem(this);
         }
+        internal string PrintUsers()
+        {
+            string result = string.Empty;
+            foreach (string user in this.UsernamePasswordDict.Keys)
+            {
+                result += user + "\n";
+            }
+            return result;
+        }
 
         public void AddUser(string userName, string password, AccessLevel accessLevel)
         {
