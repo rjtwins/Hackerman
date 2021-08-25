@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:Game.UI" xmlns:wpfautogrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
       mc:Ignorable="d"
       d:DesignHeight="257" d:DesignWidth="498"
-      Title="EndpointMap">
+      Title="EndpointMap"
+      TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
     <Page.Resources>
     </Page.Resources>
     <Grid Background="Silver" Margin="0,0,0,0" ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -17,13 +18,13 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid>
+        <Grid Margin="0,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <ContentControl Style="{StaticResource ControllBox}" Grid.Column="0" Grid.ColumnSpan="1" Uid="IP Status" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,10,0">
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,7,0">
                     <RadioButton Name="RadioButtonShow" Margin="0,5,0,5" Checked="RadioButtonShow_Checked">
                         Show
                     </RadioButton>
@@ -48,7 +49,7 @@
                     <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png"/>
                 </Grid.Background>
                 <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Fill" Panel.ZIndex="10">
-                    <Canvas TextElement.FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" TextElement.FontSize="5" x:Name ="Map"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="498" Height="257">
+                    <Canvas TextElement.FontSize="5" x:Name ="Map"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="498" Height="257">
                     </Canvas>
                 </Viewbox>
             </Grid>

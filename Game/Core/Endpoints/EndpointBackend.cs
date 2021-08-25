@@ -180,7 +180,7 @@ namespace Game.Core.Endpoints
             throw new NotImplementedException();
         }
 
-        internal string ConnectTo(string username, string password, Endpoint from)
+        internal string ConnectTo(string username, string password, Endpoint from, bool fromProgram = false)
         {
             if (from == null)
             {
@@ -190,9 +190,8 @@ namespace Game.Core.Endpoints
 
             LoggConnectionAttempt(username, from);
 
-            try
-            {
-                this.AccessLevel = UsernamePasswordAccessDict[username + password];
+            if(UsernamePasswordAccessDict.TryGetValue(username+password, out AccessLevel temp)){
+                this.AccessLevel = temp;
                 FileSystem.ConnectTo(this.AccessLevel, username);
                 LoggConnectionSucces(username, from, this.AccessLevel);
                 CurrentUsername = username;
@@ -200,10 +199,12 @@ namespace Game.Core.Endpoints
                 this.ConnectedFrom = from;
                 return "Logged in as: " + username;
             }
-            catch (KeyNotFoundException)
+            else
             {
                 LoggConnectionFailed(username, from);
-                throw new Exception("Username password combination not found.");
+                if (!fromProgram)
+                    throw new Exception("Username password combination not found.");
+                return string.Empty;
             }
         }
 

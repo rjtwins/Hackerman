@@ -29,7 +29,7 @@ namespace Game
         public static MissionManager MissionManager;
 
         public static EndpointGenerator EndpointGenerator;
-        public static EventTicker EventTicker;
+        public static GameTicker EventTicker;
         public static Bounce Bounce;
 
         public static List<Endpoint> AllEndpoints = new();
@@ -45,6 +45,8 @@ namespace Game
 
         //CONFIG:
         public static readonly int RandomUsersPerEndpoint = 3;
+
+        public static bool StopCurrentProgram { get; internal set; }
     }
     public enum EndpointType 
     { 

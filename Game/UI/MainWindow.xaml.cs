@@ -47,6 +47,7 @@ namespace Game.UI
                     string text2 = Global.GameTime.Day + "-" + Global.GameTime.Month + "-" + Global.GameTime.Year;
                     this.GameTimeDDMMYYextBlock.Text = text2;
                     this.GameTimeHHMMTextBlock.Text =text1;
+                    this.SystemTimeBoxTime.Text = text1;
                 });
                 
             }
@@ -54,35 +55,6 @@ namespace Game.UI
             {
                 //Do nothing
             }
-        }
-
-        private void DecreaseGameSpeedButton_Click(object sender, RoutedEventArgs e)
-        {
-            Global.EventTicker.DecreaseGameSpeed();
-            UpdateGameSpeedIndicator();
-        }
-
-        private void PauseGameButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (Global.GamePaused)
-            {
-                Global.EventTicker.StartTicker();
-                UpdateGameSpeedIndicator();
-                return;
-            }
-            Global.EventTicker.StopTicker();
-            GameSpeedTextBlock.Text = "0";
-        }
-
-        private void IncreaseGameSpeedButton_Click(object sender, RoutedEventArgs e)
-        {
-            Global.EventTicker.IncreaseGameSpeed();
-            UpdateGameSpeedIndicator();
-        }
-
-        private void UpdateGameSpeedIndicator()
-        {
-            GameSpeedTextBlock.Text = Global.EventTicker.GameSpeed.ToString();
         }
 
         private void MapControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -285,6 +257,45 @@ namespace Game.UI
                 StartMenuMenu.Visibility = Visibility.Collapsed;
                 (StartMenu.Content as ToggleButton).IsChecked = false;
             }
+        }
+
+        private void GameSpeedButton_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+            ContentControl parrent = radioButton.Parent as ContentControl;
+            parrent.Style = FindResource("TaskBarButtonBoxInverted") as Style;
+            switch (radioButton.Name)
+            {
+                case "PauseButton":
+                    Global.EventTicker.StopTicker();
+                    break;
+                case "Speed1Button":
+                    Global.EventTicker.ChangeSpeed(1);
+                    Global.EventTicker.StartTicker();
+                    break;
+                case "Speed2Button":
+                    Global.EventTicker.ChangeSpeed(2);
+                    Global.EventTicker.StartTicker();
+                    break;
+                case "Speed3Button":
+                    Global.EventTicker.ChangeSpeed(3);
+                    Global.EventTicker.StartTicker();
+                    break;
+                case "Speed4Button":
+                    Global.EventTicker.ChangeSpeed(4);
+                    Global.EventTicker.StartTicker();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void GameSpeedButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+            ContentControl parrent = radioButton.Parent as ContentControl;
+            parrent.Style = FindResource("TaskBarButtonBox") as Style;
+
         }
     }
 }

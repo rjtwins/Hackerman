@@ -23,7 +23,7 @@ namespace Game
             Global.GameState = new GameState();
             Global.GameState.SetUserName("RJ");
             Global.App = this;
-            Global.EventTicker = new EventTicker();
+            Global.EventTicker = new GameTicker();
             Global.EndpointGenerator = new EndpointGenerator();
 
             Global.RemoteConsole = new UI.RemoteConsole();

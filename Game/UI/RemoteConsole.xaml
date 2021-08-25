@@ -6,12 +6,14 @@
       xmlns:local="clr-namespace:Game.UI"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Console">
+      Title="Console"
+      TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA"
+      TextElement.FontSize="16" PreviewKeyDown="Page_PreviewKeyDown">
     <Grid Background="Black" Name="mypanel">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" Name="row0"/>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" Name="Scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Hidden" FontFamily="Consolas" FontSize="14">
+        <ScrollViewer Grid.Row="0" Name="Scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Hidden">
             <ScrollViewer.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent" />
             </ScrollViewer.Resources>
@@ -20,8 +22,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=.}" 
-                                       FontSize="10" TextWrapping="Wrap" TextTrimming="WordEllipsis"
-                                       FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" Foreground="#FFC7C7C7"/>
+                                       TextWrapping="Wrap" TextTrimming="WordEllipsis"
+                                       Foreground="#FFC7C7C7"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -31,11 +33,10 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Margin="5,0,4,0" Grid.Column="0" Text="{Binding ConsolePrefix, Mode=TwoWay}" Background="Black" Foreground="#FFC7C7C7"
-                               FontSize="10" UseLayoutRounding="True" OpacityMask="Black"
-                               FontFamily="pack://application:,,,/Fonts/#Joystix Monospace"/>
+                               UseLayoutRounding="True" OpacityMask="Black"/>
                     <TextBox Grid.Column="1" BorderThickness="0" BorderBrush="#00000000" Text="{Binding ConsoleInput, Mode=TwoWay}" Background="Black" Foreground="#FFC7C7C7"
                              Name="InputBlock" SelectionBrush="#00000000" SelectionTextBrush="#00000000" PreviewKeyDown="InputBlock_PreviewKeyDown" Opacity="1"
-                             FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10"/>
+                             />
                 </Grid>
             </StackPanel>
         </ScrollViewer>

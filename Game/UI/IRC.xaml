@@ -6,7 +6,9 @@
       xmlns:local="clr-namespace:Game.UI"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="IRC">
+      Title="IRC"
+      TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA"
+      TextElement.FontSize="16">
 
     <Grid Background="Black">
         <Grid.ColumnDefinitions>
@@ -19,7 +21,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <ScrollViewer Name="ChannelsScroller" Grid.Row="0" Grid.Column="0" Background="Black" Foreground="White" VerticalScrollBarVisibility="Disabled" MinWidth="100" BorderBrush="#FF3465A4" BorderThickness="0,0,2,0" Panel.ZIndex="1"
-                      FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10">
+                      >
             <StackPanel Name="Channels">
                 
             </StackPanel>
@@ -39,14 +41,13 @@
                 <RowDefinition Height="5"/>
             </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Foreground="White" Background="#FF3465A4" Margin="0,0,0,0" Padding="5,0,0,2"
-                           FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10" HorizontalAlignment="Stretch" VerticalAlignment="Center">>
+                           HorizontalAlignment="Stretch" VerticalAlignment="Center">>
                     News Monitor
                 </TextBlock>
-            <ScrollViewer Name="NewsScroller" Grid.Row="2" VerticalScrollBarVisibility="Disabled" BorderThickness="0,0,0,2" MinHeight="150" Panel.ZIndex="5"
-                          FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10"/>
+            <ScrollViewer Name="NewsScroller" Grid.Row="2" VerticalScrollBarVisibility="Disabled" BorderThickness="0,0,0,2" MinHeight="150" Panel.ZIndex="5"/>
             <Rectangle Grid.Row="2" Stroke="#FF05ACF9" StrokeThickness="1" Panel.ZIndex="20" StrokeDashArray="3 3 3" Height="1" MinWidth="1" Margin="0,2,0,2" />
-            <ScrollViewer Grid.Row="3" Name="Scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Hidden"
-                          FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10">
+            <ScrollViewer Grid.Row="3" Name="Scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Hidden">
+
                 <StackPanel x:Name="IRCOutput" ScrollViewer.VerticalScrollBarVisibility="Disabled" Orientation="Vertical"/>
             </ScrollViewer>
             <Grid Grid.Row="4" Margin="0,0,0,0" VerticalAlignment="Stretch">
@@ -55,11 +56,9 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Margin="5,0,4,0" Grid.Column="0" Text="{Binding IRCPrefix, Mode=TwoWay}" Background="Black" Foreground="#FFC7C7C7"
-                               FontSize="10" UseLayoutRounding="True" OpacityMask="Black"
-                               FontFamily="pack://application:,,,/Fonts/#Joystix Monospace"/>
+                           UseLayoutRounding="True" OpacityMask="Black"/>
                 <TextBox Grid.Column="1" BorderThickness="0" BorderBrush="#00000000" Text="" Background="Black" Foreground="#FFC7C7C7" 
-                             Name="InputBlock" SelectionBrush="#00000000" SelectionTextBrush="#00000000" PreviewKeyDown="InputBlock_PreviewKeyDown" Opacity="1"
-                             FontFamily="pack://application:,,,/Fonts/#Joystix Monospace" FontSize="10"/>
+                             Name="InputBlock" SelectionBrush="#00000000" SelectionTextBrush="#00000000" PreviewKeyDown="InputBlock_PreviewKeyDown" Opacity="1"/>
             </Grid>
         </Grid>
     </Grid>

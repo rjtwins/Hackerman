@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Core.Events
 {
-    public class EventTicker
+    public class GameTicker
     {
         //Main ticker
         private Timer MainTimer;
@@ -25,8 +25,7 @@ namespace Core.Events
 
         private Dictionary<int, double> GameSpeedDict = new Dictionary<int, double>();
 
-        private List<Event> EventsToHandle = new List<Event>();
-        public EventTicker()
+        public GameTicker()
         {
             // timer callback has been reached.
             MainTimer = new Timer(Beat, this, Timeout.Infinite, 100);
@@ -36,21 +35,8 @@ namespace Core.Events
             GameSpeedDict[0] = 0;
             GameSpeedDict[1] = 0.1;
             GameSpeedDict[2] = 6;
-            GameSpeedDict[3] = 45;
-            GameSpeedDict[4] = 232;
-            GameSpeedDict[5] = 632;
-            GameSpeedDict[6] = 1832;
-
-        }
-
-        public void IncreaseGameSpeed()
-        {
-            ChangeSpeed(Math.Min(this.GameSpeed + 1, 6));
-        }
-
-        public void DecreaseGameSpeed()
-        {
-            ChangeSpeed(Math.Max(this.GameSpeed - 1, 1));
+            GameSpeedDict[3] = 60;
+            GameSpeedDict[4] = 720;
         }
 
         public void ChangeSpeed(int level)
@@ -78,6 +64,7 @@ namespace Core.Events
         public void StopTicker()
         {
             Global.GamePaused = true;
+            this.GameSpeed = 0;
             TimeIntervalInSecondes = GameSpeedDict[0];
         }
 
@@ -96,7 +83,7 @@ namespace Core.Events
 
         public void Beat(Object stateInfo)
         {
-            EventTicker.invokeCount += 1;
+            GameTicker.invokeCount += 1;
             Global.GameTime = Global.GameTime.AddSeconds(TimeIntervalInSecondes);
             if(Global.MainWindow != null)
             {
@@ -107,7 +94,7 @@ namespace Core.Events
 
         private void HandleEvents()
         {
-            EventsToHandle.Clear();
+            List<Event> EventsToHandle = new List<Event>();
             Event e;
             for (int i = 0; i < EventQueue.Count; i++)
             {
@@ -123,12 +110,24 @@ namespace Core.Events
                 EventsToHandle.Add(e);
             }
 
-            foreach (Event eventToHandle in EventsToHandle)
+            lock (EventsToHandle)
             {
-                //Debug.WriteLine(eventToHandle.Name);
-                EventQueue.Remove(eventToHandle.StartTime);
-                TryStartEvent(eventToHandle);
+                foreach (Event eventToHandle in EventsToHandle)
+                {
+                    EventQueue.Remove(eventToHandle.StartTime);
+                    TryStartEvent(eventToHandle);
+                }
             }
+        }
+
+        /// <summary>
+        /// Returns after x in game secondes
+        /// </summary>
+        /// <param name="secondes"></param>
+        public void SleepSecondes(double secondes)
+        {
+            double timeAddedPerSecondes = this.TimeIntervalInSecondes * 10;
+            System.Threading.Thread.Sleep(Convert.ToInt32((secondes / timeAddedPerSecondes) * 1000d));
         }
 
         private void TryStartEvent(Event eventToHandle)

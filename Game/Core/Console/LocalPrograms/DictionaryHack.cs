@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Core.Events;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,9 +10,10 @@ namespace Game.Core.Console.LocalPrograms
 {
     public class DictionaryHack
     {
+        public bool Running { get; private set; }
         private static readonly DictionaryHack instance = new DictionaryHack();
         private string PasswordToGet = string.Empty;
-        private int HackTime = 100;
+        private double HackTime = 1000; // in attempts before getting the password
         public static DictionaryHack Instance
         {
             get
@@ -24,8 +26,13 @@ namespace Game.Core.Console.LocalPrograms
             }
         }
 
+
         public string StartHack(string userName)
         {
+            if (this.Running)
+            {
+                return null;
+            }
             if(Global.RemoteSystem == null)
             {
                 return "No remote connection.";
@@ -38,12 +45,17 @@ namespace Game.Core.Console.LocalPrograms
             {
                 this.PasswordToGet = PossiblePassword;
             }
-            Task.Factory.StartNew(() => this.HackOnRemote(userName));
+
+            this.Running = true;
+            Task.Factory.StartNew(() => this.HackOnRemote(new object[] { userName, 0 }));
             return "Starting dictionary attack";
         }
 
-        private void HackOnRemote(string userName)
+        private void HackOnRemote(object[] arguments)
         {
+            string userName = (string)arguments[0];
+            int index = (int)arguments[1];
+
             //TODO: Base hacktime on difficulty
 
             //If we have a non exsistant username we should never get the password.
@@ -51,46 +63,97 @@ namespace Game.Core.Console.LocalPrograms
             {
                 this.HackTime = UTILS.PasswordList.Count;
             }
+
             this.HackTime = Math.Min(HackTime, UTILS.PasswordList.Count);
-            RemoteCommandParser RCP = RemoteCommandParser.Instance;
-            Debug.WriteLine("Starting dict hack");
-            Debug.WriteLine(this.PasswordToGet);
-            Debug.WriteLine(this.HackTime);
+            string resultString = string.Empty;
 
-            System.Threading.Thread.Sleep(500);
-
-            for (int i = 0; i < this.HackTime; i++)
+            for (index = 0; index < UTILS.PasswordList.Count; index++)
             {
-                if (Global.RemoteSystem == null)
+                while (Global.GamePaused)
                 {
+                    System.Threading.Thread.Sleep(100);
+                }
+
+                if (Global.StopCurrentProgram)
+                {
+                    PasswordToGet = string.Empty;
+                    Global.StopCurrentProgram = false;
+                    this.Running = false;
                     return;
                 }
-                if (!RemoteCommandParser.Instance.GivingPassword && !RemoteCommandParser.Instance.GivingUsername)
+
+                if (Global.RemoteSystem == null)
                 {
-                    //SUCCES!
-                    break;
+                    this.Running = false;
+                    return;
                 }
-                else if (RCP.GivingPassword)
+
+                string randomPassword = UTILS.GetPasswordByIndex(index);
+
+                if (index > HackTime ||
+                    PasswordToGet == randomPassword ||
+                    (!RemoteCommandParser.Instance.GivingPassword && !RemoteCommandParser.Instance.GivingUsername))
                 {
-                    string randomPassword = UTILS.GetPasswordByIndex(i);
-                    Global.App.Dispatcher.Invoke(() => {
-                        Global.RemoteConsole.ConsoleContent.RunExternalCommand(randomPassword);
-                        Global.RemoteConsole.ExternalAfterAddAction();
-                        Global.RemoteConsole.ShowExternalInput(randomPassword);
-                    });
+                    HackSuccesfull(userName);
+                    this.PasswordToGet = string.Empty;
+                    this.Running = false;
+                    return;
                 }
-                else //Giving username
+
+                resultString += userName + Environment.NewLine
+                    + new string('*', randomPassword.Length) + Environment.NewLine
+                    + "Username password combination not found.\n";
+
+                Global.RemoteSystem.ConnectTo(userName, randomPassword, Global.Bounce.BounceList[Global.Bounce.BounceList.Count - 1], true);
+
+                switch (Global.EventTicker.GameSpeed)
                 {
-                    Global.App.Dispatcher.Invoke(() => {
-                        Global.RemoteConsole.ConsoleContent.RunExternalCommand(userName);
-                        Global.RemoteConsole.ExternalAfterAddAction();
-                        Global.RemoteConsole.ShowExternalInput(userName);
-                    });
+                    case 1:
+                        UpdateUI(resultString);
+                        resultString = string.Empty;
+                        break;
+                    case 2:
+                        if (index % 2 == 0)
+                        {
+                            UpdateUI(resultString);
+                            resultString = string.Empty;
+                        }
+                        break;
+                    case 3:
+                        if (index % 20 == 0)
+                        {
+                            UpdateUI(resultString);
+                            resultString = string.Empty;
+                        }
+                        break;
+                    case 4:
+                        if (index % 100 == 0)
+                        {
+                            UpdateUI(resultString);
+                            resultString = string.Empty;
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                System.Threading.Thread.Sleep(100);
+                Global.EventTicker.SleepSecondes(1);
             }
-            HackSuccesfull(userName);
-            this.PasswordToGet = string.Empty;
+            //if (RCP.GivingPassword)
+            //{
+            //    Global.App.Dispatcher.Invoke(() => {
+            //        Global.RemoteConsole.ConsoleContent.RunExternalCommand(randomPassword);
+            //        Global.RemoteConsole.ExternalAfterAddAction();
+            //        Global.RemoteConsole.ShowExternalInput(randomPassword);
+            //    });
+            //}
+            //else //Giving username
+            //{
+            //    Global.App.Dispatcher.Invoke(() => {
+            //        Global.RemoteConsole.ConsoleContent.RunExternalCommand(userName);
+            //        Global.RemoteConsole.ExternalAfterAddAction();
+            //        Global.RemoteConsole.ShowExternalInput(userName);
+            //    });
+            //}
         }
 
         private void HackSuccesfull(string userName)
@@ -104,7 +167,6 @@ namespace Game.Core.Console.LocalPrograms
             else if (RCP.GivingPassword)
             {
                 //Give password
-                string randomPassword = UTILS.PickRandomPassword();
                 Global.App.Dispatcher.Invoke(() => {
                     //Password
                     Global.RemoteConsole.ConsoleContent.RunExternalCommand(this.PasswordToGet);
@@ -133,6 +195,13 @@ namespace Game.Core.Console.LocalPrograms
                     Global.LocalConsole.AddLine("PASSWORD: " + this.PasswordToGet);
                 });
             }
+        }
+
+        public void UpdateUI(string resultString)
+        {
+            Global.App.Dispatcher.Invoke(() => {
+                Global.RemoteConsole.AddOutput(resultString);
+            });
         }
     }
 }

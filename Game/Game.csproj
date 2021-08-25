@@ -24,13 +24,18 @@
     <None Remove="Fonts\joystix monospace.ttf" />
     <None Remove="Fonts\Microsoft Sans Serif.ttf" />
     <None Remove="Fonts\Nintendo-DS-BIOS.ttf" />
+    <None Remove="Fonts\Pixel Sans Serif.ttf" />
+    <None Remove="Fonts\pixelmix.ttf" />
     <None Remove="Fonts\PixelOperator.ttf" />
     <None Remove="Fonts\VideoTerminalScreen.ttf" />
+    <None Remove="Fonts\W95FA.otf" />
     <None Remove="Icons\OtherIcons\001-network.png" />
     <None Remove="Icons\OtherIcons\005-chat-1.png" />
     <None Remove="Icons\OtherIcons\014-programing-1.png" />
     <None Remove="Icons\OtherIcons\015-configuration.png" />
     <None Remove="Icons\OtherIcons\side-menu.png" />
+    <None Remove="Icons\OtherIcons\time-management.png" />
+    <None Remove="Icons\OtherIcons\wall-clock.png" />
     <None Remove="Icons\UIPixels\BlackBlackConer.png" />
     <None Remove="Icons\UIPixels\BlackWhiteCorner.jpg" />
     <None Remove="Icons\UIPixels\MapBlackBorder.png" />
@@ -61,6 +66,8 @@
     <Content Include="Core\Mission\Dictionaries\smallNames.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Icons\OtherIcons\time-management.png" />
+    <Resource Include="Icons\OtherIcons\wall-clock.png" />
     <Content Include="Misc\names.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -71,8 +78,9 @@
     <Resource Include="Fonts\joystix monospace.ttf" />
     <Resource Include="Fonts\Microsoft Sans Serif.ttf" />
     <Resource Include="Fonts\Nintendo-DS-BIOS.ttf" />
-    <Resource Include="Fonts\PixelOperator.ttf" />
-    <Resource Include="Fonts\VideoTerminalScreen.ttf" />
+    <Resource Include="Fonts\Pixel Sans Serif.ttf" />
+    <Resource Include="Fonts\pixelmix.ttf" />
+    <Resource Include="Fonts\W95FA.otf" />
     <Resource Include="Icons\OtherIcons\001-network.png" />
     <Resource Include="Icons\OtherIcons\005-chat-1.png" />
     <Resource Include="Icons\OtherIcons\014-programing-1.png" />

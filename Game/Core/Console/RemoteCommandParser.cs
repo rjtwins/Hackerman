@@ -17,9 +17,6 @@ namespace Game.Core.Console
                 return instance;
             }
         }
-
-
-
         private ConsoleContent ConsoleContent;
         public Endpoint AttachedSystem { private set; get; }
         private Endpoint ConnectingFrom;
@@ -127,6 +124,12 @@ namespace Game.Core.Console
             {
                 ConsoleContent.ConsoleOutput.Add(ex.Message);
             }
+        }
+
+        internal void StopCurrentProgram()
+        {
+            Global.StopCurrentProgram = true;
+            ConsoleContent.ConsoleOutput.Add("^C");
         }
 
         public void ParseCommand(string command, string prefix)

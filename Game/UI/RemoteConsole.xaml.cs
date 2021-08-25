@@ -111,6 +111,12 @@ namespace Game.UI
             this.InputBlock.Text = string.Empty;
         }
 
+        public void AddOutput(string output)
+        {
+            ConsoleContent.ConsoleOutput.Add(output);
+            Scroller.ScrollToBottom();
+        }
+
         public void ShowExternalInput(string input)
         {
             this.InputBlock.Text = input;
@@ -119,6 +125,18 @@ namespace Game.UI
         public void SetCaretToLast(TextBox t)
         {
             t.CaretIndex = t.Text.Length;
+        }
+
+        private void Page_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                if(e.Key == Key.C)
+                {
+                    CommandParser.StopCurrentProgram();
+                }
+            }
+            
         }
     }
 

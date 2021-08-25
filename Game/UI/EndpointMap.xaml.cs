@@ -118,6 +118,7 @@ namespace Game.UI
                 Map.Children.Add(btn);
                 Canvas.SetLeft(txb, x);
                 Canvas.SetTop(txb, y-6);
+                Canvas.SetZIndex(txb, int.MinValue);
                 Map.Children.Add(txb);
                 if (e.isHidden)
                 {
