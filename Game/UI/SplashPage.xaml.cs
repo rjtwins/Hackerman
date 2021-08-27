@@ -53,8 +53,6 @@ namespace Game.UI
             this.MemoryTestTextBlock.Dispatcher.Invoke(() => { this.Stage3.Visibility = Visibility.Visible; });
             System.Threading.Thread.Sleep(500);
             this.MemoryTestTextBlock.Dispatcher.Invoke(() => { this.Stage4.Visibility = Visibility.Visible; });
-
-            
         }
     }
 }

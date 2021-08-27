@@ -302,22 +302,30 @@ namespace Game.Core.Console
             {
                 Global.Bounce.AddBounce(commandBody);
             }
-            (Endpoint from, Endpoint too, bool Succes) = Global.Bounce.MakeConnection();
+            (Endpoint from, Endpoint too, bool Succes) = Global.Bounce.SetupDoBouncePath();
             if (!Succes)
             {
                 return;
             }
+            if (!too.AllowsConnection(from))
+            {
+                this.ConsoleContent.ConsoleOutput.Add(too.IPAddress + " Does not allow a connection from " + from.IPAddress + "\n");
+                return;
+            }
+            if (from == null || too == null)
+            {
+                this.ConsoleContent.ConsoleOutput.Add("Invalid address.\n");
+                return;
+            }
 
+            Global.EndPointMap.DisplayConnection();
             //Form soft connection for login
             this.ConnectingFrom = from;
             this.AttachedSystem = too;
             Global.RemoteSystem = too;
-            Global.RemoteSystem.SoftConnection = true; ;
+            Global.RemoteSystem.SoftConnection = true;
             this.GivingUsername = true;
-            if (from == null || too == null)
-            {
-                this.ConsoleContent.ConsoleOutput.Add("Invalid address.\n");
-            }
+
             this.ConsoleContent.ConsoleOutput.Add("Connected to: " + too.IPAddress + "\nPlease input username and password.\n");
             this.ConsoleContent.ConsolePrefix = "LOGIN USERNAME:";
         }

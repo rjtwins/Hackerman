@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Game.Core.Endpoints
 {
@@ -50,7 +51,7 @@ namespace Game.Core.Endpoints
         ///
         /// </summary>
         /// <returns>Endpoint from, Endpoint too, bool succes</returns>
-        internal (Endpoint, Endpoint, bool) MakeConnection()
+        internal (Endpoint, Endpoint, bool) SetupDoBouncePath()
         {
             Endpoint from = null;
             Endpoint too = null;
@@ -63,7 +64,6 @@ namespace Game.Core.Endpoints
 
             if (BounceList.Count == 1)
             {
-                Global.EndPointMap.DisplayConnection();
                 return (Global.StartEndPoint, BounceList[0], true);
             }
             BounceList[0].BounceTo(Global.StartEndPoint, BounceList[1]);
@@ -72,7 +72,6 @@ namespace Game.Core.Endpoints
             {
                 from = BounceList[0];
                 too = BounceList[1];
-                Global.EndPointMap.DisplayConnection();
                 return (from, too, true);
             }
 
@@ -80,12 +79,11 @@ namespace Game.Core.Endpoints
             for (int i = 1; i < BounceList.Count - 1; i++)
             {
                 from = BounceList[i - 1];
-                too = BounceList[i + 1];
                 current = BounceList[i];
+                too = BounceList[i + 1];
                 current.BounceTo(from, too);
             }
-            Global.EndPointMap.DisplayConnection();
-            return (from, too, true);
+            return (current, too, true);
         }
     }
 }

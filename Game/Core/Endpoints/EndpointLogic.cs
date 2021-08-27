@@ -1,6 +1,7 @@
 ﻿using Game.Core.FileSystem;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace Game.Core.Endpoints
         public enum EndpointMonitor { NONE, LVL1, LVL2, LVL3, LVL4 }
         public enum EndpointFirewall { NONE, LVL1, LVL2, LVL3, LVL4 }
         public enum EndpointState { ONLINE, SHUTTINGDOWN, STARTING, CRASHED, DESTROYED1, DESTROYED2, DESTROYED3 };
+
+        public List<Endpoint> AllowedConnections = new();
 
         public bool MonitorActive = false;
         public bool FirewallActive = false;
@@ -98,9 +101,7 @@ namespace Game.Core.Endpoints
                     GenerateRandomUsers(2);
                     this.name = this.Owner.Name + "'s Desktop";
                     //TODO: Set back to actual values
-                    this.isHidden = false;
-                    this.MonitorActive = true;
-                    this.Monitor = EndpointMonitor.LVL1;
+                    this.isHidden = true;
                     break;
 
                 case EndpointType.EXTERNALACCES:
@@ -111,7 +112,9 @@ namespace Game.Core.Endpoints
                 case EndpointType.INTERNAL:
                     GenerateRandomUsers(10);
                     this.name = this.Owner.Name + " Internal Services";
-                    this.isHidden = true;
+                    this.isHidden = false;
+                    this.MonitorActive = false;
+                    this.Monitor = EndpointMonitor.LVL1;
                     break;
 
                 case EndpointType.BANK:
@@ -144,7 +147,6 @@ namespace Game.Core.Endpoints
                 this.AddUser(UTILS.PickRandomPerson(), UTILS.PickRandomPassword(), AccessLevel.ADMIN);
             }
         }
-
         private void GerateRootUsers(int nr)
         {
             for (int i = 0; i < nr; i++)
@@ -152,7 +154,6 @@ namespace Game.Core.Endpoints
                 this.AddUser(UTILS.PickRandomPerson(), UTILS.PickRandomPassword(), AccessLevel.ROOT);
             }
         }
-
         private void GenerateRandomUsers(int nr)
         {
             for (int i = 0; i < nr; i++)
@@ -160,7 +161,6 @@ namespace Game.Core.Endpoints
                 this.AddUser(UTILS.PickRandomPerson(), UTILS.PickRandomPassword(), AccessLevel.USER);
             }
         }
-
         internal string GetPassword(string user)
         {
             foreach (var person in UsernamePasswordDict.Keys)
@@ -181,7 +181,6 @@ namespace Game.Core.Endpoints
             }
             return string.Empty;
         }
-
         internal Person GetRandomUser(bool noSystemUsers = true)
         {
             int nrUsers = this.UsernamePasswordDict.Keys.Count;
@@ -336,6 +335,26 @@ namespace Game.Core.Endpoints
             throw new NotImplementedException();
         }
 
+        internal bool AllowsConnection(Endpoint from)
+        {
+            Debug.WriteLine("Connecting from: " + from.name);
+            Debug.WriteLine("AllowedConnections: ");
+            foreach (Endpoint e in AllowedConnections)
+            {
+                Debug.WriteLine(e.name);
+            }
+
+            if(AllowedConnections.Count == 0)
+            {
+                return true;
+            }
+            if (AllowedConnections.Contains(from))
+            {
+                return true;
+            }
+            return false;
+        }
+
         internal string LogInToo(string username, string password, Endpoint from, bool fromProgram = false)
         {
             if ((int)State > (int)EndpointState.STARTING)
@@ -471,8 +490,11 @@ namespace Game.Core.Endpoints
         private void shutdown()
         {
             State = EndpointState.SHUTTINGDOWN;
-            Global.RemoteConsole.CommandParser.ExitDisconnect();
-            Discconect();
+            if(Global.RemoteSystem == this)
+            {
+                Global.RemoteConsole.CommandParser.ExitDisconnect();
+                Discconect();
+            }
         }
     }
 }

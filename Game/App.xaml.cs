@@ -8,6 +8,7 @@ using Game.Core.Mission;
 using Game.Core.World;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Game
@@ -17,6 +18,7 @@ namespace Game
     /// </summary>
     public partial class App : Application
     {
+        private bool SplashFinished = false;
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -82,11 +84,20 @@ namespace Game
                 .EventVoid(PRINTDEBUG)
                 .RegisterWithVoid();
 
+            Task.Factory.StartNew(() => 
+            {
+                while (!SplashFinished)
+                {
+                    System.Threading.Thread.Sleep(250);
+                }
+                Global.App.Dispatcher.Invoke(() => { Global.MainWindow.ShowGameScreen(); });
+                
+            });
         }
 
         internal void FinshedPlaySetup()
         {
-            throw new NotImplementedException();
+            SplashFinished = true;
         }
 
         public void PRINTDEBUG()

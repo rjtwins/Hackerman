@@ -65,17 +65,23 @@ namespace Game.Core.Endpoints
             for (int i = 0; i < 20; i++)
             {
                 Owner owner = UTILS.PickRandomCompany();
-                Endpoint e = new Endpoint(owner, EndpointType.EXTERNALACCES);
-                (e.x, e.y) = GenerateCoordinate();
-                EndpointList.Add(e);
+                Endpoint external = new Endpoint(owner, EndpointType.EXTERNALACCES);
+                (external.x, external.y) = GenerateCoordinate();
+                EndpointList.Add(external);
 
-                e = new Endpoint(owner, EndpointType.INTERNAL);
-                (e.x, e.y) = GenerateCoordinate();
-                EndpointList.Add(e);
+                Endpoint inter = new Endpoint(owner, EndpointType.INTERNAL);
+                (inter.x, inter.y) = GenerateCoordinate();
+                EndpointList.Add(inter);
 
-                e = new Endpoint(owner, EndpointType.DATABASE);
-                (e.x, e.y) = GenerateCoordinate();
-                EndpointList.Add(e);
+                Endpoint database = new Endpoint(owner, EndpointType.DATABASE);
+                (database.x, database.y) = GenerateCoordinate();
+                EndpointList.Add(database);
+
+                inter.AllowedConnections.Add(database);
+                inter.AllowedConnections.Add(external);
+
+                database.AllowedConnections.Add(inter);
+                database.AllowedConnections.Add(external);
             }
 
             //Generate 5 bank machines:

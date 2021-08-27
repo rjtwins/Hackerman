@@ -13,6 +13,9 @@ namespace Game.UI
     public partial class MainWindow : System.Windows.Window
     {
         private List<ProgramWindow> ContentControlElements = new();
+        private bool SkipedSplash = false;
+        private bool PlayingSetup = true;
+
 
         public MainWindow()
         {
@@ -32,27 +35,41 @@ namespace Game.UI
             ContentControlElements.Add(MapControl);
             ContentControlElements.Add(IRC);
             ContentControlElements.Add(SystemTime);
+
+            this.FullWindowFrame.Visibility = Visibility.Collapsed;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Task.Factory.StartNew(() => { PlaySetup(); });
-            ShowGameScreen();
+        }
+
+        public void SkipPlaySetup()
+        {
+            this.SkipedSplash = true;
+            FinshedPlaySetup();
         }
 
         private void PlaySetup()
         {
-            
             Global.App.Dispatcher.Invoke(() => { this.FullWindowFrame.Navigate(Global.SplashPage); });
             System.Threading.Thread.Sleep(7000);
             Global.App.Dispatcher.Invoke(() => { this.FullWindowFrame.Navigate(Global.SplashPage2); });
             System.Threading.Thread.Sleep(3000);
-            Global.App.Dispatcher.Invoke(() => { this.FinshedPlaySetup(); });
+            
+            Global.App.Dispatcher.Invoke(() => 
+            {
+                if (!SkipedSplash)
+                {
+                    this.FinshedPlaySetup();
+                }
+            });
         }
 
         private void FinshedPlaySetup()
         {
-            this.FullWindowFrame.Visibility = Visibility.Collapsed;
+            PlayingSetup = false;
+            Global.App.FinshedPlaySetup();
         }
 
         internal void UpdateDateTime()
@@ -278,6 +295,13 @@ namespace Game.UI
 
         private void Window_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            //Skip splash if playing
+            if (PlayingSetup)
+            {
+                SkipPlaySetup();
+            }
+
+
             Control c = e.Source as Control;
             if (c == null)
             {
@@ -302,6 +326,14 @@ namespace Game.UI
                 }
                 programWindow.Style = (Style)FindResource("ProgramWindowActiveStyle");
                 SetOntop(programWindow);
+            }
+        }
+
+        private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (PlayingSetup)
+            {
+                SkipPlaySetup();
             }
         }
     }

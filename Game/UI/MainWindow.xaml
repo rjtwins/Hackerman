@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Game" xmlns:s="clr-namespace:Game.UI" xmlns:Sys="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
-        Title="Hackerman" Height="600" Width="900" WindowState="Maximized" WindowStyle="ThreeDBorderWindow" Visibility="Visible" Background="#FF30363D" Foreground="#FFD6DFE9" FontFamily="pack://application:,,,/Fonts/#W95FA" WindowStartupLocation="CenterScreen" PreviewMouseUp="Window_PreviewMouseUp">
+        Title="Hackerman" Height="600" Width="900" WindowState="Maximized" WindowStyle="ThreeDBorderWindow" Visibility="Visible" Background="#FF30363D" Foreground="#FFD6DFE9" FontFamily="pack://application:,,,/Fonts/#W95FA" WindowStartupLocation="CenterScreen" PreviewMouseUp="Window_PreviewMouseUp" PreviewKeyDown="Window_PreviewKeyDown">
     <Grid Background="Teal" TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
