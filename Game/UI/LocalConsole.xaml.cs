@@ -1,10 +1,5 @@
 ﻿using Game.Core.Console;
-using Game.Core.Endpoints;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -83,8 +78,8 @@ namespace Game.UI
             }
             if (e.Key == Key.Down)
             {
-                Debug.WriteLine(e.Key);
-                Debug.WriteLine(historyIndex);
+                //Debug.WriteLine(e.Key);
+                //Debug.WriteLine(historyIndex);
 
                 if (ConsoleContent.History.Count == 0)
                 {
@@ -103,6 +98,6 @@ namespace Game.UI
         public void SetCaretToLast(TextBox t)
         {
             t.CaretIndex = t.Text.Length;
-        }  
+        }
     }
 }

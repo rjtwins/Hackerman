@@ -12,21 +12,21 @@ namespace Game.UI
 
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Control designerItem = this.DataContext as Control;
+            ProgramWindow programWindow = (ProgramWindow)this.DataContext;
 
-            if (designerItem == null)
+            if (programWindow == null)
             {
                 return;
             }
-            if ((bool)designerItem.Resources["Maxed"])
+            if (programWindow.maxed)
             {
                 return;
             }
-            double left = Canvas.GetLeft(designerItem);
-            double top = Canvas.GetTop(designerItem);
+            double left = Canvas.GetLeft(programWindow);
+            double top = Canvas.GetTop(programWindow);
 
-            Canvas.SetLeft(designerItem, left + e.HorizontalChange);
-            Canvas.SetTop(designerItem, top + e.VerticalChange);
+            Canvas.SetLeft(programWindow, left + e.HorizontalChange);
+            Canvas.SetTop(programWindow, top + e.VerticalChange);
         }
     }
 }

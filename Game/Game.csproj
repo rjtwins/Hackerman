@@ -24,6 +24,7 @@
     <None Remove="Fonts\joystix monospace.ttf" />
     <None Remove="Fonts\Microsoft Sans Serif.ttf" />
     <None Remove="Fonts\Nintendo-DS-BIOS.ttf" />
+    <None Remove="Fonts\Perfect DOS VGA 437 Win.ttf" />
     <None Remove="Fonts\Pixel Sans Serif.ttf" />
     <None Remove="Fonts\pixelmix.ttf" />
     <None Remove="Fonts\PixelOperator.ttf" />
@@ -33,6 +34,9 @@
     <None Remove="Icons\OtherIcons\005-chat-1.png" />
     <None Remove="Icons\OtherIcons\014-programing-1.png" />
     <None Remove="Icons\OtherIcons\015-configuration.png" />
+    <None Remove="Icons\OtherIcons\ASoftLog.png" />
+    <None Remove="Icons\OtherIcons\ASoftPixel.png" />
+    <None Remove="Icons\OtherIcons\AsoftYelloLetterLogo.png" />
     <None Remove="Icons\OtherIcons\side-menu.png" />
     <None Remove="Icons\OtherIcons\time-management.png" />
     <None Remove="Icons\OtherIcons\wall-clock.png" />
@@ -47,7 +51,10 @@
     <None Remove="Icons\WorldMapDensity.png" />
     <None Remove="Icons\WorldMapPixelHighRes.png" />
     <None Remove="Icons\WorldMapPixels.jpg" />
+    <None Remove="Misc\banks.txt" />
+    <None Remove="Misc\faux_id_fake_companies.csv" />
     <None Remove="Misc\names.txt" />
+    <None Remove="Misc\persons.csv" />
     <None Remove="Misc\top100000.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -66,6 +73,16 @@
     <Content Include="Core\Mission\Dictionaries\smallNames.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Misc\banks.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Misc\persons.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Fonts\Perfect DOS VGA 437 Win.ttf" />
+    <Resource Include="Icons\OtherIcons\ASoftLog.png" />
+    <Resource Include="Icons\OtherIcons\ASoftPixel.png" />
+    <Resource Include="Icons\OtherIcons\AsoftYelloLetterLogo.png" />
     <Resource Include="Icons\OtherIcons\time-management.png" />
     <Resource Include="Icons\OtherIcons\wall-clock.png" />
     <Content Include="Misc\names.txt">
@@ -102,6 +119,9 @@
     <Resource Include="Icons\WorldMapDensity.png" />
     <Resource Include="Icons\WorldMapPixelHighRes.png" />
     <Resource Include="Icons\WorldMapPixels.jpg" />
+    <Content Include="Misc\faux_id_fake_companies.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />

@@ -5,10 +5,10 @@ using Game.Core.Dialog;
 using Game.Core.Endpoints;
 using Game.Core.Mission;
 using Game.Core.Mission.MissionTypes;
+using Game.Core.World;
 using Game.UI;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -17,8 +17,13 @@ namespace Game
     public static class Global
     {
         //TODO rever to singeltons and public statics
+        public static Random Rand = new Random();
+
         public static App App;
         public static GameState GameState;
+
+        public static SplashPage SplashPage;
+        public static SplashPage2 SplashPage2;
 
         public static EndpointMap EndPointMap;
         public static MainWindow MainWindow;
@@ -43,20 +48,19 @@ namespace Game
         public static ActiveTraceTracker ActiveTraceTracker;
         public static PassiveTraceTracker PassiveTraceTracker;
 
-        //CONFIG:
-        public static readonly int RandomUsersPerEndpoint = 3;
-
         public static bool StopCurrentProgram { get; internal set; }
     }
-    public enum EndpointType 
-    { 
+
+    public enum EndpointType
+    {
+        PLAYER,
         PERSONAL,
-        EXTERNALACCES, 
+        EXTERNALACCES,
         INTERNAL,
         BANK,
         MEDIA,
-        DATABASE, 
-        GOVERMENT 
+        DATABASE,
+        GOVERMENT
     }
 
     public enum MissionType

@@ -34,5 +34,10 @@ namespace Game.Core.FileSystem
         {
             return (Program)this.Clone();
         }
+
+        internal void RunProgram()
+        {
+            //
+        }
     }
 }

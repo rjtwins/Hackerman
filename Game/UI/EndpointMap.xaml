@@ -12,20 +12,22 @@
     </Page.Resources>
     <Grid Background="Silver" Margin="0,0,0,0" ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid Margin="0,0,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <ContentControl Style="{StaticResource ControllBox}" Grid.Column="0" Grid.ColumnSpan="1" Uid="IP Status" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ContentControl Style="{StaticResource ControllBox}" Grid.Column="0" Grid.ColumnSpan="1"
+                            Uid="Hostname"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="81">
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,0,7,0">
-                    <RadioButton Name="RadioButtonShow" Margin="0,5,0,5" Checked="RadioButtonShow_Checked">
+                    <RadioButton Name="RadioButtonShow" Margin="0,6,0,3" Checked="RadioButtonShow_Checked">
                         Show
                     </RadioButton>
                     <RadioButton Name="RadioButtonHide" Margin="0,5,0,5" Checked="RadioButtonHide_Checked">
@@ -35,18 +37,17 @@
             </ContentControl>
             <ContentControl Style="{StaticResource ControllBox}" Grid.Column="1" Grid.ColumnSpan="1" Uid="Filter" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0,10,0" TextChanged="TextBox_TextChanged">
-
                 </TextBox>
             </ContentControl>
         </Grid>
-        <ContentControl Style="{StaticResource InlayedBorder}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+        <ContentControl Style="{StaticResource InlayedBorder}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ContentControl.Background>
-                <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png"/>
+                <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png" />
             </ContentControl.Background>
             <Grid x:Name="MapBorder" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-1,0,0,0" MinWidth="1" MinHeight="1"
           ClipToBounds="True">
                 <Grid.Background>
-                    <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png"/>
+                    <ImageBrush ImageSource="/Icons/WorldMapPixelHighRes.png" />
                 </Grid.Background>
                 <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Fill" Panel.ZIndex="10">
                     <Canvas TextElement.FontSize="5" x:Name ="Map"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="498" Height="257">

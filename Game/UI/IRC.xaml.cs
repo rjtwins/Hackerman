@@ -1,40 +1,31 @@
-﻿using Game.Core.Console;
-using Game.Core.Dialog;
-using Game.Core.Mission;
-using Game.Core.Mission.MissionTypes;
+﻿using Game.Core.Mission.MissionTypes;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Game.UI
 {
     /// <summary>
     /// Interaction logic for IRC.xaml
     /// </summary>
-    public partial class IRC : Page , INotifyPropertyChanged
+    public partial class IRC : Page, INotifyPropertyChanged
     {
         //TODO seperate command from UI.
         public string Prefix { set; get; }
+
         //private ObservableCollection<StackPanel> iRCOutput = new ObservableCollection<StackPanel>();
 
         public IRCChannel CurrentChannel;
         public Dictionary<string, IRCChannel> IDChannelDict = new();
-        Dictionary<string, Func<string, string>> CommandDict = new();
-        Dictionary<Guid, StackPanel> GuidJobListingDict = new();
+        private Dictionary<string, Func<string, string>> CommandDict = new();
+        private Dictionary<Guid, StackPanel> GuidJobListingDict = new();
+
+        private bool loaded = false;
 
         public IRC()
         {
@@ -49,14 +40,14 @@ namespace Game.UI
         private string DCC(string commandBody)
         {
             string[] splitCommandBody = commandBody.Split(' ');
-            if(splitCommandBody.Length > 2 || splitCommandBody.Length == 0)
+            if (splitCommandBody.Length > 2 || splitCommandBody.Length == 0)
             {
                 return "DCC invalid number of arguments, use DDC command filename";
             }
             //Get or Send commands
             if (commandBody.StartsWith("Send"))
             {
-                if(Global.StartEndPoint.GetFile(null, splitCommandBody[1]) == null)
+                if (Global.StartEndPoint.GetFile(null, splitCommandBody[1]) == null)
                 {
                     return "DCC file not found.";
                 }
@@ -66,8 +57,10 @@ namespace Game.UI
                     {
                         case MissionType.STEAL:
                             return "This is not the file we requested.";
+
                         case MissionType.STEALMULTIPLE:
                             return "This is not a file we requested.";
+
                         default:
                             return "This is not a file we requested.";
                     }
@@ -91,13 +84,18 @@ namespace Game.UI
 
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
+            if (loaded)
+            {
+                return;
+            }
+            loaded = true;
             AddHiddenChannel("Lobby");
             SetChannel("Lobby");
 
             this.IRCPrefix = Global.GameState.UserName;
             InputBlock.KeyDown += IRC_KeyDown;
             InputBlock.Focus();
-            
+
             AddChannel("jobs");
         }
 
@@ -121,7 +119,6 @@ namespace Game.UI
                 {
                     AddMessage(channelName, sender, message);
                 });
-
             }
             catch (System.Threading.Tasks.TaskCanceledException)
             {
@@ -164,7 +161,7 @@ namespace Game.UI
             stp.HorizontalAlignment = HorizontalAlignment.Stretch;
             stp.Orientation = Orientation.Horizontal;
             System.Drawing.Color senderColor;
-            
+
             if (!IDChannelDict.TryGetValue(channelName, out IRCChannel toWriteTo))
             {
                 return stp;
@@ -181,7 +178,6 @@ namespace Game.UI
             }
             nameBlock.Foreground = new SolidColorBrush(Color.FromArgb(senderColor.A, senderColor.R, senderColor.G, senderColor.B));
 
-
             if (IsCurrentChannel(toWriteTo))
             {
                 IRCOutput.Children.Add(stp);
@@ -191,10 +187,9 @@ namespace Game.UI
             toWriteTo.ChannelNameTextBlock.Foreground = Brushes.Red;
             toWriteTo.ChannelNameTextBlock.Background = Brushes.Black;
 
-
             bool IsCurrentChannel(IRCChannel toWriteTo)
             {
-                if(this.CurrentChannel == null)
+                if (this.CurrentChannel == null)
                 {
                     return false;
                 }
@@ -223,7 +218,7 @@ namespace Game.UI
                     return;
                 }
                 string result = Parse(InputBlock.Text);
-                if(result != string.Empty)
+                if (result != string.Empty)
                 {
                     StackPanel stp = new StackPanel();
                     TextBlock nameBlock = new TextBlock();
@@ -318,21 +313,26 @@ namespace Game.UI
 
         public void RemoveChannel(string channelName)
         {
-            if(this.IDChannelDict.TryGetValue(channelName, out IRCChannel iRCChannel))
+            if (this.IDChannelDict.TryGetValue(channelName, out IRCChannel iRCChannel))
             {
-                if(channelName == CurrentChannel.ChannelName)
+                if(CurrentChannel != null)
                 {
-                    SetChannel("Lobby");
+                    if (channelName == CurrentChannel.ChannelName)
+                    {
+                        SetChannel("Lobby");
+                    }
                 }
                 this.Channels.Children.Remove(iRCChannel.ChannelNameTextBlock);
                 this.IDChannelDict.Remove(channelName);
             }
         }
+
         public void RemoveJobListing(MissionTemplate mission)
         {
             this.RemoveChannel(mission.MissionChannel);
             this.IDChannelDict["jobs"].Messages.Remove(this.GuidJobListingDict[mission.id]);
         }
+
         public void AddJobListing(MissionTemplate mission)
         {
             this.AddHiddenChannel(mission.IRCChannel);
@@ -344,7 +344,7 @@ namespace Game.UI
 
         public string LeaveChannel(string input)
         {
-            if(CurrentChannel.ChannelName == "Lobby")
+            if (CurrentChannel.ChannelName == "Lobby")
             {
                 return string.Empty;
             }
@@ -355,24 +355,23 @@ namespace Game.UI
         {
             string result = string.Empty;
 
-            if(int.TryParse(text, out int choise))
+            if (int.TryParse(text, out int choise))
             {
                 CurrentChannel.DialogResolver.Next(choise);
                 return string.Empty;
             }
 
-
             var SplitText = text.Split(' ');
             string commandBody = string.Empty;
-            if(SplitText.Length == 0)
+            if (SplitText.Length == 0)
             {
                 return result;
             }
-            if(!CommandDict.TryGetValue(SplitText[0], out Func<string , string> toRun))
+            if (!CommandDict.TryGetValue(SplitText[0], out Func<string, string> toRun))
             {
                 return "Command " + "\" " + SplitText[0] + "\" not recognized.\n";
             }
-            if(SplitText.Length > 1)
+            if (SplitText.Length > 1)
             {
                 commandBody = string.Join(' ', SplitText[1..SplitText.Length]);
             }
@@ -411,6 +410,7 @@ namespace Game.UI
         //}
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

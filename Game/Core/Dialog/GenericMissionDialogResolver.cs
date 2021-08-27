@@ -1,13 +1,9 @@
-﻿using Spin;
+﻿using Game.Core.Mission.MissionTypes;
+using Spin;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Game.Core.Mission;
-using Game.Core.Events;
-using Game.Core.Mission.MissionTypes;
 
 namespace Game.Core.Dialog
 {
@@ -15,25 +11,26 @@ namespace Game.Core.Dialog
     {
         //TODO: Make the dialog show the target ip and name
         //TODO: Look into registering commands with the sequence to check for things instead of relying on flags.
-        Sequence Sequence;
-        VariableRef _ChoiseVariable = new VariableRef("choise");
-        VariableRef _EndOfConvoVariable = new VariableRef("endOfConvo");
-        VariableRef _DialogResult = new VariableRef("result");
-        VariableRef _Contact = new VariableRef("contact");
-        VariableRef _Target = new VariableRef("target");
-        VariableRef _Reward = new VariableRef("reward");
-        VariableRef _MissionCompleted = new VariableRef("missionCompleted");
-        VariableRef _MissionAccepted = new VariableRef("missionAccepted");
-        VariableRef _MissionRejected = new VariableRef("missionRejected");
-        VariableRef _CheckMissionCompleted = new VariableRef("checkMissionCompleted");
-        VariableRef _TargetIp = new VariableRef("targetIp");
-        VariableRef _FilesToSteal = new VariableRef("filesToSteal");
+        private Sequence Sequence;
+
+        private VariableRef _ChoiseVariable = new VariableRef("choise");
+        private VariableRef _EndOfConvoVariable = new VariableRef("endOfConvo");
+        private VariableRef _DialogResult = new VariableRef("result");
+        private VariableRef _Contact = new VariableRef("contact");
+        private VariableRef _Target = new VariableRef("target");
+        private VariableRef _Reward = new VariableRef("reward");
+        private VariableRef _MissionCompleted = new VariableRef("missionCompleted");
+        private VariableRef _MissionAccepted = new VariableRef("missionAccepted");
+        private VariableRef _MissionRejected = new VariableRef("missionRejected");
+        private VariableRef _CheckMissionCompleted = new VariableRef("checkMissionCompleted");
+        private VariableRef _TargetIp = new VariableRef("targetIp");
+        private VariableRef _FilesToSteal = new VariableRef("filesToSteal");
 
         public int DialogResult = 99;
-        string Contact = string.Empty;
+        private string Contact = string.Empty;
 
-        string PreviousLineName = string.Empty;
-        List<string> History = new List<string>();
+        private string PreviousLineName = string.Empty;
+        private List<string> History = new List<string>();
         public int Choise;
         public bool EndOfConvo = false;
         private string AttachedChannelName;
@@ -76,7 +73,6 @@ namespace Game.Core.Dialog
         //    this.Sequence.SetVariable(_Contact, contact);
         //}
 
-
         public void StartFromLine(string Line)
         {
             Sequence.SetNextLine(Line);
@@ -95,7 +91,6 @@ namespace Game.Core.Dialog
         /// <param name="startIndex"></param>
         private void Parse(Sequence Sequence, int startIndex)
         {
-
             string sString = string.Empty;
             try
             {
@@ -135,13 +130,13 @@ namespace Game.Core.Dialog
                     {
                         result.TrimStart();
                     }
-                    if(!string.IsNullOrEmpty(result) && !string.IsNullOrWhiteSpace(result))
+                    if (!string.IsNullOrEmpty(result) && !string.IsNullOrWhiteSpace(result))
                     {
                         Global.IRCWindow.AddMessageFromThread(this.AttachedChannelName, user, result);
                         result = string.Empty;
                     }
                     s = s.Remove(0, 1);
-                    if(s.Contains("PLAYER"))
+                    if (s.Contains("PLAYER"))
                     {
                         s = Global.GameState.UserName;
                     }
@@ -217,7 +212,7 @@ namespace Game.Core.Dialog
             if ((bool)Sequence.GetVariable(_EndOfConvoVariable))
             {
                 this.EndOfConvo = true;
-                
+
                 return;
             }
 

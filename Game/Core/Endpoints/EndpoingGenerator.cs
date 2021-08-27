@@ -1,6 +1,7 @@
 ﻿using Game.Properties;
 using System;
 using System.Collections.Generic;
+using static Game.UTILS;
 
 namespace Game.Core.Endpoints
 {
@@ -17,9 +18,9 @@ namespace Game.Core.Endpoints
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public Endpoint AddEndpoint(int x, int y)
+        public Endpoint MakeEndpoint(int x, int y, Owner owner, EndpointType endpointType)
         {
-            Endpoint e = new Endpoint();
+            Endpoint e = new Endpoint(owner, endpointType);
 
             e.x = x;
             e.y = y;
@@ -39,23 +40,53 @@ namespace Game.Core.Endpoints
         /// Add Endpoint with random coordinates.
         /// </summary>
         /// <returns></returns>
-        public Endpoint AddEndpoint()
+        public Endpoint MakeEndpoint(Owner owner, EndpointType endpointType)
         {
-            Endpoint e = new Endpoint();
+            Endpoint e = new Endpoint(owner, endpointType);
             (e.x, e.y) = GenerateCoordinate();
             return e;
         }
 
-        public List<Endpoint> GenerateEndpoints(int number)
+        public List<Endpoint> GenerateEndpoints()
         {
             this.EndpointCoordinates = UTILS.getBoolBitmap(20, Resources.WorldMapDensity);
             List<Endpoint> EndpointList = new List<Endpoint>();
-            for (int i = 0; i < number; i++)
+
+            //Generate 30 personal machines:
+            for (int i = 0; i < 100; i++)
             {
-                Endpoint e = new Endpoint();
+                Owner owner = UTILS.PickRandomPerson();
+                Endpoint e = new Endpoint(owner, EndpointType.PERSONAL);
                 (e.x, e.y) = GenerateCoordinate();
                 EndpointList.Add(e);
             }
+
+            //Generate 20 companies machines:
+            for (int i = 0; i < 20; i++)
+            {
+                Owner owner = UTILS.PickRandomCompany();
+                Endpoint e = new Endpoint(owner, EndpointType.EXTERNALACCES);
+                (e.x, e.y) = GenerateCoordinate();
+                EndpointList.Add(e);
+
+                e = new Endpoint(owner, EndpointType.INTERNAL);
+                (e.x, e.y) = GenerateCoordinate();
+                EndpointList.Add(e);
+
+                e = new Endpoint(owner, EndpointType.DATABASE);
+                (e.x, e.y) = GenerateCoordinate();
+                EndpointList.Add(e);
+            }
+
+            //Generate 5 bank machines:
+            for (int i = 0; i < 5; i++)
+            {
+                Owner owner = UTILS.PickRandomBank();
+                Endpoint e = new Endpoint(owner, EndpointType.BANK);
+                (e.x, e.y) = GenerateCoordinate();
+                EndpointList.Add(e);
+            }
+
             EndpointList.Add(GenerateStartEndpoint());
             return EndpointList;
         }
@@ -72,38 +103,37 @@ namespace Game.Core.Endpoints
                 //var range = EndpointCoordinates[new Range(x-5, x+5), new Range(y-5, y+5)];
                 return GenerateCoordinate();
             }
-
-            ////Proximity check
-            //bool reject = false;
-            //for (int xmin = x - d; xmin < x + d; xmin++)
-            //{
-            //    if (xmin < 0 || xmin >= XMax)
-            //    {
-            //        continue;
-            //    }
-            //    for (int ymin = y - d; ymin < y + d; ymin++)
-            //    {
-            //        if (ymin < 0 || ymin >= YMax)
-            //        {
-            //            continue;
-            //        }
-            //        if (EndpointCoordinates[xmin, ymin] == 1)
-            //        {
-            //            reject = true;
-            //            break;
-            //        }
-            //        ymin++;
-            //    }
-            //    if (reject)
-            //    {
-            //        break;
-            //    }
-            //    xmin++;
-            //}
-            //if (reject)
-            //{
-            //    (x, y) = GenerateCoordinate();
-            //}
+            //Proximity check
+            bool reject = false;
+            for (int xmin = x - d; xmin < x + d; xmin++)
+            {
+                if (xmin < 0 || xmin >= XMax)
+                {
+                    continue;
+                }
+                for (int ymin = y - d; ymin < y + d; ymin++)
+                {
+                    if (ymin < 0 || ymin >= YMax)
+                    {
+                        continue;
+                    }
+                    if (EndpointCoordinates[xmin, ymin] == 1)
+                    {
+                        reject = true;
+                        break;
+                    }
+                    ymin++;
+                }
+                if (reject)
+                {
+                    break;
+                }
+                xmin++;
+            }
+            if (reject)
+            {
+                (x, y) = GenerateCoordinate();
+            }
 
             EndpointCoordinates[x, y] = 1;
             return (x, y);

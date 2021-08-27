@@ -118,6 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="beepbeep" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\beepbeep.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cardlockopen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cardlockopen.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="negativebeepbeep" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\negativebeepbeep.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="positivebeep" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\positivebeep.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="startup1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\startup1.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="systembeep" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\systembeep.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="WorldMapDensity" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\WorldMapDensity.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

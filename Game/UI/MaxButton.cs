@@ -1,10 +1,8 @@
-﻿using System.Diagnostics;
-using System.Windows.Controls;
-using System.Windows.Media;
+﻿using System.Windows.Controls;
 
 namespace Game.UI
 {
-    internal class MaxButton : Button
+    public class MaxButton : Button
     {
         private const string MaxText = "◇";
         private const string WindowFyText = "◈";
@@ -13,9 +11,8 @@ namespace Game.UI
         public MaxButton()
         {
             this.Click += MaxButton_Click;
-            Global.MainWindow.MainCanvas.SizeChanged += MainCanvas_SizeChanged;
-            //this.BorderBrush = Brushes.Transparent;
-            //this.Background = Brushes.Transparent;
+            this.Loaded += MaxButton_Loaded;
+            //Global.MainWindow.MainCanvas.SizeChanged += MainCanvas_SizeChanged;
             ButtonText = new TextBlock();
             ButtonText.Text = MaxText;
             ButtonText.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
@@ -23,55 +20,67 @@ namespace Game.UI
             this.AddChild(ButtonText);
         }
 
+        private void MaxButton_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (this.DataContext.GetType() == typeof(ProgramWindowNoButtons))
+            {
+                this.Visibility = System.Windows.Visibility.Collapsed;
+                (this.Parent as Control).Visibility = System.Windows.Visibility.Collapsed;
+            }
+        }
+
         private void MainCanvas_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
         {
-            Control ContextedControl = this.DataContext as Control;
-            if (ContextedControl == null)
+            Control programWindow = (Control)this.DataContext;
+            if (programWindow == null)
             {
                 return;
             }
-            bool Maxed = (bool)ContextedControl.Resources["Maxed"];
+            bool Maxed = false;//programWindow.maxed;
 
             if (Maxed)
             {
-                ContextedControl.Width = Global.MainWindow.MainCanvas.ActualWidth;
-                ContextedControl.Height = Global.MainWindow.MainCanvas.ActualHeight;
-                Canvas.SetLeft(ContextedControl, 0);
-                Canvas.SetTop(ContextedControl, 0);
+                programWindow.Width = Global.MainWindow.MainCanvas.ActualWidth;
+                programWindow.Height = Global.MainWindow.MainCanvas.ActualHeight;
+                Canvas.SetLeft(programWindow, 0);
+                Canvas.SetTop(programWindow, 0);
             }
         }
 
         private void MaxButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            Control ContextedControl = this.DataContext as Control;
-            Debug.WriteLine(ContextedControl.GetType());
+            ProgramWindow programWindow = (ProgramWindow)this.DataContext;
 
-            if (ContextedControl == null)
+            if (programWindow == null)
             {
                 return;
             }
-            bool Maxed = (bool)ContextedControl.Resources["Maxed"];
+            bool Maxed = programWindow.maxed;
 
             if (!Maxed)
             {
-                ContextedControl.Width = Global.MainWindow.MainCanvas.ActualWidth;
-                ContextedControl.Height = Global.MainWindow.MainCanvas.ActualHeight;
+                programWindow.WindowedHeight = programWindow.Height;
+                programWindow.WindowedWidth = programWindow.Width;
+                programWindow.WindowedLeft = Canvas.GetLeft(programWindow);
+                programWindow.WindowedTop = Canvas.GetTop(programWindow);
+                programWindow.Width = Global.MainWindow.MainCanvas.ActualWidth;
+                programWindow.Height = Global.MainWindow.MainCanvas.ActualHeight;
                 this.ButtonText.Text = WindowFyText;
-                Canvas.SetLeft(ContextedControl, 0);
-                Canvas.SetTop(ContextedControl, 0);
+                Canvas.SetLeft(programWindow, 0);
+                Canvas.SetTop(programWindow, 0);
 
                 Maxed = true;
             }
             else if (Maxed)
             {
-                ContextedControl.Width = 400;
-                ContextedControl.Height = 400;
-                Canvas.SetLeft(ContextedControl, 200);
-                Canvas.SetTop(ContextedControl, 200);
+                programWindow.Width = programWindow.WindowedWidth;
+                programWindow.Height = programWindow.WindowedHeight;
+                Canvas.SetLeft(programWindow, programWindow.WindowedLeft);
+                Canvas.SetTop(programWindow, programWindow.WindowedTop);
                 this.ButtonText.Text = MaxText;
                 Maxed = false;
             }
-            ContextedControl.Resources["Maxed"] = Maxed;
+            programWindow.maxed = Maxed;
         }
     }
 }

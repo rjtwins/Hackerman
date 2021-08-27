@@ -17,6 +17,7 @@ namespace Game.Core.Console
                 return instance;
             }
         }
+
         private ConsoleContent ConsoleContent;
         public Endpoint AttachedSystem { private set; get; }
         private Endpoint ConnectingFrom;
@@ -29,7 +30,6 @@ namespace Game.Core.Console
 
         private RemoteCommandParser()
         {
-
         }
 
         public void Setup(ConsoleContent c)
@@ -39,6 +39,7 @@ namespace Game.Core.Console
             FillCommandDictionary();
         }
 
+        //TODO: Move this somewhere better
         private void FillCommandDictionary()
         {
             CommandDictionary["cat"] = this.Concatenate;
@@ -46,7 +47,7 @@ namespace Game.Core.Console
             CommandDictionary["help"] = this.PrintHelp;
             CommandDictionary["cls"] = this.ClearConsole;
             CommandDictionary["clear"] = this.ClearConsole;
-            CommandDictionary["exit"] = this.ExitConsole;
+            CommandDictionary["exit"] = this.ExitDisconnect;
             CommandDictionary["ls"] = this.List;
             CommandDictionary["dir"] = this.List;
             CommandDictionary["cat"] = this.Concatenate;
@@ -54,6 +55,7 @@ namespace Game.Core.Console
             CommandDictionary["upload"] = this.Upload;
             CommandDictionary["download"] = this.Download;
             CommandDictionary["delete"] = this.Delete;
+            CommandDictionary["users"] = this.PrintUsers;
             CommandDictionary["users"] = this.PrintUsers;
         }
 
@@ -68,29 +70,14 @@ namespace Game.Core.Console
             throw new NotImplementedException();
         }
 
-        //Make a connection FROM the current bounce network.
-        private void MakeConnection(string commandBody = null)
-        {
-            if(System.Net.IPAddress.TryParse(commandBody, out System.Net.IPAddress IP))
-            {
-                Global.Bounce.AddBounce(commandBody);
-            }
-            (Endpoint from, Endpoint too, bool Succes) = Global.Bounce.MakeConnection();
-            if (!Succes)
-            {
-                return;
-            }
-            AttachSystem(from, too);
-        }
-
         private void Download(string commandBody)
         {
             Program p;
             string[] splitCommand = commandBody.Split('\\');
-            if(splitCommand.Length == 1)
+            if (splitCommand.Length == 1)
             {
                 p = this.AttachedSystem.GetFile(null, commandBody);
-                if(p == null)
+                if (p == null)
                 {
                     ConsoleContent.ConsoleOutput.Add("File \"" + commandBody + "\" not found.\n");
                     return;
@@ -118,7 +105,7 @@ namespace Game.Core.Console
 
             try
             {
-                if(splitCommand.Length < 2)
+                if (splitCommand.Length < 2)
                 {
                     Global.RemoteSystem.UploadFileToo(null, P);
                 }
@@ -173,22 +160,19 @@ namespace Game.Core.Console
             {
                 commandBody = splitCommand[1];
             }
-
             else if (splitCommand.Count > 2)
             {
                 commandBody = string.Join(' ', splitCommand.GetRange(1, splitCommand.Count - 1));
             }
-
-
 
             if (this.AttachedSystem == null && commandType != "connect")
             {
                 ConsoleContent.ConsoleOutput.Add("Unable to excute: " + commandType + " on remote: \"NONE\"\n");
                 return;
             }
-            if(this.AttachedSystem == null && commandType == "connect")
+            if (this.AttachedSystem == null && commandType == "connect")
             {
-                MakeConnection(commandBody);
+                AttachSystem(commandBody);
                 return;
             }
 
@@ -227,7 +211,7 @@ namespace Game.Core.Console
             try
             {
                 this.password = command;
-                string result = AttachedSystem.ConnectTo(this.username, this.password, this.ConnectingFrom);
+                string result = AttachedSystem.LogInToo(this.username, this.password, this.ConnectingFrom);
                 ConsoleContent.ConsoleOutput.Add(result);
                 this.GivingPassword = false;
                 ConsoleContent.ConsolePrefix = AttachedSystem.CurrentPath();
@@ -248,9 +232,9 @@ namespace Game.Core.Console
         }
 
         //TODO: fix error when running exit command when not connected to a system
-        private void ExitConsole(string obj)
+        public void ExitDisconnect(string obj = null)
         {
-            if(AttachedSystem != null)
+            if (AttachedSystem != null)
             {
                 AttachedSystem.Discconect();
                 ConsoleContent.ConsoleOutput.Add("Disconnected\n");
@@ -260,6 +244,13 @@ namespace Game.Core.Console
             this.GivingPassword = false;
             this.AttachedSystem = null;
             Global.EndPointMap.UnmakeConnection();
+
+            if (OnDisconnected == null)
+            {
+                return;
+            }
+            DisconnectedEventArgs args = new DisconnectedEventArgs(null);
+            OnDisconnected(this, args);
         }
 
         private void ClearConsole(string obj)
@@ -304,13 +295,26 @@ namespace Game.Core.Console
             ConsoleContent.ConsoleOutput.Add(result);
         }
 
-        public void AttachSystem(Endpoint from, Endpoint too)
+        public void AttachSystem(string commandBody = null)
         {
+            //Make the bounce path and log bounces with bounce.
+            if (System.Net.IPAddress.TryParse(commandBody, out System.Net.IPAddress IP))
+            {
+                Global.Bounce.AddBounce(commandBody);
+            }
+            (Endpoint from, Endpoint too, bool Succes) = Global.Bounce.MakeConnection();
+            if (!Succes)
+            {
+                return;
+            }
+
+            //Form soft connection for login
             this.ConnectingFrom = from;
             this.AttachedSystem = too;
             Global.RemoteSystem = too;
+            Global.RemoteSystem.SoftConnection = true; ;
             this.GivingUsername = true;
-            if(from == null || too == null)
+            if (from == null || too == null)
             {
                 this.ConsoleContent.ConsoleOutput.Add("Invalid address.\n");
             }
@@ -327,6 +331,20 @@ namespace Game.Core.Console
         {
             string result = string.Join('\n', CommandDictionary.Keys);
             ConsoleContent.ConsoleOutput.Add(result);
+        }
+
+        public delegate void DisconnectedEventHandler(object sender, DisconnectedEventArgs e);
+        public event DisconnectedEventHandler OnDisconnected;
+
+    }
+
+    public class DisconnectedEventArgs : EventArgs
+    {
+        public string Status { get; private set; }
+
+        public DisconnectedEventArgs(string status)
+        {
+            Status = status;
         }
     }
 }

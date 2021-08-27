@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Game.UI
 {
@@ -14,27 +12,47 @@ namespace Game.UI
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
-        private List<ContentControl> ContentControlElements = new();
+        private List<ProgramWindow> ContentControlElements = new();
 
         public MainWindow()
         {
-            Global.MainWindow = this;
+            this.Loaded += MainWindow_Loaded;
             InitializeComponent();
         }
 
-        //TODO move this on another load call then this one
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        public void ShowGameScreen()
         {
-            (this.RemoteConsoleFrame.Template.FindName("PageFrame", this.RemoteConsoleFrame) as System.Windows.Controls.Frame).Navigate(Global.RemoteConsole);
-            (this.LocalConsoleFrame.Template.FindName("PageFrame", this.LocalConsoleFrame) as System.Windows.Controls.Frame).Navigate(Global.LocalConsole);
-            //(this.MapControlFrame.Template.FindName("PageFrame", this.MapControlFrame) as System.Windows.Controls.Frame).Navigate(Global.EndPointMap);
+            this.RemoteConsoleFrame.Navigate(Global.RemoteConsole);
+            this.LocalConsoleFrame.Navigate(Global.LocalConsole);
             this.MapControlFrame.Navigate(Global.EndPointMap);
-            (this.IRCFrame.Template.FindName("PageFrame", this.IRCFrame) as System.Windows.Controls.Frame).Navigate(Global.IRCWindow);
+            this.IRCFrame.Navigate(Global.IRCWindow);
 
             ContentControlElements.Add(RemoteConsole);
             ContentControlElements.Add(LocalConsole);
             ContentControlElements.Add(MapControl);
             ContentControlElements.Add(IRC);
+            ContentControlElements.Add(SystemTime);
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Task.Factory.StartNew(() => { PlaySetup(); });
+            ShowGameScreen();
+        }
+
+        private void PlaySetup()
+        {
+            
+            Global.App.Dispatcher.Invoke(() => { this.FullWindowFrame.Navigate(Global.SplashPage); });
+            System.Threading.Thread.Sleep(7000);
+            Global.App.Dispatcher.Invoke(() => { this.FullWindowFrame.Navigate(Global.SplashPage2); });
+            System.Threading.Thread.Sleep(3000);
+            Global.App.Dispatcher.Invoke(() => { this.FinshedPlaySetup(); });
+        }
+
+        private void FinshedPlaySetup()
+        {
+            this.FullWindowFrame.Visibility = Visibility.Collapsed;
         }
 
         internal void UpdateDateTime()
@@ -46,16 +64,17 @@ namespace Game.UI
                     string text1 = Global.GameTime.Hour + ":" + Global.GameTime.Minute;
                     string text2 = Global.GameTime.Day + "-" + Global.GameTime.Month + "-" + Global.GameTime.Year;
                     this.GameTimeDDMMYYextBlock.Text = text2;
-                    this.GameTimeHHMMTextBlock.Text =text1;
+                    this.GameTimeHHMMTextBlock.Text = text1;
                     this.SystemTimeBoxTime.Text = text1;
                 });
-                
             }
             catch (System.Threading.Tasks.TaskCanceledException)
             {
                 //Do nothing
             }
         }
+
+        #region ProgramWindow Visibility
 
         private void MapControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -64,6 +83,7 @@ namespace Game.UI
             {
                 toggelButton.IsChecked = true;
                 BounceTaskBarButton.Style = FindResource("TaskBarButtonBoxInverted") as Style;
+                this.SetOntop(MapControl);
                 return;
             }
             toggelButton.IsChecked = false;
@@ -77,6 +97,7 @@ namespace Game.UI
             {
                 toggelButton.IsChecked = true;
                 RemoteConsoleTaskBarButton.Style = FindResource("TaskBarButtonBoxInverted") as Style;
+                this.SetOntop(MapControl);
                 return;
             }
             toggelButton.IsChecked = false;
@@ -90,6 +111,7 @@ namespace Game.UI
             {
                 toggelButton.IsChecked = true;
                 LocalConsoleTaskBarButton.Style = FindResource("TaskBarButtonBoxInverted") as Style;
+                this.SetOntop(MapControl);
                 return;
             }
             toggelButton.IsChecked = false;
@@ -103,64 +125,19 @@ namespace Game.UI
             {
                 toggelButton.IsChecked = true;
                 ZeeChatTaskBarButton.Style = FindResource("TaskBarButtonBoxInverted") as Style;
+                this.SetOntop(MapControl);
                 return;
             }
             toggelButton.IsChecked = false;
             ZeeChatTaskBarButton.Style = FindResource("TaskBarButtonBox") as Style;
         }
 
-        private void MapControl_GotFocus(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void WindowContentControlMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-
-            Brush A = new LinearGradientBrush(Colors.Gray, Colors.White, 1);
-            Brush B = new LinearGradientBrush(Colors.Navy, (Color)ColorConverter.ConvertFromString("#FF195689"), 1);
-
-            ContentControl c = sender as ContentControl;
-
-            if (c == null)
-            {
-                return;
-            }
-
-            Debug.WriteLine(c.Name);
-
-
-            (this.RemoteConsole.FindName("RemoteGradientGrid") as Grid).Background = A;
-            (this.LocalConsole.FindName("LocalGradientGrid") as Grid).Background = A;
-            (this.MapControl.FindName("GradientGrid") as Grid).Background = A;
-            (this.IRC.FindName("IRCGradientGrid") as Grid).Background = A;
-
-            if (c.Name == RemoteConsole.Name)
-            {
-                (this.RemoteConsole.FindName("RemoteGradientGrid") as Grid).Background = B;
-                SetOntop(RemoteConsole);
-            }
-            if (c.Name == LocalConsole.Name)
-            {
-                (this.LocalConsole.FindName("LocalGradientGrid") as Grid).Background = B;
-                SetOntop(LocalConsole);
-            }
-            if (c.Name == MapControl.Name)
-            {
-                (this.MapControl.FindName("GradientGrid") as Grid).Background = B;
-                SetOntop(MapControl);
-            }
-            if (c.Name == IRC.Name)
-            {
-                (this.IRC.FindName("IRCGradientGrid") as Grid).Background = B;
-                SetOntop(IRC);
-            }
-        }
+        #endregion ProgramWindow Visibility
 
         private void SetOntop(ContentControl contentControl)
         {
             int maxZ = 0;
-            ContentControl maxZContentControl;
-            foreach(ContentControl c in this.ContentControlElements)
+            foreach (ContentControl c in this.ContentControlElements)
             {
                 maxZ = Math.Max(maxZ, Canvas.GetZIndex(c));
             }
@@ -186,10 +163,14 @@ namespace Game.UI
                 {
                     this.MapControl.Visibility = Visibility.Collapsed;
                     this.MapControl.IsEnabled = false;
+                    RemoteConsole.Style = (Style)FindResource("ProgramWindowInActiveStyle");
                     return;
                 }
                 this.MapControl.Visibility = Visibility.Visible;
                 this.MapControl.IsEnabled = true;
+                this.SetOntop(this.MapControl);
+                MapControl.Style = (Style)FindResource("ProgramWindowActiveStyle");
+
             }
             else if (contentControl == this.ZeeChatTaskBarButton)
             {
@@ -197,10 +178,13 @@ namespace Game.UI
                 {
                     this.IRC.Visibility = Visibility.Collapsed;
                     this.IRC.IsEnabled = false;
+                    RemoteConsole.Style = (Style)FindResource("ProgramWindowInActiveStyle");
                     return;
                 }
                 this.IRC.Visibility = Visibility.Visible;
                 this.IRC.IsEnabled = true;
+                this.SetOntop(this.IRC);
+                IRC.Style = (Style)FindResource("ProgramWindowActiveStyle");
             }
             else if (contentControl == this.LocalConsoleTaskBarButton)
             {
@@ -208,10 +192,13 @@ namespace Game.UI
                 {
                     this.LocalConsole.Visibility = Visibility.Collapsed;
                     this.LocalConsole.IsEnabled = false;
+                    RemoteConsole.Style = (Style)FindResource("ProgramWindowInActiveStyle");
                     return;
                 }
                 this.LocalConsole.Visibility = Visibility.Visible;
                 this.LocalConsole.IsEnabled = true;
+                this.SetOntop(this.LocalConsole);
+                LocalConsole.Style = (Style)FindResource("ProgramWindowActiveStyle");
             }
             else if (contentControl == this.RemoteConsoleTaskBarButton)
             {
@@ -219,10 +206,13 @@ namespace Game.UI
                 {
                     this.RemoteConsole.Visibility = Visibility.Collapsed;
                     this.RemoteConsole.IsEnabled = false;
+                    RemoteConsole.Style = (Style)FindResource("ProgramWindowInActiveStyle");
                     return;
                 }
                 this.RemoteConsole.Visibility = Visibility.Visible;
                 this.RemoteConsole.IsEnabled = true;
+                this.SetOntop(this.RemoteConsole);
+                RemoteConsole.Style = (Style)FindResource("ProgramWindowActiveStyle");
             }
         }
 
@@ -243,22 +233,6 @@ namespace Game.UI
             }
         }
 
-        private void Window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            Control c = e.Source as Control;
-            if(c == null)
-            {
-                StartMenuMenu.Visibility = Visibility.Collapsed;
-                (StartMenu.Content as ToggleButton).IsChecked = false;
-                return;
-            }
-            if(c.Name != "StartMenuMenu")
-            {
-                StartMenuMenu.Visibility = Visibility.Collapsed;
-                (StartMenu.Content as ToggleButton).IsChecked = false;
-            }
-        }
-
         private void GameSpeedButton_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton radioButton = sender as RadioButton;
@@ -269,22 +243,27 @@ namespace Game.UI
                 case "PauseButton":
                     Global.EventTicker.StopTicker();
                     break;
+
                 case "Speed1Button":
                     Global.EventTicker.ChangeSpeed(1);
                     Global.EventTicker.StartTicker();
                     break;
+
                 case "Speed2Button":
                     Global.EventTicker.ChangeSpeed(2);
                     Global.EventTicker.StartTicker();
                     break;
+
                 case "Speed3Button":
                     Global.EventTicker.ChangeSpeed(3);
                     Global.EventTicker.StartTicker();
                     break;
+
                 case "Speed4Button":
                     Global.EventTicker.ChangeSpeed(4);
                     Global.EventTicker.StartTicker();
                     break;
+
                 default:
                     break;
             }
@@ -295,7 +274,35 @@ namespace Game.UI
             RadioButton radioButton = sender as RadioButton;
             ContentControl parrent = radioButton.Parent as ContentControl;
             parrent.Style = FindResource("TaskBarButtonBox") as Style;
+        }
 
+        private void Window_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Control c = e.Source as Control;
+            if (c == null)
+            {
+                StartMenuMenu.Visibility = Visibility.Collapsed;
+                (StartMenu.Content as ToggleButton).IsChecked = false;
+                MenuButtonClick((StartMenu.Content as ToggleButton), null);
+                return;
+            }
+            if (c.Name != "StartMenuMenu")
+            {
+                StartMenuMenu.Visibility = Visibility.Collapsed;
+                (StartMenu.Content as ToggleButton).IsChecked = false;
+                MenuButtonClick((StartMenu.Content as ToggleButton), null);
+            }
+
+            foreach (ProgramWindow programWindow in this.ContentControlElements)
+            {
+                if (programWindow.Name != c.Name)
+                {
+                    programWindow.Style = (Style)FindResource("ProgramWindowInActiveStyle");
+                    continue;
+                }
+                programWindow.Style = (Style)FindResource("ProgramWindowActiveStyle");
+                SetOntop(programWindow);
+            }
         }
     }
 }

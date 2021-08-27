@@ -5,137 +5,49 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Game" xmlns:s="clr-namespace:Game.UI" xmlns:Sys="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="900" WindowState="Normal" WindowStyle="SingleBorderWindow" Visibility="Visible" ShowInTaskbar="False" Background="#FF30363D" Foreground="#FFD6DFE9" MouseUp="Window_MouseUp">
-    <Window.Resources>
-
-        <!-- MoveThumb Template -->
-        <ControlTemplate x:Key="MoveThumbTemplate" TargetType="{x:Type s:MoveThumb}">
-            <Rectangle Fill="Transparent" />
-        </ControlTemplate>
-
-
-        <ControlTemplate x:Key="MinTemplate" TargetType="{x:Type s:MinButton}">
-            <TextBlock Grid.Column="0" Text="-" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" FontWeight="Normal" />
-        </ControlTemplate>
-
-        <ControlTemplate x:Key="MaxTemplate" TargetType="{x:Type s:MaxButton}">
-            <TextBlock Grid.Column="0" Text="&#10697;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" FontWeight="Normal" />
-        </ControlTemplate>
-
-        <!-- ResizeDecorator Template -->
-        <ControlTemplate x:Key="ResizeDecoratorTemplate" TargetType="{x:Type Control}">
-            <Grid>
-                <s:ResizeThumb Height="3" Cursor="SizeNS" Margin="0 -4 0 0"
-                       VerticalAlignment="Top" HorizontalAlignment="Stretch" Opacity="0" />
-                <s:ResizeThumb Width="3" Cursor="SizeWE" Margin="-4 0 0 0"
-                       VerticalAlignment="Stretch" HorizontalAlignment="Left" Opacity="0" />
-                <s:ResizeThumb Width="3" Cursor="SizeWE" Margin="0 0 -4 0"
-                       VerticalAlignment="Stretch" HorizontalAlignment="Right" Opacity="0" />
-                <s:ResizeThumb Height="3" Cursor="SizeNS" Margin="0 0 0 -4"
-                       VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Opacity="0" />
-                <s:ResizeThumb Width="7" Height="7" Cursor="SizeNWSE" Margin="-6,-6,0,0"
-                       VerticalAlignment="Top" HorizontalAlignment="Left" Background="{x:Null}" Foreground="{x:Null}" Opacity="0" Visibility="Visible" />
-                <s:ResizeThumb Width="7" Height="7" Cursor="SizeNESW" Margin="0 -6 -6 0"
-                       VerticalAlignment="Top" HorizontalAlignment="Right" Opacity="0" />
-                <s:ResizeThumb Width="7" Height="7" Cursor="SizeNESW" Margin="-6 0 0 -6"
-                       VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0" />
-                <s:ResizeThumb Width="7" Height="7" Cursor="SizeNWSE" Margin="0 0 -6 -6"
-                       VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0" />
-            </Grid>
-        </ControlTemplate>
-
-        <!-- Designer Item Template-->
-        <ControlTemplate x:Key="DesignerItemTemplate" TargetType="ContentControl">
-            <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                <Control Template="{StaticResource ResizeDecoratorTemplate}" />
-                <ContentPresenter Content="{TemplateBinding ContentControl.Content}" />
-            </Grid>
-        </ControlTemplate>
-
-        <!--Controll template for inner border for frames-->
-        <ControlTemplate x:Key = "BorderedWindowTemplate" TargetType = "ContentControl">
-            <Grid Background="Silver">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="1"/>
-                    <ColumnDefinition Width="1"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="1"/>
-                    <RowDefinition Height="1"/>
-                </Grid.RowDefinitions>
-                <Frame x:Name="PageFrame" NavigationUIVisibility="Automatic" Padding="0,0,0,0" Margin="0,0,0,0" BorderThickness="1,1,0,0" Foreground="{x:Null}" Grid.Column="3" Grid.Row="3" BorderBrush="Black" />
-                <Rectangle Fill="Silver" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7"/>
-                <Rectangle Fill="Gray" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5"/>
-                <Rectangle Fill="Black" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3"/>
-
-                <Rectangle Fill="Silver" Grid.Column="0" Grid.Row="0" Grid.RowSpan="7" />
-                <Rectangle Fill="Gray" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4" />
-                <Rectangle Fill="Black" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" />
-
-                <Rectangle Fill="#FFDFDFDF" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="7"/>
-                <Rectangle Fill="White" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5"/>
-                <Rectangle Fill="Silver" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="3"/>
-
-                <Rectangle Fill="#FFDFDFDF" Grid.Column="4" Grid.Row="3" Grid.RowSpan="2" />
-                <Rectangle Fill="White" Grid.Column="5" Grid.Row="2" Grid.RowSpan="3" />
-                <Rectangle Fill="Silver" Grid.Column="6" Grid.Row="1" Grid.RowSpan="7" />
-
-            </Grid>
-        </ControlTemplate>
-    </Window.Resources>
-
-    <Grid Background="Teal" MouseUp="WindowContentControlMouseUp" TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA" >
+        Title="Hackerman" Height="600" Width="900" WindowState="Maximized" WindowStyle="ThreeDBorderWindow" Visibility="Visible" Background="#FF30363D" Foreground="#FFD6DFE9" FontFamily="pack://application:,,,/Fonts/#W95FA" WindowStartupLocation="CenterScreen" PreviewMouseUp="Window_PreviewMouseUp">
+    <Grid Background="Teal" TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
+
+        <Frame x:Name="FullWindowFrame" Grid.ColumnSpan="10" Grid.RowSpan="10" Panel.ZIndex="999" Background="Black"/>
+
         <ContentControl x:Name="StartMenuMenu"  Style="{StaticResource TaskBarButtonBox}" Grid.Column="0" Grid.Row="1"
                          MinWidth="150" Panel.ZIndex="1" Margin="0,0,0,-6"
-                        Visibility="Collapsed">
+                        Visibility="Visible" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="300">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="APERTURE 2000" Panel.ZIndex="99" HorizontalAlignment="Stretch" 
-                       VerticalAlignment="Stretch" Foreground="White" ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="APERTURE 2000" Panel.ZIndex="99" HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch" Foreground="White" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                        UseLayoutRounding="True"
-                       TextWrapping="Wrap" Margin="0,0,0,0" Padding="4,0,0,0">
+                       TextWrapping="Wrap" Margin="0,0,0,0" Padding="4,0,0,0" FontWeight="Bold" FontStyle="Normal" TextDecorations="{x:Null}" FontSize="17">
                     <TextBlock.Background>
                         <LinearGradientBrush EndPoint="0,0" StartPoint="1,1">
-                            <GradientStop Color="Blue"/>
-                            <GradientStop Color="#FF0C00FF" Offset="1"/>
-                            <GradientStop Color="#FF556AF2" Offset="0.881"/>
+                            <GradientStop Color="Blue" />
+                            <GradientStop Color="#FF0C00FF" Offset="1" />
+                            <GradientStop Color="#FF556AF2" Offset="0.881" />
                         </LinearGradientBrush>
                     </TextBlock.Background>
                     <TextBlock.LayoutTransform>
                         <RotateTransform Angle="-90"></RotateTransform>
                     </TextBlock.LayoutTransform>
                 </TextBlock>
-                <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
-                    <Button BorderBrush="{x:Null}" Background="{x:Null}">
-                        Shut Down...
-                    </Button>
-                    <Button BorderBrush="{x:Null}" Background="{x:Null}">
+                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Bottom">
+                    <Button BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Margin="0,0,0,0">
                         Save...
                     </Button>
-                    <Button BorderBrush="{x:Null}" Background="{x:Null}">
-                        Credits
+                    <Button BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left">
+                        Shut Down...
                     </Button>
                 </StackPanel>
             </Grid>
@@ -151,21 +63,21 @@
                         <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="MenuButtonClick" Padding="1,1,1,1" Margin="0,0,0,0">
                             <Grid HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
                                 <Image Grid.Column="0" Source="/Icons/OtherIcons/side-menu.png" Width="18" Height="17" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,-1" />
-                                <TextBlock Grid.Column="1" Text="Menu" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="0,0,0,0"/>
+                                <TextBlock Grid.Column="1" Text="Menu" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="0,0,0,0" />
                             </Grid>
                         </ToggleButton>
                     </ContentControl>
-                    <ContentControl Style="{StaticResource DividerBorder}" Padding="0,0,0,0" Margin="4,3,4,3" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+                    <ContentControl Style="{StaticResource DividerBorder}" Padding="0,0,0,0" Margin="4,3,4,3" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" />
                     <ContentControl x:Name="BounceTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0">
                         <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
                             <StackPanel HorizontalAlignment="Left" Margin="-70,0,0,0" VerticalAlignment="Top" Orientation="Horizontal" FlowDirection="LeftToRight" ScrollViewer.VerticalScrollBarVisibility="Disabled" UseLayoutRounding="False">
                                 <Image Source="/Icons/OtherIcons/001-network.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,-1" />
-                                <TextBlock Text="Bounce" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                                <TextBlock Text="Bounce" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0" />
                             </StackPanel>
                         </ToggleButton>
                     </ContentControl>
@@ -173,7 +85,7 @@
                         <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click" Margin="0,0,0,0">
                             <StackPanel HorizontalAlignment="Stretch" Margin="-64,0,0,0" Orientation="Horizontal">
                                 <Image Grid.Column="0" Source="/Icons/OtherIcons/005-chat-1.png" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                <TextBlock Grid.Column="1" Text="Zee Chat" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                                <TextBlock Grid.Column="1" Text="Zee Chat" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
                             </StackPanel>
                         </ToggleButton>
                     </ContentControl>
@@ -181,7 +93,7 @@
                         <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="-69,0,0,0" VerticalAlignment="Stretch">
                                 <Image Grid.Column="0" Source="/Icons/OtherIcons/014-programing-1.png" Width="19" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
-                                <TextBlock Grid.Column="1" Text="CMD" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                                <TextBlock Grid.Column="1" Text="CMD" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
                             </StackPanel>
                         </ToggleButton>
                     </ContentControl>
@@ -189,13 +101,13 @@
                         <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="-69,0,0,0">
                                 <Image Grid.Column="0" Source="/Icons/OtherIcons/015-configuration.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                <TextBlock Grid.Column="1" Text="TracON" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                                <TextBlock Grid.Column="1" Text="TracON" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
                             </StackPanel>
                         </ToggleButton>
                     </ContentControl>
                 </StackPanel>
                 <StackPanel Name="Tray" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
-                    <ContentControl Style="{StaticResource DividerBorder}" Margin="0,3,0,3"/>
+                    <ContentControl Style="{StaticResource DividerBorder}" Margin="0,3,0,3" />
 
                     <ContentControl Style="{StaticResource ClockInlay}" Height="35" Margin="0,-2,0,0">
                         <StackPanel Margin="0,0,0,0" Orientation="Horizontal">
@@ -206,391 +118,134 @@
                             dd-mm-yy
                             </TextBlock>
                         </StackPanel>
-
                     </ContentControl>
                 </StackPanel>
             </Grid>
         </Border>
+        
         <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Teal" Margin="0,0,0,0" Grid.ColumnSpan="2" TextElement.FontSize="20" TextElement.FontWeight="Bold">
 
-            <ContentControl
-            x:Name="GameTimeBox"
-            Canvas.Top="33"
-            Canvas.Left="667"
-            Template="{StaticResource DesignerItemTemplate}"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5" Foreground="White" Visibility="Visible" GotFocus="MapControl_GotFocus" MouseUp="WindowContentControlMouseUp" 
-                Height="100" Width="230" MinHeight="100" MinWidth="230" MaxWidth="230" MaxHeight="100" Margin="0,0,0,0" FlowDirection="LeftToRight">
-                <ContentControl.Resources>
-                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
-                </ContentControl.Resources>
-                <ContentControl.Background>
-                    <SolidColorBrush Color="Silver" Opacity="1"/>
-                </ContentControl.Background>
-                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" BorderBrush="Silver">
-                    <Border.Effect>
-                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
-                    </Border.Effect>
-                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
-                        <Grid Loaded="Grid_Loaded" Background="Silver" DataContext="{Binding ElementName=GameTimeBox}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="99" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" Panel.ZIndex="30" />
-
-                            <StackPanel x:Name="GameTimeBoxGradientGrid" Height="21" Margin="0,0,0,2" Orientation="Horizontal">
-                                <StackPanel.Background>
-                                    <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
-                                        <GradientStop Color="Navy" Offset="0"/>
-                                        <GradientStop Color="#FF195689" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </StackPanel.Background>
-
-                                <Image Grid.Column="0" Source="/Icons/OtherIcons/time-management.png"
-                                            Stretch="UniformToFill" Margin="2,0,0,0" 
-                                            ScrollViewer.VerticalScrollBarVisibility="Disabled" 
-                                            Panel.ZIndex="11" VerticalAlignment="Center" 
-                                            HorizontalAlignment="Center" Height="21" Width="21" />
-                                <TextBlock Grid.Column="1" Text="System Time" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}"/>
+            <s:ProgramWindowNoButtons x:Name="SystemTime"
+                             Style="{StaticResource ProgramWindowActiveStyle}"
+                             Margin="5,5,0,0" Canvas.Left="213" Canvas.Top="33"
+                             Height="89" Width="221" MinWidth="221" MinHeight="89" MaxHeight="89" MaxWidth="221">
+                <s:ProgramWindowNoButtons.icon>
+                    <Image Source="/Icons/OtherIcons/time-management.png" Height="21" Width="21" />
+                </s:ProgramWindowNoButtons.icon>
+                <s:ProgramWindowNoButtons.title>
+                    <TextBlock Text="System Time" Foreground="White" />
+                </s:ProgramWindowNoButtons.title>
+                <s:ProgramWindowNoButtons.mainContent>
+                    <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="61">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ContentControl Grid.Column="0" Style="{StaticResource InlayedBorder}" Background="Black">
+                            <Border Background="Black">
+                                <TextBlock x:Name="SystemTimeBoxTime" Text="HH MM SS" Foreground="#FF606000" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,0,5,0" FontSize="20" Height="24" Width="81" />
+                            </Border>
+                        </ContentControl>
+                        <Grid Grid.Column="1" TextElement.FontSize="10" Margin="0,0,0,-1">
+                            <StackPanel Margin="7,2,5,2">
+                                <StackPanel Orientation="Horizontal">
+                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                                        <RadioButton x:Name="PauseButton" GroupName="GameSpeedGroup" Width="48" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
+                                            =
+                                        </RadioButton>
+                                    </ContentControl>
+                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                                        <RadioButton x:Name="Speed1Button" GroupName="GameSpeedGroup" Width="49" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">>
+                                        </RadioButton>
+                                    </ContentControl>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" TextElement.FontSize="7">
+                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                                        <RadioButton x:Name="Speed2Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
+                                            >>
+                                        </RadioButton>
+                                    </ContentControl>
+                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                                        <RadioButton x:Name="Speed3Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Unchecked="GameSpeedButton_Unchecked">
+                                            >>>
+                                        </RadioButton>
+                                    </ContentControl>
+                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                                        <RadioButton x:Name="Speed4Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Unchecked="GameSpeedButton_Unchecked">
+                                            >>>>
+                                        </RadioButton>
+                                    </ContentControl>
+                                </StackPanel>
                             </StackPanel>
-                            <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="61">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <ContentControl Grid.Column="0" Style="{StaticResource InlayedBorder}" Background="Black">
-                                    <Border Background="Black">
-                                        <TextBlock x:Name="SystemTimeBoxTime" Text="HH MM SS" Foreground="#FF606000" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,0,5,0" FontSize="20" Height="24" Width="81"/>
-                                    </Border>
-                                </ContentControl>
-                                <Grid Grid.Column="1" TextElement.FontSize="10" Margin="0,0,0,-1">
-                                    <StackPanel Margin="7,2,5,2">
-                                        <StackPanel Orientation="Horizontal">
-                                            <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                                <RadioButton x:Name="PauseButton" GroupName="GameSpeedGroup" Width="48" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
-                                                    =
-                                                </RadioButton>
-                                            </ContentControl>
-                                            <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                                <RadioButton x:Name="Speed1Button" GroupName="GameSpeedGroup" Width="49" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
-                                                    >
-                                                </RadioButton>
-                                            </ContentControl>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" TextElement.FontSize="7">
-                                            <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                                <RadioButton x:Name="Speed2Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
-                                                    >>
-                                                </RadioButton>
-                                            </ContentControl>
-                                            <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                                <RadioButton x:Name="Speed3Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Unchecked="GameSpeedButton_Unchecked">
-                                                    >>>
-                                                </RadioButton>
-                                            </ContentControl>
-                                            <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                                <RadioButton x:Name="Speed4Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Unchecked="GameSpeedButton_Unchecked">
-                                                    >>>>
-                                                </RadioButton>
-                                            </ContentControl>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Grid>
-                            </Grid>
                         </Grid>
-                    </Border>
-                </Border>
-            </ContentControl>
+                    </Grid>
+                </s:ProgramWindowNoButtons.mainContent>
+            </s:ProgramWindowNoButtons>
 
-            <ContentControl
-            x:Name="MapControl"
-            Width="600"
-            MinWidth="0"
-            Height="300"
-            MinHeight="0"
-            Canvas.Top="150"
-            Canvas.Left="150"
-            Template="{StaticResource DesignerItemTemplate}"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver" IsVisibleChanged="MapControl_IsVisibleChanged" Visibility="Collapsed" GotFocus="MapControl_GotFocus" MouseUp="WindowContentControlMouseUp">
-                <ContentControl.Resources>
-                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
-                </ContentControl.Resources>
+            <s:ProgramWindow x:Name="MapControl"
+                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Collapsed" Canvas.Left="200" Canvas.Top="160" Width="300" MinWidth="300" MinHeight="200" Height="200"
+                             IsVisibleChanged="MapControl_IsVisibleChanged">
+                <s:ProgramWindow.icon>
+                    <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />
+                </s:ProgramWindow.icon>
+                <s:ProgramWindow.title>
+                    <TextBlock Text="Bounce Visual Assistant" Foreground="White" />
+                </s:ProgramWindow.title>
+                <s:ProgramWindow.mainContent>
+                    <Frame x:Name="MapControlFrame" />
+                </s:ProgramWindow.mainContent>
+            </s:ProgramWindow>
 
-                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" UseLayoutRounding="{DynamicResource Maxed}" BorderBrush="Silver">
-                    <Border.Effect>
-                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
-                    </Border.Effect>
-                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
-                        <Grid Loaded="Grid_Loaded" Background="Silver">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                <Grid x:Name="GradientGrid" DataContext="{Binding ElementName=MapControl}" Height="21" Margin="0,0,0,2">
-                                    <Grid.Background>
-                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
-                                            <GradientStop Color="Navy" Offset="0"/>
-                                            <GradientStop Color="#FF195689" Offset="1"/>
-                                        </LinearGradientBrush>
-                                    </Grid.Background>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Grid.Column="0" Source="/Icons/OtherIcons/001-network.png"
-                                               Stretch="UniformToFill" Margin="2,0,0,0" 
-                                               ScrollViewer.VerticalScrollBarVisibility="Disabled" 
-                                               Panel.ZIndex="11" VerticalAlignment="Center" 
-                                               HorizontalAlignment="Center" Height="21" Width="21" />
-                                    <TextBlock Grid.Column="1" Text="Bounce Visual Assistant" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}"/>
-                                    <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
+            <s:ProgramWindow x:Name="RemoteConsole"
+                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Collapsed" Canvas.Left="200" Canvas.Top="160" Width="300" MinWidth="300" MinHeight="200" Height="200"
+                             IsVisibleChanged="RemoteConsole_IsVisibleChanged">
+                <s:ProgramWindow.icon>
+                    <Image Source="/Icons/OtherIcons/015-configuration.png" Height="21" Width="21" />
+                </s:ProgramWindow.icon>
+                <s:ProgramWindow.title>
+                    <TextBlock Text="TracON Remote Shell" Foreground="White" />
+                </s:ProgramWindow.title>
+                <s:ProgramWindow.mainContent>
+                    <ContentControl Style="{StaticResource InlayedBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Margin="0,3,0,0">
+                        <Frame x:Name="RemoteConsoleFrame" />
+                    </ContentControl>
+                </s:ProgramWindow.mainContent>
+            </s:ProgramWindow>
 
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                        <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
-                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
-                                        </s:MinButton>
-                                        <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
-                                        </s:MaxButton>
-                                    </StackPanel>
-                                </Grid>
-                            </Grid>
-                            <Frame x:Name="MapControlFrame" Grid.Column="0" Grid.Row="1"/>
-                            <!--<ContentControl x:Name="MapControlFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
-                            </ContentControl-->
-                        </Grid>
-                    </Border>
-                </Border>
-            </ContentControl>
+            <s:ProgramWindow x:Name="LocalConsole"
+                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Collapsed" Canvas.Left="200" Canvas.Top="160" Width="300" MinWidth="300" MinHeight="200" Height="200"
+                             IsVisibleChanged="LocalConsole_IsVisibleChanged">
+                <s:ProgramWindow.icon>
+                    <Image Source="/Icons/OtherIcons/014-programing-1.png" Height="21" Width="21" />
+                </s:ProgramWindow.icon>
+                <s:ProgramWindow.title>
+                    <TextBlock Text="Apature Command Prompt" Foreground="White" />
+                </s:ProgramWindow.title>
+                <s:ProgramWindow.mainContent>
+                    <ContentControl Style="{StaticResource InlayedBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Margin="0,3,0,0">
+                        <Frame x:Name="LocalConsoleFrame" />
+                    </ContentControl>
+                </s:ProgramWindow.mainContent>
+            </s:ProgramWindow>
 
-            <ContentControl
-            x:Name="RemoteConsole"
-            Width="600"
-            MinWidth="0"
-            Height="300"
-            MinHeight="0"
-            Canvas.Top="150"
-            Canvas.Left="150"
-            Template="{StaticResource DesignerItemTemplate}"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver" IsVisibleChanged="RemoteConsole_IsVisibleChanged" Visibility="Hidden" MouseUp="WindowContentControlMouseUp">
-                <ContentControl.Resources>
-                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
-                </ContentControl.Resources>
-
-                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" UseLayoutRounding="{DynamicResource Maxed}" BorderBrush="Silver">
-                    <Border.Effect>
-                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
-                    </Border.Effect>
-                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
-                        <Grid Loaded="Grid_Loaded" Background="Silver">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-
-                                <Grid x:Name="RemoteGradientGrid" DataContext="{Binding ElementName=RemoteConsole}" Height="21" Margin="0,0,0,2">
-                                    <Grid.Background>
-                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
-                                            <GradientStop Color="Navy" Offset="0"/>
-                                            <GradientStop Color="#FF195689" Offset="1"/>
-                                        </LinearGradientBrush>
-                                    </Grid.Background>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Grid.Column="0" Source="/Icons/OtherIcons/015-configuration.png"
-                                               Stretch="UniformToFill" Margin="2,0,0,0" 
-                                               ScrollViewer.VerticalScrollBarVisibility="Disabled" 
-                                               Panel.ZIndex="11" VerticalAlignment="Center" 
-                                               HorizontalAlignment="Center" Height="21" Width="21" />
-                                    <TextBlock Grid.Column="1" Text="TracON Remote Shell" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
-
-                                    </TextBlock>
-
-                                    <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
-
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                        <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
-                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
-                                        </s:MinButton>
-                                        <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
-                                        </s:MaxButton>
-                                    </StackPanel>
-                                </Grid>
-
-                            </Grid>
-                            <ContentControl x:Name="RemoteConsoleFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
-                            </ContentControl>
-                        </Grid>
-                    </Border>
-                </Border>
-            </ContentControl>
-
-            <ContentControl
-            x:Name="LocalConsole"
-            Width="600"
-            MinWidth="0"
-            Height="300"
-            MinHeight="0"
-            Canvas.Top="0"
-            Canvas.Left="0"
-            Template="{StaticResource DesignerItemTemplate}"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5" Foreground="White" Background="Silver" IsVisibleChanged="LocalConsole_IsVisibleChanged" Visibility="Hidden" MouseUp="WindowContentControlMouseUp">
-                <ContentControl.Resources>
-                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
-                </ContentControl.Resources>
-
-                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" UseLayoutRounding="{DynamicResource Maxed}" BorderBrush="Silver" Background="Silver">
-                    <Border.Effect>
-                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
-                    </Border.Effect>
-                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
-                        <Grid Loaded="Grid_Loaded" Background="Silver">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,0">
-
-                                <Grid x:Name="LocalGradientGrid" DataContext="{Binding ElementName=LocalConsole}" Height="21" Margin="0,0,0,2">
-                                    <Grid.Background>
-                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
-                                            <GradientStop Color="Navy" Offset="0"/>
-                                            <GradientStop Color="#FF195689" Offset="1"/>
-                                        </LinearGradientBrush>
-                                    </Grid.Background>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Grid.Column="0" Source="/Icons/OtherIcons/014-programing-1.png"
-                                               Stretch="UniformToFill" Margin="2,0,0,0" 
-                                               ScrollViewer.VerticalScrollBarVisibility="Disabled" 
-                                               Panel.ZIndex="11" VerticalAlignment="Center" 
-                                               HorizontalAlignment="Center" Height="21" Width="21" />
-                                    <TextBlock Grid.Column="1" Text="Apature Command Prompt" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
-
-                                    </TextBlock>
-
-
-                                    <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" />
-
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                        <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
-                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
-                                        </s:MinButton>
-                                        <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
-                                        </s:MaxButton>
-                                    </StackPanel>
-                                </Grid>
-
-                            </Grid>
-                            <ContentControl x:Name="LocalConsoleFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
-                            </ContentControl>
-                        </Grid>
-                    </Border>
-                </Border>
-            </ContentControl>
-
-            <ContentControl
-            x:Name="IRC"
-            Width="600"
-            MinWidth="0"
-            Height="300"
-            MinHeight="0"
-            Canvas.Top="0"
-            Canvas.Left="0"
-            Template="{StaticResource DesignerItemTemplate}"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            Padding="0,0,0,0" UseLayoutRounding="True"
-            RenderTransformOrigin="0.5,0.5" Foreground="White" IsVisibleChanged="IRC_IsVisibleChanged" Background="Silver" Visibility="Hidden" MouseUp="WindowContentControlMouseUp">
-                <ContentControl.Resources>
-                    <Sys:Boolean x:Key="Maxed">false</Sys:Boolean>
-                </ContentControl.Resources>
-
-                <Border Padding="0,0,0,0" Margin="5,5,5,5" BorderThickness="1,1,1,1" UseLayoutRounding="{DynamicResource Maxed}" BorderBrush="Silver" Background="Silver">
-                    <Border.Effect>
-                        <DropShadowEffect RenderingBias="Quality" ShadowDepth="2" BlurRadius="1"/>
-                    </Border.Effect>
-                    <Border Margin="0,0,0,0" Padding="1,1,1,1" BorderBrush="White" BorderThickness="1,1,0,0" Background="Silver">
-                        <Grid Loaded="Grid_Loaded" Background="Silver">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,2,2,0">
-
-                                <Grid x:Name="IRCGradientGrid" DataContext="{Binding ElementName=IRC}" Height="21" Margin="-1,-1,-1,5">
-                                    <Grid.Background>
-                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
-                                            <GradientStop Color="Navy" Offset="0"/>
-                                            <GradientStop Color="#FF195689" Offset="1"/>
-                                        </LinearGradientBrush>
-                                    </Grid.Background>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Grid.Column="0" Source="/Icons/OtherIcons/005-chat-1.png"
-                                               Stretch="UniformToFill" Margin="2,0,0,0" 
-                                               ScrollViewer.VerticalScrollBarVisibility="Disabled" 
-                                               Panel.ZIndex="11" VerticalAlignment="Center" 
-                                               HorizontalAlignment="Center" Height="21" Width="21" />
-                                    <TextBlock Grid.Column="1" Text="Zee Chat IRC" Panel.ZIndex="0" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,-2,0,0" Padding="0,0,0,0" RenderTransformOrigin="0.5,0.5" FontWeight="Bold" TextDecorations="{x:Null}" FontStyle="Normal">
-
-                                    </TextBlock>
-
-
-                                    <s:MoveThumb Grid.Column="0" Grid.ColumnSpan="2" Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" Padding="0,0,0,0" />
-
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,-4,0,-4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                        <s:MinButton Background="Silver" Margin="1,5,1,5" Height="17" Width="17">
-                                            <TextBlock Text="&#9866;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" />
-                                        </s:MinButton>
-                                        <s:MaxButton Foreground="Black" Background="Silver" Margin="1,5,5,5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="18" Height="17">
-                                        </s:MaxButton>
-                                    </StackPanel>
-                                </Grid>
-
-                            </Grid>
-                            <ContentControl x:Name="IRCFrame" Grid.Column="0" Grid.Row="1" Template="{StaticResource BorderedWindowTemplate}">
-                            </ContentControl>
-                        </Grid>
-                    </Border>
-                </Border>
-            </ContentControl>
-
+            <s:ProgramWindow x:Name="IRC"
+                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Collapsed" Canvas.Left="200" Canvas.Top="160" Width="300" MinWidth="300" MinHeight="200" Height="200"
+                             IsVisibleChanged="IRC_IsVisibleChanged">
+                <s:ProgramWindow.icon>
+                    <Image Source="/Icons/OtherIcons/005-chat-1.png" Height="21" Width="21" />
+                </s:ProgramWindow.icon>
+                <s:ProgramWindow.title>
+                    <TextBlock Text="Zee Chat IRC" Foreground="White" />
+                </s:ProgramWindow.title>
+                <s:ProgramWindow.mainContent>
+                    <ContentControl Style="{StaticResource InlayedBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Margin="0,3,0,0">
+                        <Frame x:Name="IRCFrame" />
+                    </ContentControl>
+                </s:ProgramWindow.mainContent>
+            </s:ProgramWindow>
         </Canvas>
     </Grid>
-
 </Window>

@@ -11,10 +11,10 @@ namespace Game.Core.FileSystem
 
         public Folder CurrentFolder;
 
-        public EndpointBackend ParrentEndpoint { protected set; get; }
+        public Endpoint ParrentEndpoint { protected set; get; }
         public List<Folder> AllFolders { protected set; get; } = new List<Folder>();
 
-        public FileSystem(EndpointBackend endpoint) : base("root")
+        public FileSystem(Endpoint endpoint) : base("root")
         {
             this.ParrentEndpoint = endpoint;
             this.Parent = this;
@@ -27,7 +27,7 @@ namespace Game.Core.FileSystem
         public List<LogItem> GetConnectionLog()
         {
             ConnectionLog l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
-            if(l == null)
+            if (l == null)
             {
                 GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
                 l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
@@ -50,6 +50,13 @@ namespace Game.Core.FileSystem
         {
             AccessLevel = AccessLevel.ROOT;
             MakeFolderFromPath(@"root\system").AccessLevel = AccessLevel.ROOT;
+            GetFolderFromPath(@"root\system").AddProgram(new Program("Apature32.dll"));
+            GetFolderFromPath(@"root\system").AddProgram(new Program("Services.dll"));
+            GetFolderFromPath(@"root\system").AddProgram(new Program("HelperLib.dll"));
+            GetFolderFromPath(@"root\system").AddProgram(new Program("HelperLib.dll"));
+
+  
+            MakeFolderFromPath(@"root\autostart").AccessLevel = AccessLevel.ROOT;
             MakeFolderFromPath(@"root\system\logs").AccessLevel = AccessLevel.ROOT;
             GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
 
@@ -75,6 +82,7 @@ namespace Game.Core.FileSystem
             {
                 f = GetFolderFromPath(folderPath, CurrentFolder);
             }
+            //Debug.WriteLine("Checking if user has acces: " + user);
             if (CheckUserAcces(user, f))
             {
                 AddFileToFolder(p.Copy(), f, false);
@@ -136,10 +144,11 @@ namespace Game.Core.FileSystem
         {
             //Ugly else if chain but gwatever
             Folder f = null;
-            if(folderPath == null)
+            if (folderPath == null)
             {
                 f = this.CurrentFolder;
-            }else if(this.Folders.Count == 0)
+            }
+            else if (this.Folders.Count == 0)
             {
                 f = this.CurrentFolder;
             }
@@ -156,7 +165,7 @@ namespace Game.Core.FileSystem
                 AccesLevelException(f);
             }
 
-            if(!f.Programs.TryGetValue(fileName, out Program p))
+            if (!f.Programs.TryGetValue(fileName, out Program p))
             {
                 return null;
             }
@@ -178,7 +187,7 @@ namespace Game.Core.FileSystem
             {
                 f = GetFolderFromPath(path, CurrentFolder);
             }
-            if(!CheckUserAcces(user, f))
+            if (!CheckUserAcces(user, f))
             {
                 AccesLevelException(f);
             }
@@ -211,7 +220,7 @@ namespace Game.Core.FileSystem
 
         private bool CheckUserAcces(string user, Folder folder)
         {
-            if(user == null)
+            if (user == null || user == string.Empty || string.IsNullOrWhiteSpace(user))
             {
                 return true;
             }
@@ -321,6 +330,14 @@ namespace Game.Core.FileSystem
             //    AccesLevelException(F);
             //}
             return F;
+        }
+
+        internal void RunStartupPrograms()
+        {
+            foreach (Program p in GetFolderFromPath(@"root\system\autostart").Programs.Values)
+            {
+                p.RunProgram();
+            }
         }
 
         public Folder GetFolderFromPath(string path, Folder start)

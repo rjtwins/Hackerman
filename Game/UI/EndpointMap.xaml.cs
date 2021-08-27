@@ -1,11 +1,11 @@
 ﻿using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
 using Point = System.Windows.Point;
@@ -19,6 +19,7 @@ namespace Game.UI
     {
         private Dictionary<Guid, Endpoint> DrawnEndpointsDict = new();
         private Dictionary<Guid, Button> ButtonDict = new();
+
         //private Dictionary<Guid, StackPanel> StackPanelDict = new();
         private Dictionary<Guid, TextBlock> TextBlockDict = new();
 
@@ -32,6 +33,7 @@ namespace Game.UI
             InitializeComponent();
             Map.Children.Add(Polyline);
             Polyline.Stroke = System.Windows.Media.Brushes.Red;
+            Polyline.StrokeDashArray = new DoubleCollection(new double[] { 2, 3, 2 });
         }
 
         private void EndpointMap_Loaded(object sender, RoutedEventArgs e)
@@ -56,7 +58,7 @@ namespace Game.UI
         {
             foreach (Guid id in TextBlockDict.Keys)
             {
-                if(id != EndpointID)
+                if (id != EndpointID)
                 {
                     ButtonDict[id].Background = Brushes.Yellow;
                     continue;
@@ -82,8 +84,13 @@ namespace Game.UI
         {
             foreach (Endpoint e in Global.AllEndpoints)
             {
+                if (this.DrawnEndpointsDict.ContainsValue(e))
+                {
+                    //Go home you are allready drawn
+                    continue;
+                }
+
                 //Variables
-                StackPanel stp = new StackPanel();
                 Button btn = new Button();
                 TextBlock txb = new TextBlock();
 
@@ -108,26 +115,37 @@ namespace Game.UI
                 btn.Height = 3;
                 txb.HorizontalAlignment = HorizontalAlignment.Left;
                 txb.VerticalAlignment = VerticalAlignment.Top;
-                txb.Text = e.IPAddress;
+                txb.Text = e.name;
 
                 //Location
-                int x = e.x/10;
-                int y = e.y/10;
+                int x = e.x / 10;
+                int y = e.y / 10;
                 Canvas.SetLeft(btn, x);
                 Canvas.SetTop(btn, y);
                 Map.Children.Add(btn);
                 Canvas.SetLeft(txb, x);
-                Canvas.SetTop(txb, y-6);
+                Canvas.SetTop(txb, y - 6);
                 Canvas.SetZIndex(txb, int.MinValue);
                 Map.Children.Add(txb);
                 if (e.isHidden)
                 {
                     btn.Visibility = Visibility.Hidden;
+                    txb.Visibility = Visibility.Hidden;
                 }
             }
         }
 
-        private void EndpointClick(object sender, RoutedEventArgs e)
+        internal void PingEndpoint(Endpoint currentEndpoint)
+        {
+            Guid id = currentEndpoint.Id;
+            ColorAnimation animation = new ColorAnimation(Colors.Red, new Duration(TimeSpan.FromSeconds(1)));
+            animation.Duration = new Duration(TimeSpan.FromSeconds(1));
+            Button btn = ButtonDict[id];
+            btn.Dispatcher.Invoke(() => { btn.Background = Brushes.Red; });
+            /*BeginAnimation(SolidColorBrush.ColorProperty, animation)*/
+        }
+
+    private void EndpointClick(object sender, RoutedEventArgs e)
         {
             //No map editing when we are in a connection.
             if (isConnected)
@@ -135,7 +153,7 @@ namespace Game.UI
                 return;
             }
 
-            Debug.WriteLine("Drawing:" + (Guid)(sender as Button).Tag);
+            //Debug.WriteLine("Drawing:" + (Guid)(sender as Button).Tag);
             Guid id = (Guid)(sender as Button).Tag;
 
             if (!DrawnEndpointsDict.ContainsKey(id))
@@ -161,14 +179,14 @@ namespace Game.UI
             }
 
             var from = ButtonDict[Global.StartEndPoint.Id];
-            PointDict[Global.StartEndPoint.Id] = new Point(Canvas.GetLeft(from) +1.5, Canvas.GetTop(from) + 1.5);
+            PointDict[Global.StartEndPoint.Id] = new Point(Canvas.GetLeft(from) + 1.5, Canvas.GetTop(from) + 1.5);
             Polyline.Points.Add(PointDict[Global.StartEndPoint.Id]);
 
             foreach (Endpoint e in Global.Bounce.BounceList)
             {
                 var too = ButtonDict[e.Id];
 
-                PointDict[e.Id] = new Point(Canvas.GetLeft(too) +1.5, Canvas.GetTop(too) +1.5);
+                PointDict[e.Id] = new Point(Canvas.GetLeft(too) + 1.5, Canvas.GetTop(too) + 1.5);
                 Polyline.Points.Add(PointDict[e.Id]);
             }
         }
@@ -180,7 +198,7 @@ namespace Game.UI
 
         public void DisplayConnection()
         {
-            this.Polyline.StrokeDashArray = new DoubleCollection(new double[] { 2, 3, 2 });
+            this.Polyline.StrokeDashArray = new DoubleCollection();
             DisableEndpointButtons();
             Button last = this.ButtonDict[
                 Global.Bounce.BounceList[
@@ -193,41 +211,48 @@ namespace Game.UI
         private void DisableEndpointButtons()
         {
             this.isConnected = true;
-
-            //foreach (Button btn in this.GuidButtonDict.Values)
-            //{
-            //    btn.IsEnabled = false;
-            //}
         }
 
         private void EnableEndpointButtons()
         {
             this.isConnected = false;
-            //foreach (Button btn in this.GuidButtonDict.Values)
-            //{
-            //    btn.IsEnabled = true;
-            //}
         }
 
         public void UnmakeConnection()
         {
-            Button last = this.ButtonDict[
-                Global.Bounce.BounceList[
-                    Global.Bounce.BounceList.Count - 1]
-                    .Id];
+            if(Global.Bounce.BounceList.Count == 0)
+            {
+
+            }
+            Button last = this.ButtonDict
+                [
+                    Global.Bounce.BounceList
+                    [
+                        Global.Bounce.BounceList.Count - 1
+                    ].Id
+                ];
             last.BorderThickness = new Thickness(0);
             last.BorderBrush = Brushes.Transparent;
 
-            this.Polyline.StrokeDashArray = new DoubleCollection();
+            this.Polyline.StrokeDashArray = new DoubleCollection(new double[] { 2, 3, 2 });
             EnableEndpointButtons();
             DrawBouncePath();
+
+            foreach (Button btn in this.ButtonDict.Values)
+            {
+                btn.Background = Brushes.Yellow;
+            }
         }
 
         private void RadioButtonShow_Checked(object sender, RoutedEventArgs e)
         {
-            foreach(TextBlock txb in this.TextBlockDict.Values)
+            foreach (Guid id in this.TextBlockDict.Keys)
             {
-                txb.Visibility = Visibility.Visible;
+                if (DrawnEndpointsDict[id].isHidden)
+                {
+                    continue;
+                }
+                TextBlockDict[id].Visibility = Visibility.Visible;
             }
         }
 
@@ -235,7 +260,7 @@ namespace Game.UI
         {
             foreach (TextBlock txb in this.TextBlockDict.Values)
             {
-                txb.Visibility = Visibility.Collapsed;
+                txb.Visibility = Visibility.Hidden;
             }
         }
 
@@ -243,9 +268,9 @@ namespace Game.UI
         {
             TextBox textBox = sender as TextBox;
             this.FilterOnEndpoint(textBox.Text);
-            if(textBox.Text == string.Empty)
+            if (textBox.Text == string.Empty)
             {
-                foreach(Button btn in this.ButtonDict.Values)
+                foreach (Button btn in this.ButtonDict.Values)
                 {
                     btn.Background = Brushes.Yellow;
                 }

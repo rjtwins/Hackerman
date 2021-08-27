@@ -15,8 +15,11 @@ namespace Game.Core.Events
         private Func<object[], object[]> FunctionToRun;
         private Action<object[]> ActionWithParameter;
         private Action ActionToRun;
-        object[] MethodArguments;
-        enum MethodType { VOID, ACTION, FUNC, NOTHING};
+        private object[] MethodArguments;
+
+        private enum MethodType
+        { VOID, ACTION, FUNC, NOTHING };
+
         private MethodType MType = MethodType.VOID;
 
         public Event(string v)
@@ -64,7 +67,6 @@ namespace Game.Core.Events
 
         public virtual object[] StartEvent()
         {
-
             if (this.Canceled)
             {
                 return new object[0];
@@ -74,14 +76,18 @@ namespace Game.Core.Events
             {
                 case MethodType.NOTHING:
                     return new object[0];
+
                 case MethodType.VOID:
                     ActionToRun();
                     return new object[0];
+
                 case MethodType.ACTION:
                     ActionWithParameter(MethodArguments);
                     return new object[0];
+
                 case MethodType.FUNC:
                     return FunctionToRun(MethodArguments);
+
                 default:
                     return new object[0];
             }

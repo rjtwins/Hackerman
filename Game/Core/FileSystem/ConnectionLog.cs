@@ -6,12 +6,13 @@ namespace Game.Core.FileSystem
     public class ConnectionLog : Program
     {
         public List<LogItem> Log;
+
         public ConnectionLog() : base("syslog.log", false)
         {
             Log = new List<LogItem>();
         }
 
-    public override string ToString()
+        public override string ToString()
         {
             string result = "CONNECTION LOG:\n";
             foreach (LogItem item in this.Log)
@@ -22,12 +23,15 @@ namespace Game.Core.FileSystem
                     case AccessLevel.USER:
                         acceslevel = "USER";
                         break;
+
                     case AccessLevel.ADMIN:
                         acceslevel = "ADMIN";
                         break;
+
                     case AccessLevel.ROOT:
                         acceslevel = "ROOT";
                         break;
+
                     default:
                         break;
                 }
@@ -35,21 +39,25 @@ namespace Game.Core.FileSystem
                 switch (item.LogType)
                 {
                     case LogType.CONNECTION_ATTEMPT:
-                        result += "LOGIN ATTEMPT:\t" + item.From.IPAddress;
+                        result += "LOGIN ATTEMPT:\t\t\t\t" + item.From.IPAddress;
                         break;
+
                     case LogType.CONNECTION_FAILED:
-                        result += "FAILED AUTHENTICAION:\t" + item.From.IPAddress;
+                        result += "FAILED AUTHENTICAION:\t\t\t" + item.From.IPAddress;
                         break;
+
                     case LogType.CONNECTION_SUCCES:
-                        result += "CONNECTION SUCCESFULL:\t" + item.From.IPAddress + "\tLOGGED IN AS:\t" + acceslevel;
+                        result += "CONNECTION SUCCESFULL:\t\t\t" + item.From.IPAddress + " WITH: " + acceslevel;
                         break;
+
                     case LogType.CONNECTION_ROUTED:
-                        result += "ROUTED:\t" + item.From.IPAddress + " : " + item.Too.IPAddress;
+                        result += "ROUTED:\t\t\t\t" + item.From.IPAddress + " : " + item.Too.IPAddress;
                         break;
+
                     default:
                         break;
                 }
-                result += "\n";
+                result += "\t\t" + item.TimeStamp.ToString() + "\n";
             }
             return result;
         }

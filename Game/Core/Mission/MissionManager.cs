@@ -3,7 +3,6 @@ using Game.Core.Mission.MissionTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Game.Core.Mission
@@ -16,7 +15,6 @@ namespace Game.Core.Mission
 
         public MissionManager()
         {
-
         }
 
         public void AcceptMission(MissionTemplate mission)
@@ -29,23 +27,25 @@ namespace Game.Core.Mission
         public void EvaluateMissionListings()
         {
             List<MissionTemplate> toRemove = new List<MissionTemplate>();
-            foreach(MissionTemplate m in this.ActiveListings)
+            foreach (MissionTemplate m in this.ActiveListings)
             {
                 if (Mission48HoursOld(m))
                 {
                     toRemove.Add(m);
-                    Global.App.Dispatcher.Invoke((Action)delegate {
+                    Global.App.Dispatcher.Invoke((Action)delegate
+                    {
                         Global.IRCWindow.RemoveChannel(m.MissionChannel);
                     });
                 }
             }
             ActiveListings = ActiveListings.Except(toRemove).ToList();
 
-            if(ActiveListings.Count < 5)
+            if (ActiveListings.Count < 5)
             {
                 //We must do this on the UI thread sinse we are eding UI elements,
                 //TODO move the invoker to the actual UI
-                Global.App.Dispatcher.Invoke((Action)delegate{
+                Global.App.Dispatcher.Invoke((Action)delegate
+                {
                     this.ActiveListings.Add(MissionGenerator.GenerateMission(this.Rand.Next(Math.Max(Global.GameState.Reputation - 2, 0), Global.GameState.Reputation)));
                     this.ActiveListings.Add(MissionGenerator.GenerateMission(this.Rand.Next(Math.Max(Global.GameState.Reputation - 2, 0), Global.GameState.Reputation)));
                 });
@@ -75,9 +75,11 @@ namespace Game.Core.Mission
 
             mission.Status = MissionTemplate.MissionStatus.REJECTED;
             //Remove the listing from the UI after 10
-            Task.Run(delegate {
+            Task.Run(delegate
+            {
                 System.Threading.Thread.Sleep(10000);
-                Global.App.Dispatcher.Invoke((Action)delegate {
+                Global.App.Dispatcher.Invoke((Action)delegate
+                {
                     Global.IRCWindow.RemoveJobListing(mission);
                 });
             });

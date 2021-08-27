@@ -11,7 +11,7 @@
       TextElement.FontSize="16">
     <Grid Background="Black" Name="mypanel">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" Name="row0"/>
+            <RowDefinition Height="*" Name="row0" />
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0" Name="Scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Hidden">
             <ScrollViewer.Resources>
@@ -21,8 +21,8 @@
                 <ItemsControl ItemsSource="{Binding ConsoleOutput, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=.}" Foreground="#FFC7C7C7" 
-                                       TextWrapping="Wrap" TextTrimming="WordEllipsis"/>
+                            <TextBlock Text="{Binding Path=.}" Foreground="#FFC7C7C7"
+                                       TextWrapping="Wrap" TextTrimming="WordEllipsis" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -32,10 +32,9 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Margin="5,0,4,0" Grid.Column="0" Text="{Binding ConsolePrefix, Mode=TwoWay}" Background="Black" Foreground="#FFC7C7C7"
-                               UseLayoutRounding="True" OpacityMask="Black"/>
-                    <TextBox Grid.Column="1" BorderThickness="0" BorderBrush="#00000000" Text="{Binding ConsoleInput, Mode=TwoWay}" Background="Black" Foreground="#FFC7C7C7" 
-                             Name="InputBlock" SelectionBrush="#00000000" SelectionTextBrush="#00000000" PreviewKeyDown="InputBlock_PreviewKeyDown" Opacity="1"
-                             />
+                               UseLayoutRounding="True" OpacityMask="Black" />
+                    <TextBox Grid.Column="1" BorderThickness="0" BorderBrush="#00000000" Text="{Binding ConsoleInput, Mode=TwoWay}" Background="Black" Foreground="#FFC7C7C7"
+                             Name="InputBlock" SelectionBrush="#00000000" SelectionTextBrush="#00000000" PreviewKeyDown="InputBlock_PreviewKeyDown" Opacity="1" />
                 </Grid>
             </StackPanel>
         </ScrollViewer>

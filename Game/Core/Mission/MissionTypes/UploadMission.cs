@@ -1,17 +1,14 @@
 ﻿using Game.Core.FileSystem;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game.Core.Mission.MissionTypes
 {
-    class UploadMission : MissionTemplate
+    internal class UploadMission : MissionTemplate
     {
         private List<Program> FilesToUpload = new List<Program>();
         private string FilePathForUpload = string.Empty;
-        bool FilesGoten = false;
+        private bool FilesGoten = false;
+
         public UploadMission(int nrOfFiles)
         {
             //TODO: Base file path for upload on dificulty
@@ -20,16 +17,17 @@ namespace Game.Core.Mission.MissionTypes
             {
                 FilesToUpload.Add(new Program(UTILS.PickRandomFileName()));
             }
-            if(nrOfFiles > 1)
+            if (nrOfFiles > 1)
             {
                 this.MissionType = MissionType.UPLOADMULTIPLE;
                 return;
             }
             this.MissionType = MissionType.UPLOAD;
         }
+
         public override bool CheckMissionCompleted()
         {
-            foreach(Program p in this.FilesToUpload)
+            foreach (Program p in this.FilesToUpload)
             {
                 if (this.TargetEndpoint.GetFile(FilePathForUpload, p.Name) == null)
                 {

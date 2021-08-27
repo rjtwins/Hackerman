@@ -1,4 +1,5 @@
 ﻿using Game.Core.FileSystem;
+using static Game.UTILS;
 
 namespace Game.Core.Endpoints
 {
@@ -6,7 +7,7 @@ namespace Game.Core.Endpoints
     {
         //TODO: Modify so this is the users system
         //this is the players endpoint
-        public LocalEndpoint() : base()
+        public LocalEndpoint() : base(new Person(), EndpointType.PLAYER)
         {
             Global.StartEndPoint = this;
             IsLocalEndpoint = true;

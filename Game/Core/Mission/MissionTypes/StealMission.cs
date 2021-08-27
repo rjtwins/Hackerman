@@ -1,17 +1,13 @@
 ﻿using Game.Core.FileSystem;
-using Game.Core.Mission.MissionTypes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game.Core.Mission.MissionTypes
 {
     public class StealMission : MissionTemplate
     {
-        List<Program> FilesToSteal = new List<Program>();
-        string AllFilesString = string.Empty;
+        private List<Program> FilesToSteal = new List<Program>();
+        private string AllFilesString = string.Empty;
+
         public StealMission(int nrOfFiles) : base()
         {
             for (int i = 0; i < nrOfFiles; i++)
@@ -26,7 +22,7 @@ namespace Game.Core.Mission.MissionTypes
 
         public override void Setup()
         {
-            foreach(Program p in this.FilesToSteal)
+            foreach (Program p in this.FilesToSteal)
             {
                 TargetEndpoint.UploadFileToo(@"root\system", p, false);
             }
@@ -35,7 +31,7 @@ namespace Game.Core.Mission.MissionTypes
 
         public override void RemoveMission()
         {
-            foreach(Program p in this.FilesToSteal)
+            foreach (Program p in this.FilesToSteal)
             {
                 TargetEndpoint.RemoveFileFrom(@"root\system", p, false);
             }
@@ -45,7 +41,7 @@ namespace Game.Core.Mission.MissionTypes
         {
             foreach (var file in this.FilesToSteal)
             {
-                if(file.Name == v)
+                if (file.Name == v)
                 {
                     return true;
                 }
@@ -64,7 +60,7 @@ namespace Game.Core.Mission.MissionTypes
                 }
             }
             stolen.ForEach(x => FilesToSteal.Remove(x));
-            if(FilesToSteal.Count == 0)
+            if (FilesToSteal.Count == 0)
             {
                 this.DialogResolver.MissionCompleted();
                 this.Status = MissionStatus.COMPLETED;
@@ -73,7 +69,7 @@ namespace Game.Core.Mission.MissionTypes
 
         public override bool CheckMissionCompleted()
         {
-            if(this.Status == MissionStatus.COMPLETED)
+            if (this.Status == MissionStatus.COMPLETED)
             {
                 return true;
             }

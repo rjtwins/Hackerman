@@ -16,7 +16,6 @@ namespace Game.Core.Mission.MissionTypes
             { 2, new MissionType[] {MissionType.CHANGEINFO, MissionType.FRAME } },
         };
 
-
         public MissionTemplate()
         {
             this.id = Guid.NewGuid();
@@ -40,7 +39,6 @@ namespace Game.Core.Mission.MissionTypes
         internal GenericMissionDialogResolver DialogResolver;
         internal IRCChannel IRCChannel;
         internal Endpoint TargetEndpoint;
-
 
         public abstract bool CheckMissionCompleted();
 

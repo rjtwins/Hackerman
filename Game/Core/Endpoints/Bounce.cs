@@ -10,13 +10,14 @@ namespace Game.Core.Endpoints
         {
             foreach (var e in Global.AllEndpoints)
             {
-                if(endpointIP == e.IPAddress)
+                if (endpointIP == e.IPAddress)
                 {
                     AddBounce(e);
                     return;
                 }
             }
         }
+
         public void AddBounce(Endpoint endpoint)
         {
             if (BounceList.Contains(endpoint))
@@ -44,8 +45,9 @@ namespace Game.Core.Endpoints
             }
             BounceList.Add(endpoint);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns>Endpoint from, Endpoint too, bool succes</returns>
         internal (Endpoint, Endpoint, bool) MakeConnection()
@@ -85,6 +87,5 @@ namespace Game.Core.Endpoints
             Global.EndPointMap.DisplayConnection();
             return (from, too, true);
         }
-
     }
 }

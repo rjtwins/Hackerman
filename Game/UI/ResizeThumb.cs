@@ -14,17 +14,17 @@ namespace Game.UI
 
         private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            Control designerItem = this.DataContext as Control;
+            ProgramWindow programWindow = (ProgramWindow)this.DataContext;
 
             if (e != null)
             {
                 e.Handled = true;
             }
-            if (designerItem == null)
+            if (programWindow == null)
             {
                 return;
             }
-            if ((bool)designerItem.Resources["Maxed"])
+            if (programWindow.maxed)
             {
                 return;
             }
@@ -33,14 +33,14 @@ namespace Game.UI
             switch (VerticalAlignment)
             {
                 case VerticalAlignment.Bottom:
-                    deltaVertical = Math.Min(-e.VerticalChange, designerItem.ActualHeight - designerItem.MinHeight);
-                    designerItem.Height -= deltaVertical;
+                    deltaVertical = Math.Min(-e.VerticalChange, programWindow.ActualHeight - programWindow.MinHeight);
+                    programWindow.Height -= deltaVertical;
                     break;
 
                 case VerticalAlignment.Top:
-                    deltaVertical = Math.Min(e.VerticalChange, designerItem.ActualHeight - designerItem.MinHeight);
-                    Canvas.SetTop(designerItem, Canvas.GetTop(designerItem) + deltaVertical);
-                    designerItem.Height -= deltaVertical;
+                    deltaVertical = Math.Min(e.VerticalChange, programWindow.ActualHeight - programWindow.MinHeight);
+                    Canvas.SetTop(programWindow, Canvas.GetTop(programWindow) + deltaVertical);
+                    programWindow.Height -= deltaVertical;
                     break;
 
                 default:
@@ -50,14 +50,14 @@ namespace Game.UI
             switch (HorizontalAlignment)
             {
                 case HorizontalAlignment.Left:
-                    deltaHorizontal = Math.Min(e.HorizontalChange, designerItem.ActualWidth - designerItem.MinWidth);
-                    Canvas.SetLeft(designerItem, Canvas.GetLeft(designerItem) + deltaHorizontal);
-                    designerItem.Width -= deltaHorizontal;
+                    deltaHorizontal = Math.Min(e.HorizontalChange, programWindow.ActualWidth - programWindow.MinWidth);
+                    Canvas.SetLeft(programWindow, Canvas.GetLeft(programWindow) + deltaHorizontal);
+                    programWindow.Width -= deltaHorizontal;
                     break;
 
                 case HorizontalAlignment.Right:
-                    deltaHorizontal = Math.Min(-e.HorizontalChange, designerItem.ActualWidth - designerItem.MinWidth);
-                    designerItem.Width -= deltaHorizontal;
+                    deltaHorizontal = Math.Min(-e.HorizontalChange, programWindow.ActualWidth - programWindow.MinWidth);
+                    programWindow.Width -= deltaHorizontal;
                     break;
 
                 default:

@@ -1,28 +1,22 @@
-﻿using Core.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Game.Core.Events
 {
-    public class EventBuilder : 
-        IEventName ,
-        IEventInterval ,
-        IEventStartTime ,
-        IEventVoid ,
+    public class EventBuilder :
+        IEventName,
+        IEventInterval,
+        IEventStartTime,
+        IEventVoid,
         IEventAction,
         IEventFunction
     {
-
-        string _EventName;
-        double _EventInterval;
-        DateTime _EventStartTime;
-        Action _EventVoid;
-        Action<object[]> _EventAction;
-        Func<object[], object[]> _EventFunc;
-        object[] _Arguments;
+        private string _EventName;
+        private double _EventInterval;
+        private DateTime _EventStartTime;
+        private Action _EventVoid;
+        private Action<object[]> _EventAction;
+        private Func<object[], object[]> _EventFunc;
+        private object[] _Arguments;
 
         private EventBuilder(string EventName)
         {
@@ -33,7 +27,6 @@ namespace Game.Core.Events
         {
             return new EventBuilder(EventName);
         }
-
 
         public IEventVoid EventVoid(Action VoidToRun)
         {
@@ -69,52 +62,59 @@ namespace Game.Core.Events
             return this;
         }
 
-        public Event RegisterWithAction()
+        public void RegisterWithAction()
         {
-            return new Event(this._EventName, this._EventInterval, _EventAction, _Arguments);
+            new Event(this._EventName, this._EventInterval, _EventAction, _Arguments);
         }
 
-        public Event RegisterWithFunc()
+        public void RegisterWithFunc()
         {
-            return new Event(this._EventName, this._EventInterval, _EventFunc, _Arguments);
+            new Event(this._EventName, this._EventInterval, _EventFunc, _Arguments);
         }
 
-        public Event RegisterWithVoid()
+        public void RegisterWithVoid()
         {
-            return new Event(this._EventName, this._EventInterval, _EventVoid);
+            new Event(this._EventName, this._EventInterval, _EventVoid);
         }
     }
 
     public interface IEventName
     {
         public IEventInterval EventInterval(double IntervalInSecondes);
+
         public IEventStartTime EventStartTime(DateTime StartTime);
     }
 
     public interface IEventInterval
     {
         public IEventVoid EventVoid(Action VoidToRun);
+
         public IEventAction EventAction(Action<object[]> ActionToRun, object[] Arguments);
+
         public IEventFunction EventFunction(Func<object[], object[]> FuncToRun, object[] Arguments);
     }
 
     public interface IEventStartTime
     {
         public IEventVoid EventVoid(Action VoidToRun);
+
         public IEventAction EventAction(Action<object[]> ActionToRun, object[] Arguments);
+
         public IEventFunction EventFunction(Func<object[], object[]> FuncToRun, object[] Arguments);
     }
 
     public interface IEventVoid
     {
-        public Event RegisterWithVoid();
+        public void RegisterWithVoid();
     }
+
     public interface IEventAction
     {
-        public Event RegisterWithAction();
+        public void RegisterWithAction();
     }
+
     public interface IEventFunction
     {
-        public Event RegisterWithFunc();
+        public void RegisterWithFunc();
     }
 }

@@ -5,9 +5,10 @@ using Game.Core.Console;
 using Game.Core.Endpoints;
 using Game.Core.Events;
 using Game.Core.Mission;
+using Game.Core.World;
+using System;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Media;
 
 namespace Game
 {
@@ -18,11 +19,21 @@ namespace Game
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            base.OnStartup(e);
             //declaring globals
-            UTILS.LoadPasswordAndUsernameFile();
+            UTILS.LoadExternalLists();
+            MissionDictionaries.ParseFromFiles();
+
             Global.GameState = new GameState();
             Global.GameState.SetUserName("RJ");
             Global.App = this;
+            Global.SplashPage = new UI.SplashPage();
+            Global.SplashPage2 = new UI.SplashPage2();
+
+            Global.MainWindow = new UI.MainWindow();
+
+            MainWindow.Show();
+
             Global.EventTicker = new GameTicker();
             Global.EndpointGenerator = new EndpointGenerator();
 
@@ -33,11 +44,17 @@ namespace Game
 
             Global.Bounce = new Bounce();
             Global.LocalSystem = new LocalSystem();
-            Global.ActiveTraceTracker = new Core.ActiveTraceTracker();
-            Global.PassiveTraceTracker = new Core.PassiveTraceTracker();
+            Global.ActiveTraceTracker = new Core.World.ActiveTraceTracker();
+            Global.PassiveTraceTracker = new Core.World.PassiveTraceTracker();
+
+            Global.AllEndpoints = Global.EndpointGenerator.GenerateEndpoints();
+            TrafficSimulator.Instance.Start();
+
+            Global.MissionManager = new MissionManager();
+            Global.MissionManager.EvaluateMissionListings();
+
 
             //TODO move non UI game flow to other class
-            base.OnStartup(e);
             Global.EventTicker.StartTicker();
 
             EventBuilder.BuildEvent("TESTEVENT0")
@@ -64,6 +81,12 @@ namespace Game
                 .EventInterval(1400d)
                 .EventVoid(PRINTDEBUG)
                 .RegisterWithVoid();
+
+        }
+
+        internal void FinshedPlaySetup()
+        {
+            throw new NotImplementedException();
         }
 
         public void PRINTDEBUG()
@@ -78,12 +101,11 @@ namespace Game
 
         public void OnMapReady()
         {
-            Global.AllEndpoints = Global.EndpointGenerator.GenerateEndpoints(100);
             Global.EndPointMap.DisplayEndpoints();
+        }
 
-            MissionDictionaries.ParseFromFiles();
-            Global.MissionManager = new MissionManager();
-            Global.MissionManager.EvaluateMissionListings();
+        private void MaxButton_Selected(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

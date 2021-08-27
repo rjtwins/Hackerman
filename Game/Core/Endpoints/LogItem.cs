@@ -1,5 +1,4 @@
-﻿using Game.Core.Events;
-using System;
+﻿using System;
 
 namespace Game.Core.Endpoints
 {
@@ -29,12 +28,12 @@ namespace Game.Core.Endpoints
         IUser,
         IAccesLevel
     {
-        Endpoint _From;
-        Endpoint _Too;
-        LogType _LogType;
-        AccessLevel _AccesLevel;
-        string _UserName;
-        DateTime _TimeStamp;
+        private Endpoint _From;
+        private Endpoint _Too;
+        private LogType _LogType;
+        private AccessLevel _AccesLevel;
+        private string _UserName;
+        private DateTime _TimeStamp;
 
         public static ILogBuilder Builder()
         {
@@ -138,15 +137,22 @@ namespace Game.Core.Endpoints
     public interface ILogBuilder
     {
         public ICONNECTION_ATTEMPT CONNECTION_ATTEMPT();
-        public ICONNECTION_FAILED CONNECTION_FAILED();
-        public ICONNECTION_SUCCES CONNECTION_SUCCES();
-        public IFILE_EDITED FILE_EDITED();
-        public IFILE_COPIED FILE_COPIED();
-        public IFILE_DELETED FILE_DELETED();
-        public IFILE_RUN FILE_RUN();
-        public ICONNECTION_ROUTED CONNECTION_ROUTED();
-        public ICONNECTION_DISCONNECTED CONNECTION_DISCONNECTED();
 
+        public ICONNECTION_FAILED CONNECTION_FAILED();
+
+        public ICONNECTION_SUCCES CONNECTION_SUCCES();
+
+        public IFILE_EDITED FILE_EDITED();
+
+        public IFILE_COPIED FILE_COPIED();
+
+        public IFILE_DELETED FILE_DELETED();
+
+        public IFILE_RUN FILE_RUN();
+
+        public ICONNECTION_ROUTED CONNECTION_ROUTED();
+
+        public ICONNECTION_DISCONNECTED CONNECTION_DISCONNECTED();
     }
 
     public interface ICONNECTION_DISCONNECTED
@@ -167,13 +173,11 @@ namespace Game.Core.Endpoints
     public interface IFILE_COPIED
     {
         public IFrom From(Endpoint from);
-
     }
 
     public interface IFILE_EDITED
     {
         public IFrom From(Endpoint from);
-
     }
 
     public interface IFILE_RUN
@@ -181,17 +185,14 @@ namespace Game.Core.Endpoints
         public IFrom From(Endpoint from);
     }
 
-
     public interface ICONNECTION_SUCCES
     {
         public IFrom From(Endpoint from);
-
     }
 
     public interface ICONNECTION_FAILED
     {
         public IFrom From(Endpoint from);
-
     }
 
     public interface ICONNECTION_ATTEMPT
@@ -208,11 +209,12 @@ namespace Game.Core.Endpoints
     {
         public IUser User(string user);
     }
-    
+
     public interface IUser
     {
         public IAccesLevel AccesLevel(AccessLevel accessLevel);
     }
+
     public interface IAccesLevel
     {
         public LogItem TimeStamp(DateTime timeStamp);

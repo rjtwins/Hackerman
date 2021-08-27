@@ -1,5 +1,4 @@
 ﻿using Game.Core.Console;
-using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +16,7 @@ namespace Game.UI
     public partial class RemoteConsole : System.Windows.Controls.Page
     {
         public ConsoleContent ConsoleContent = new ConsoleContent();
-        private RemoteCommandParser CommandParser;
+        public RemoteCommandParser CommandParser;
         private int historyIndex = 0;
 
         public RemoteConsole()
@@ -40,7 +39,6 @@ namespace Game.UI
 
         public void StartConsole(string user)
         {
-
         }
 
         private void InputBlock_KeyDown(object sender, KeyEventArgs e)
@@ -131,12 +129,11 @@ namespace Game.UI
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                if(e.Key == Key.C)
+                if (e.Key == Key.C)
                 {
                     CommandParser.StopCurrentProgram();
                 }
             }
-            
         }
     }
 

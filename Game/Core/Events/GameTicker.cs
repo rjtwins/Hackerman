@@ -2,7 +2,6 @@
 using Game.Core.Events;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Core.Events
@@ -70,7 +69,7 @@ namespace Core.Events
 
         public void StartTicker()
         {
-            if(TimeIntervalInSecondes == 0d)
+            if (TimeIntervalInSecondes == 0d)
             {
                 TimeIntervalInSecondes = GameSpeedDict[1];
                 this.GameSpeed = 1;
@@ -85,7 +84,7 @@ namespace Core.Events
         {
             GameTicker.invokeCount += 1;
             Global.GameTime = Global.GameTime.AddSeconds(TimeIntervalInSecondes);
-            if(Global.MainWindow != null)
+            if (Global.MainWindow != null)
             {
                 Global.MainWindow.UpdateDateTime();
                 HandleEvents();
@@ -103,7 +102,7 @@ namespace Core.Events
                 {
                     throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
                 }
-                if(e.StartTime > Global.GameTime)
+                if (e.StartTime > Global.GameTime)
                 {
                     break;
                 }
@@ -124,10 +123,10 @@ namespace Core.Events
         /// Returns after x in game secondes
         /// </summary>
         /// <param name="secondes"></param>
-        public void SleepSecondes(double secondes)
+        public void SleepSeconds(double secondes)
         {
-            double timeAddedPerSecondes = this.TimeIntervalInSecondes * 10;
-            System.Threading.Thread.Sleep(Convert.ToInt32((secondes / timeAddedPerSecondes) * 1000d));
+            double secondsAddedPerSeconds = this.TimeIntervalInSecondes * 10;
+            System.Threading.Thread.Sleep(Convert.ToInt32((secondes / secondsAddedPerSeconds) * 1000d));
         }
 
         private void TryStartEvent(Event eventToHandle)

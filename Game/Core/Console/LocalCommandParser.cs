@@ -1,5 +1,4 @@
 ﻿using Game.Core.Console.LocalPrograms;
-using Game.Core.Endpoints;
 using Game.UI;
 using System;
 using System.Collections.Generic;
@@ -74,7 +73,7 @@ namespace Game.Core.Console
 
         public void ParseCommand(string command, string prefix)
         {
-             //split at space
+            //split at space
             List<string> splitCommand = new List<string>(command.Split(' '));
             string commandType = splitCommand[0];
             string commandBody = string.Empty;
@@ -83,7 +82,6 @@ namespace Game.Core.Console
             {
                 commandBody = splitCommand[1];
             }
-
             else if (splitCommand.Count > 2)
             {
                 commandBody = string.Join(' ', splitCommand.GetRange(1, splitCommand.Count - 1));
@@ -92,7 +90,7 @@ namespace Game.Core.Console
             if (CommandDictionary.ContainsKey(commandType))
             {
                 CommandDictionary[commandType](commandBody);
-                return; 
+                return;
             }
 
             ConsoleContent.ConsoleOutput.Add("\"" + command + "\"" + " is not recognized as an internal or external command or operable program.\n");
