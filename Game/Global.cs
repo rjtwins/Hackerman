@@ -16,7 +16,7 @@ namespace Game
 {
     public static class Global
     {
-        //TODO rever to singeltons and public statics
+        //TODO revert to singelton and public statics
         public static Random Rand = new Random();
 
         public static App App;

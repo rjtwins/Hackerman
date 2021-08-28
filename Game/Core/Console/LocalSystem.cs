@@ -2,6 +2,7 @@
 using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
+using static Game.Core.Endpoints.Endpoint;
 
 namespace Game.Core.Console
 {
@@ -11,6 +12,14 @@ namespace Game.Core.Console
 
         public Bouncer Bouncer = new Bouncer();
         private Dictionary<string, Endpoint[]> SavedBounceLists = new Dictionary<string, Endpoint[]>();
+
+        public EndpointFirewall FirewallBypass = EndpointFirewall.NONE;
+        public EndpointMonitor MonitorBypass = EndpointMonitor.NONE;
+
+        internal bool FirewallBypassActive;
+
+        public bool MonitorBypassActive { get; internal set; }
+
         //private Dictionary<string, Program> SavedFiles = new Dictionary<string, Program>();
 
         internal void SaveCurrentBounceListsAs(string commandBody)

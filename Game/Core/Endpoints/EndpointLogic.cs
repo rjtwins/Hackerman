@@ -80,7 +80,36 @@ namespace Game.Core.Endpoints
             {
                 return;
             }
+            if(((int)Global.LocalSystem.MonitorBypass) > ((int)this.Monitor) 
+                && Global.LocalSystem.MonitorBypassActive)
+            {
+                return;
+            }
             Global.ActiveTraceTracker.StartTrace(this.TraceSpeed);
+        }
+
+        //TODO: make it so if you spoof the network it will not block you.
+        public bool CanBreachFirewall()
+        {
+            if (!HasFirewall())
+                return true;
+            if (!FirewallActive)
+                return true;
+            if(((int)Global.LocalSystem.FirewallBypass) > ((int)this.Firewall) 
+                && Global.LocalSystem.FirewallBypassActive)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool HasFirewall()
+        {
+            if (((int)this.Firewall) > ((int)EndpointFirewall.NONE))
+            {
+                return true;
+            }
+            return false;
         }
 
         private void SetupEndpoint()
