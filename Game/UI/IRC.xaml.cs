@@ -21,7 +21,7 @@ namespace Game.UI
         //private ObservableCollection<StackPanel> iRCOutput = new ObservableCollection<StackPanel>();
 
         public IRCChannel CurrentChannel;
-        public Dictionary<string, IRCChannel> IDChannelDict = new();
+        public Dictionary<string, IRCChannel> NameChannelDict = new();
         private Dictionary<string, Func<string, string>> CommandDict = new();
         private Dictionary<Guid, StackPanel> GuidJobListingDict = new();
 
@@ -103,12 +103,12 @@ namespace Game.UI
         {
             IRCChannel IRCChannel = new IRCChannel(channelName);
             IRCChannel.ChannelNameTextBlock.Text = channelName;
-            this.IDChannelDict.Add(channelName, IRCChannel);
+            this.NameChannelDict.Add(channelName, IRCChannel);
         }
 
         public void AddHiddenChannel(IRCChannel iRCChannel)
         {
-            this.IDChannelDict.Add(iRCChannel.ChannelName, iRCChannel);
+            this.NameChannelDict.Add(iRCChannel.ChannelName, iRCChannel);
         }
 
         public void AddMessageFromThread(string channelName, string sender, string message)
@@ -162,7 +162,7 @@ namespace Game.UI
             stp.Orientation = Orientation.Horizontal;
             System.Drawing.Color senderColor;
 
-            if (!IDChannelDict.TryGetValue(channelName, out IRCChannel toWriteTo))
+            if (!NameChannelDict.TryGetValue(channelName, out IRCChannel toWriteTo))
             {
                 return stp;
             }
@@ -255,7 +255,7 @@ namespace Game.UI
             }
 
             //Get channel and port messages back
-            if (!this.IDChannelDict.TryGetValue(ChannelName, out IRCChannel iRCChannel))
+            if (!this.NameChannelDict.TryGetValue(ChannelName, out IRCChannel iRCChannel))
             {
                 return "Channel not found.\n";
             }
@@ -288,7 +288,7 @@ namespace Game.UI
             if (CurrentChannel.Messages != null)
             {
                 this.CurrentChannel.Messages = IRCOutput.Children.OfType<StackPanel>().ToList();
-                this.IDChannelDict[CurrentChannel.ChannelName] = this.CurrentChannel;
+                this.NameChannelDict[CurrentChannel.ChannelName] = this.CurrentChannel;
             }
             if (this.CurrentChannel.ChannelNameTextBlock != null)
             {
@@ -299,21 +299,35 @@ namespace Game.UI
 
         public void AddChannel(IRCChannel iRCChannel)
         {
-            this.IDChannelDict.Add(iRCChannel.ChannelName, iRCChannel);
+            this.NameChannelDict.Add(iRCChannel.ChannelName, iRCChannel);
             this.Channels.Children.Add(iRCChannel.ChannelNameTextBlock);
+        }
+
+        public bool ChannelExsits(string channelName)
+        {
+            if (this.NameChannelDict.ContainsKey(channelName))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void AddChannelFromThread(string channelName)
+        {
+            this.Dispatcher.Invoke(() => { AddChannel(channelName); });
         }
 
         public void AddChannel(string channelName)
         {
             IRCChannel IRCChannel = new IRCChannel(channelName);
             IRCChannel.ChannelNameTextBlock.Text = channelName;
-            this.IDChannelDict.Add(channelName, IRCChannel);
+            this.NameChannelDict.Add(channelName, IRCChannel);
             this.Channels.Children.Add(IRCChannel.ChannelNameTextBlock);
         }
 
         public void RemoveChannel(string channelName)
         {
-            if (this.IDChannelDict.TryGetValue(channelName, out IRCChannel iRCChannel))
+            if (this.NameChannelDict.TryGetValue(channelName, out IRCChannel iRCChannel))
             {
                 if(CurrentChannel != null)
                 {
@@ -323,14 +337,14 @@ namespace Game.UI
                     }
                 }
                 this.Channels.Children.Remove(iRCChannel.ChannelNameTextBlock);
-                this.IDChannelDict.Remove(channelName);
+                this.NameChannelDict.Remove(channelName);
             }
         }
 
         public void RemoveJobListing(MissionTemplate mission)
         {
             this.RemoveChannel(mission.MissionChannel);
-            this.IDChannelDict["jobs"].Messages.Remove(this.GuidJobListingDict[mission.id]);
+            this.NameChannelDict["jobs"].Messages.Remove(this.GuidJobListingDict[mission.id]);
         }
 
         public void AddJobListing(MissionTemplate mission)

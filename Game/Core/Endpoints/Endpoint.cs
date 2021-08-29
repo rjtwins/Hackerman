@@ -22,6 +22,8 @@ namespace Game.Core.Endpoints
         public int PassiveTraceDificulty = 1;
         public int TraceSpeed = 1;
         public bool isHidden { protected set; get; } = false;
+        public DateTime NextAdminCheckDate { get; internal set; }
+        public DateTime NextRestartDate { get; internal set; }
 
         public Endpoint(Person Person, EndpointType endpointType)
         {
@@ -33,16 +35,23 @@ namespace Game.Core.Endpoints
             //For testing:
             Person p1 = new Person();
             p1.Name = "root";
+            p1.WorkPassword = "root";
 
             Person p2 = new Person();
             p2.Name = "guest";
-
-            Person p3 = new Person();
-            p3.Name = "admin";
+            p2.WorkPassword = "guest";
 
             this.AddUser(p1, "root", AccessLevel.ROOT);
             this.AddUser(p2, "guest", AccessLevel.USER);
-            this.AddUser(p3, "admin", AccessLevel.ADMIN);
+        }
+
+
+        internal string PrintSchedule()
+        {
+            string result = "SCHEDULE:\n"
+                + this.NextRestartDate.ToString() + "Scheduled automatic restart.\n"
+                + this.NextAdminCheckDate.ToString() + "Scheduled administrative maintenance.\n";
+            return result;
         }
     }
 }

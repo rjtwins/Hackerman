@@ -30,7 +30,7 @@ namespace Game.Core.Console.LocalPrograms
             Global.RemoteConsole.CommandParser.OnDisconnected += CommandParser_OnDisconnected;
         }
 
-        private void CommandParser_OnDisconnected(object sender, DisconnectedEventArgs e)
+        private void CommandParser_OnDisconnected(object sender, RemoteConsoleDisconnectedEventArgs e)
         {
             this.Stop = true;
         }

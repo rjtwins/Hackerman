@@ -10,7 +10,6 @@ namespace Core.Events
     {
         //Main ticker
         private Timer MainTimer;
-
         public int GameSpeed { private set; get; } = 1;
         public double TimeIntervalInSecondes = 0.1d;
 
@@ -19,9 +18,7 @@ namespace Core.Events
 
         //Dictionaries for all events past present and future.
         public SortedList<DateTime, Guid> EventQueue = new SortedList<DateTime, Guid>();
-
         public Dictionary<Guid, Event> IDEventDict = new Dictionary<Guid, Event>();
-
         private Dictionary<int, double> GameSpeedDict = new Dictionary<int, double>();
 
         public GameTicker()
@@ -114,6 +111,9 @@ namespace Core.Events
                 foreach (Event eventToHandle in EventsToHandle)
                 {
                     EventQueue.Remove(eventToHandle.StartTime);
+                }
+                foreach(Event eventToHandle in EventsToHandle)
+                {
                     TryStartEvent(eventToHandle);
                 }
             }

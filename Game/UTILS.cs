@@ -44,14 +44,18 @@ namespace Game
             return ar;
         }
 
-        internal static Endpoint PickRandomEndpointWithAccess(Endpoint e)
+        internal static (bool GuestUser, Endpoint) PickRandomEndpointWithAccess(Endpoint e)
         {
             if(e.AllowedConnections.Count == 0)
             {
-                return e.GetRandomUser().PersonalComputer;
+                Person randomUser = e.GetRandomUser();
+                if(randomUser.Name == "guest")
+                {
+                    return (true, PickRandomPersonWithEndpoint().PersonalComputer);
+                }
+                return (false, randomUser.PersonalComputer);
             }
-            return e.AllowedConnections[Rand.Next(e.AllowedConnections.Count)];
-
+            return (false, e.AllowedConnections[Rand.Next(e.AllowedConnections.Count)]);
         }
 
         internal static Endpoint PickRandomCompanyEdnpoint()
@@ -138,6 +142,11 @@ namespace Game
                 p.WorkPassword = UTILS.PickRandomPassword();
             }
             return p;
+        }
+
+        internal static Person PickRandomPersonWithEndpoint()
+        {
+            return Global.PersonalEndpoints[Rand.Next(Global.PersonalEndpoints.Count)].Owner;
         }
 
         public static string GenerateRandomString(int n)

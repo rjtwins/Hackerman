@@ -19,7 +19,7 @@ namespace Game.Core.World
             Global.RemoteConsole.CommandParser.OnDisconnected += CommandParser_OnDisconnected;
         }
 
-        private void CommandParser_OnDisconnected(object sender, Console.DisconnectedEventArgs e)
+        private void CommandParser_OnDisconnected(object sender, Console.RemoteConsoleDisconnectedEventArgs e)
         {
             if(this.Tracing)
                 StopTrace();

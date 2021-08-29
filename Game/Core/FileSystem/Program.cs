@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Core.Endpoints;
+using System;
 
 namespace Game.Core.FileSystem
 {
@@ -9,6 +10,7 @@ namespace Game.Core.FileSystem
         public byte[] content { private set; get; }
         public bool Executable = false;
         public Guid Id { private set; get; }
+        public bool IsMalicious = false;
 
         public Program(string name, bool executable = false)
         {
@@ -35,9 +37,14 @@ namespace Game.Core.FileSystem
             return (Program)this.Clone();
         }
 
-        internal void RunProgram()
+        public virtual string RunProgram(Endpoint ranOn)
         {
-            //
+            return "";
+        }
+
+        public virtual void StopProgram()
+        {
+
         }
     }
 }

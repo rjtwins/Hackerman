@@ -1,6 +1,7 @@
 ﻿using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Game.Core.FileSystem
@@ -55,8 +56,7 @@ namespace Game.Core.FileSystem
             GetFolderFromPath(@"root\system").AddProgram(new Program("HelperLib.dll"));
             GetFolderFromPath(@"root\system").AddProgram(new Program("HelperLib.dll"));
 
-  
-            MakeFolderFromPath(@"root\autostart").AccessLevel = AccessLevel.ROOT;
+            MakeFolderFromPath(@"root\system\autostart").AccessLevel = AccessLevel.ROOT;
             MakeFolderFromPath(@"root\system\logs").AccessLevel = AccessLevel.ROOT;
             GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
 
@@ -249,7 +249,7 @@ namespace Game.Core.FileSystem
         /// <param name="f"></param>
         /// <param name="o"></param>
         /// <param name="user"></param>
-        public void AddFileToFolder(Program p, Folder f, bool o)
+        private void AddFileToFolder(Program p, Folder f, bool o)
         {
             if (!this.AllFolders.Contains(f) && this.AllFolders.Count != 0)
             {
@@ -281,6 +281,7 @@ namespace Game.Core.FileSystem
                     continue;
                 }
                 NewFolder = new Folder(F, folder);
+                AllFolders.Add(NewFolder);
                 F.Folders[folder] = NewFolder;
             }
             return NewFolder;
@@ -305,6 +306,7 @@ namespace Game.Core.FileSystem
                     continue;
                 }
                 F.Folders[folder] = new Folder(F, folder);
+                AllFolders.Add(F.Folders[folder]);
             }
         }
 
@@ -314,6 +316,9 @@ namespace Game.Core.FileSystem
             List<string> folders = path.Split('\\').ToList<string>();
             folders.RemoveAt(0); //Remove "root" because we are root
 
+            Debug.WriteLine(this.ParrentEndpoint.name);
+            Debug.WriteLine(this.ParrentEndpoint.IsLocalEndpoint);
+
             foreach (string FString in folders)
             {
                 try
@@ -321,7 +326,7 @@ namespace Game.Core.FileSystem
                     F = F.Folders[FString];
                 }
                 catch (KeyNotFoundException ex)
-                {
+                {;
                     throw new Exception("The system cannot find the path specified to.");
                 }
             }
@@ -332,11 +337,30 @@ namespace Game.Core.FileSystem
             return F;
         }
 
+        internal string TryRunFile(string path)
+        {
+            string[] splitPath = path.Split('\\');
+            Folder tempFolder;
+            if (splitPath.Length > 0)
+            {
+                tempFolder = GetFolderFromPath(string.Join("\\", splitPath[0..(splitPath.Length - 1)]));
+                if(tempFolder.Programs.TryGetValue(splitPath[splitPath.Length - 1], out Program p))
+                {
+                    return p.RunProgram(this.ParrentEndpoint);
+                }
+            }
+            if (CurrentFolder.Programs.TryGetValue(path, out Program q))
+            {
+                return q.RunProgram(this.ParrentEndpoint);
+            }
+            return "Program \""+ path +"\" not found.";
+        }
+
         internal void RunStartupPrograms()
         {
             foreach (Program p in GetFolderFromPath(@"root\system\autostart").Programs.Values)
             {
-                p.RunProgram();
+                p.RunProgram(this.ParrentEndpoint);
             }
         }
 

@@ -10,6 +10,7 @@ namespace Game.Core.Endpoints
         public AccessLevel AccessLevel;
         public string UserName;
         public DateTime TimeStamp;
+        public string FilePath;
     }
 
     public class LogItemBuilder :
@@ -34,6 +35,7 @@ namespace Game.Core.Endpoints
         private AccessLevel _AccesLevel;
         private string _UserName;
         private DateTime _TimeStamp;
+        private string _FilePath;
 
         public static ILogBuilder Builder()
         {
@@ -101,8 +103,9 @@ namespace Game.Core.Endpoints
             return this;
         }
 
-        public IFILE_RUN FILE_RUN()
+        public IFILE_RUN FILE_RUN(string path)
         {
+
             this._LogType = LogType.FILE_RUN;
             return this;
         }
@@ -148,7 +151,7 @@ namespace Game.Core.Endpoints
 
         public IFILE_DELETED FILE_DELETED();
 
-        public IFILE_RUN FILE_RUN();
+        public IFILE_RUN FILE_RUN(string path);
 
         public ICONNECTION_ROUTED CONNECTION_ROUTED();
 

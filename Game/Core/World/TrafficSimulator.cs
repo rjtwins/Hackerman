@@ -52,17 +52,22 @@ namespace Game.Core.World
 
             //TODO filter pick on endpoint type.
             Endpoint A = UTILS.PickRandomCompanyEdnpoint();
-            Endpoint B = UTILS.PickRandomEndpointWithAccess(A);
+            (bool isGuestUser, Endpoint B) = UTILS.PickRandomEndpointWithAccess(A);
 
-            Person person = B.Owner;
-            string password = B.Owner.WorkPassword;
+            string password = "guest";
+            string userName = "guest";
+            if (!isGuestUser)
+            {
+                password = B.Owner.WorkPassword;
+                userName = B.Owner.Name;
+            }
 
-            if (person != null && password != string.Empty)
+            if (userName != null && password != string.Empty)
             {
                 Debug.WriteLine("Simulated Traffic Between:");
                 Debug.WriteLine("--From " + A.IPAddress);
                 Debug.WriteLine("--Too " + B.IPAddress);
-                A.LogInToo(person.Name, password, B, true);
+                A.LogInToo(userName, password, B, true);
                 A.Discconect();
             }
 

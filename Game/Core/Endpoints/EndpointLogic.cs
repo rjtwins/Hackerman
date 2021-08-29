@@ -19,12 +19,15 @@ namespace Game.Core.Endpoints
         public int BounceVersion = 0;
 
         public bool ConnectedToo = false;
+        public EndpointEvents EndpointEvents;
 
         public enum EndpointMonitor { NONE, LVL1, LVL2, LVL3, LVL4 }
         public enum EndpointFirewall { NONE, LVL1, LVL2, LVL3, LVL4 }
         public enum EndpointState { ONLINE, SHUTTINGDOWN, STARTING, CRASHED, DESTROYED1, DESTROYED2, DESTROYED3 };
 
         public List<Endpoint> AllowedConnections = new();
+
+        public List<(string, string)> LoginHistory = new();
 
         public bool MonitorActive = false;
         public bool FirewallActive = false;
@@ -96,7 +99,6 @@ namespace Game.Core.Endpoints
             }
             Global.ActiveTraceTracker.StartTrace(this.TraceSpeed);
         }
-
         //TODO: make it so if you spoof the network it will not block you.
         public bool CanBreachFirewall()
         {
@@ -111,7 +113,6 @@ namespace Game.Core.Endpoints
             }
             return false;
         }
-
         public bool HasFirewall()
         {
             if (((int)this.Firewall) > ((int)EndpointFirewall.NONE))
@@ -120,10 +121,14 @@ namespace Game.Core.Endpoints
             }
             return false;
         }
-
         private void SetupEndpoint()
         {
             this.Id = Guid.NewGuid();
+
+            if (this.IsLocalEndpoint)
+            {
+                return;
+            }
 
             //Generate IPAdress with Guid as seed
             var data = new byte[4];
@@ -170,8 +175,8 @@ namespace Game.Core.Endpoints
                 default:
                     break;
             }
+            this.EndpointEvents = new EndpointEvents(this);
         }
-
         internal bool HasConnection()
         {
             if (this.SoftConnection)
@@ -180,28 +185,6 @@ namespace Game.Core.Endpoints
             }
             return false;
 
-        }
-
-        private void GenerateAdminUsers(int nr)
-        {
-            for (int i = 0; i < nr; i++)
-            {
-                this.AddUser(UTILS.PickRandomPerson(), UTILS.PickRandomPassword(), AccessLevel.ADMIN);
-            }
-        }
-        private void GenerateRootUsers(int nr)
-        {
-            for (int i = 0; i < nr; i++)
-            {
-                this.AddUser(UTILS.PickRandomPerson(), UTILS.PickRandomPassword(), AccessLevel.ROOT);
-            }
-        }
-        private void GenerateRandomUsers(int nr)
-        {
-            for (int i = 0; i < nr; i++)
-            {
-                this.AddUser(UTILS.PickRandomPerson(), UTILS.PickRandomPassword(), AccessLevel.USER);
-            }
         }
         internal string GetPassword(string user)
         {
@@ -227,12 +210,12 @@ namespace Game.Core.Endpoints
         {
             int nrUsers = this.UsernamePasswordDict.Keys.Count;
 
-            if (nrUsers == 3)
+            Person randomUser = UsernamePasswordDict.Keys.ToList()[Global.Rand.Next(nrUsers)];
+
+            if(nrUsers == 1)
             {
                 return null;
             }
-
-            Person randomUser = UsernamePasswordDict.Keys.ToList()[Global.Rand.Next(nrUsers)];
 
             if (!noSystemUsers)
             {
@@ -241,12 +224,6 @@ namespace Game.Core.Endpoints
 
             switch (randomUser.Name)
             {
-                case "guest":
-                    return GetRandomUser();
-
-                case "admin":
-                    return GetRandomUser();
-
                 case "root":
                     return GetRandomUser();
 
@@ -256,17 +233,15 @@ namespace Game.Core.Endpoints
 
             return randomUser;
         }
-
         internal string PrintUsers()
         {
-            string result = "USER LIST:\n";
+            string result = "USER:\t\tTYPE:\n";
             foreach (Person person in this.UsernamePasswordDict.Keys)
             {
-                result += person.Name + "\n";
+                result += person.Name + "\t\t" + this.UsernamePasswordAccessDict[person.Name + person.WorkPassword].ToString() + "\n";
             }
             return result;
         }
-
         internal void AddEmployes(Endpoint[] employes)
         {
             foreach(Endpoint e in employes)
@@ -274,7 +249,6 @@ namespace Game.Core.Endpoints
                 this.AddUser(e.Owner, e.Owner.WorkPassword, AccessLevel.USER);
             }
         }
-
 
         public void AddUser(Person person, string password, AccessLevel accessLevel)
         {
@@ -297,15 +271,40 @@ namespace Game.Core.Endpoints
             LogConnectionRouted(from, too);
         }
 
-        private void LogConnectionRouted(Endpoint from, Endpoint too)
+        internal void AdminSystemCheck()
         {
-            this.ConnectionLog.Add(new LogItem
+            #region logs
+            //Trim Logs to 20 entries.
+            List<LogItem> sysLog = this.SystemLog;
+            while(sysLog.Count > 20)
             {
-                From = from,
-                Too = too,
-                LogType = LogType.CONNECTION_ROUTED,
-                TimeStamp = Global.GameTime
-            });
+                sysLog.RemoveAt(this.SystemLog.Count - 1);
+            }
+            this.SystemLog = sysLog;
+
+            List<LogItem> conLog = this.ConnectionLog;
+            while (conLog.Count > 20)
+            {
+                conLog.RemoveAt(this.SystemLog.Count - 1);
+            }
+            this.ConnectionLog = conLog;
+            #endregion
+
+            #region virus scan
+            foreach (Folder f in this.FileSystem.AllFolders)
+            {
+                foreach(Program p in f.Programs.Values)
+                {
+                    if (p.IsMalicious)
+                    {
+                        p.StopProgram();
+                        f.RemoveProgram(p);
+                    }
+                }
+            }
+            #endregion
+
+            this.EndpointEvents.ScheduleNextAdminCheck();
         }
 
         internal void Discconect()
@@ -317,7 +316,11 @@ namespace Game.Core.Endpoints
             CurrentUsername = string.Empty;
             CurrentPassword = string.Empty;
             this.ConnectedFrom = null;
-            EndpointDisconnectedEventArgs args = new EndpointDisconnectedEventArgs(null);
+            EndpointDisconnectedEventArgs args = new EndpointDisconnectedEventArgs("");
+            if(OnDisconnected == null)
+            {
+                return;
+            }
             OnDisconnected(this, args);
         }
 
@@ -350,6 +353,12 @@ namespace Game.Core.Endpoints
             return FileSystem.TryPrintFile(command);
         }
 
+        internal string RunProgram(string path)
+        {
+            this.LogFileRan(path);
+            return FileSystem.TryRunFile(path);
+        }
+
         internal string NavigateTo(string command)
         {
             FileSystem.NavigateTo(command, CurrentUsername);
@@ -371,7 +380,6 @@ namespace Game.Core.Endpoints
             }
             return result;
         }
-
         internal string RemoveFileFrom(string path, Program p, bool log = true)
         {
             string result = this.FileSystem.RemoveFileFromFolder(path, p, CurrentUsername);
@@ -387,7 +395,6 @@ namespace Game.Core.Endpoints
             }
             throw new NotImplementedException();
         }
-
         internal bool AllowsConnection(Endpoint from)
         {
             Debug.WriteLine("Connecting from: " + from.name);
@@ -407,12 +414,15 @@ namespace Game.Core.Endpoints
             }
             return false;
         }
-
         internal void ConnectToo(Endpoint from)
         {
             this.SoftConnection = true;
-            EndpointConnectedEventArgs args = new EndpointConnectedEventArgs(null);
-            OnConnected(this, args);
+
+            if(OnConnected != null)
+            {
+                EndpointConnectedEventArgs args = new EndpointConnectedEventArgs(null);
+                OnConnected(this, args);
+            }
         }
 
         internal string LogInToo(string username, string password, Endpoint from, bool fromProgram = false)
@@ -432,8 +442,6 @@ namespace Game.Core.Endpoints
                 throw new Exception("Attempted to connect to endpoint from a null address this should not be possible.");
             }
 
-            Task.Factory.StartNew(() => IncomingConnectionEvent(username, password, from));
-
             LoggConnectionAttempt(username, from);
             if (UsernamePasswordAccessDict.TryGetValue(username + password, out AccessLevel temp))
             {
@@ -443,8 +451,14 @@ namespace Game.Core.Endpoints
                 CurrentUsername = username;
                 CurrentPassword = password;
                 this.ConnectedFrom = from;
-                EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password);
-                OnLogin(this, args);
+                this.LoginHistory.Add((username, password));
+
+                if(OnLogin != null)
+                {
+                    EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password);
+                    OnLogin(this, args);
+
+                }
                 return "Logged in as: " + username;
             }
             else
@@ -456,27 +470,18 @@ namespace Game.Core.Endpoints
             }
         }
 
-        #region Connection Events
-
-        private void ConnectionFailedEvent(string username, string password, Endpoint from)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private void ConnectionEstablishedEvent(string username, string password, Endpoint from)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private void IncomingConnectionEvent(string username, string password, Endpoint from)
-        {
-
-        }
-
-        #endregion Connection Events
-
         #region Connection logs
 
+        private void LogConnectionRouted(Endpoint from, Endpoint too)
+        {
+            this.ConnectionLog.Add(new LogItem
+            {
+                From = from,
+                Too = too,
+                LogType = LogType.CONNECTION_ROUTED,
+                TimeStamp = Global.GameTime
+            });
+        }
         private void LoggConnectionFailed(string username, Endpoint from)
         {
             this.ConnectionLog.Add(LogItemBuilder
@@ -523,7 +528,26 @@ namespace Game.Core.Endpoints
             }); ;
         }
 
+        private void LogFileRan(string path)
+        {
+            this.ConnectionLog.Add(LogItemBuilder
+                .Builder()
+                .FILE_RUN(path)
+                .From(this.ConnectedFrom)
+                .User(this.CurrentUsername)
+                .AccesLevel(this.AccessLevel)
+                .TimeStamp(Global.GameTime)
+                );
+        }
+
         #endregion Connection logs
+
+
+        internal void AutoRestart()
+        {
+            this.Restart();
+            this.EndpointEvents.ScheduleNextRestart();
+        }
 
         public void Restart()
         {

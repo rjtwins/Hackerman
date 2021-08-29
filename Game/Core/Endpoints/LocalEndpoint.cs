@@ -1,4 +1,5 @@
-﻿using Game.Core.FileSystem;
+﻿using Game.Core.Console.RemotePrograms;
+using Game.Core.FileSystem;
 using static Game.UTILS;
 
 namespace Game.Core.Endpoints
@@ -19,6 +20,8 @@ namespace Game.Core.Endpoints
             this.FileSystem.AddProgram(new TextFile("TEST1.info"));
             this.FileSystem.AddProgram(new TextFile("TEST2.info"));
             this.FileSystem.AddProgram(new TextFile("TEST3.info"));
+            this.FileSystem.AddProgram(new TrafficListener());
+            this.FileSystem.AddProgram(new MemoryScraper());
         }
     }
 }

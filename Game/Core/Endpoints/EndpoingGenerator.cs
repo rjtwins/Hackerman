@@ -62,35 +62,37 @@ namespace Game.Core.Endpoints
                 e.AddUser(Person, Person.PersonalPassword, AccessLevel.ROOT);
                 Person.PersonalComputer = e;
                 EndpointList.Add(e);
-                Global.PerosnalEndpoints.Add(e);
+                Global.PersonalEndpoints.Add(e);
                 AvailableEmployes.Add(e);
             }
 
-            //Generate 20 companies machines:
+            //Generate 20 random companies machines:
             for (int i = 0; i < 20; i++)
             {
                 Endpoint[] employes = PickRandomEmploye(10, AvailableEmployes);
+                Endpoint Admin = PickRandomEmploye(1, AvailableEmployes)[0];
 
                 Person Person = UTILS.PickRandomCompany();
                 Endpoint external = new Endpoint(Person, EndpointType.EXTERNALACCES);
                 (external.x, external.y) = GenerateCoordinate();
                 external.AddEmployes(employes);
+                external.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
                 EndpointList.Add(external);
                 Global.CompanyEndpoints.Add(external);
 
                 Endpoint inter = new Endpoint(Person, EndpointType.INTERNAL);
                 (inter.x, inter.y) = GenerateCoordinate();
                 inter.AddEmployes(employes);
+                inter.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
                 EndpointList.Add(inter);
                 Global.CompanyEndpoints.Add(inter);
-
 
                 Endpoint database = new Endpoint(Person, EndpointType.DATABASE);
                 (database.x, database.y) = GenerateCoordinate();
                 database.AddEmployes(employes);
+                database.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
                 EndpointList.Add(database);
                 Global.CompanyEndpoints.Add(database);
-
 
                 inter.AllowedConnections.Add(database);
                 inter.AllowedConnections.Add(external);

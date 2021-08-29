@@ -56,7 +56,13 @@ namespace Game.Core.Console
             CommandDictionary["download"] = this.Download;
             CommandDictionary["delete"] = this.Delete;
             CommandDictionary["users"] = this.PrintUsers;
-            CommandDictionary["users"] = this.PrintUsers;
+            CommandDictionary["schedule"] = this.PrintSchedule;
+        }
+
+        private void PrintSchedule(string obj)
+        {
+            string result = AttachedSystem.PrintSchedule();
+            ConsoleContent.ConsoleOutput.Add(result);
         }
 
         private void PrintUsers(string obj)
@@ -265,6 +271,13 @@ namespace Game.Core.Console
 
         private void RunProgram(string commmandBody)
         {
+            if (string.IsNullOrEmpty(commmandBody))
+            {
+                ConsoleContent.ConsoleOutput.Add("Invalid number of arguments");
+            }
+            string result = AttachedSystem.RunProgram(commmandBody);
+            ConsoleContent.ConsoleOutput.Add(result);
+
         }
 
         private void Concatenate(string commandBody)

@@ -39,7 +39,7 @@ namespace Game
 
         public static List<Endpoint> AllEndpoints = new();
         public static List<Endpoint> CompanyEndpoints = new();
-        public static List<Endpoint> PerosnalEndpoints = new();
+        public static List<Endpoint> PersonalEndpoints = new();
         public static LocalSystem LocalSystem;
         public static Endpoint StartEndPoint;
         public static Endpoint RemoteSystem;
