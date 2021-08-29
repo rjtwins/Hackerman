@@ -17,7 +17,7 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <Frame x:Name="FullWindowFrame" Grid.ColumnSpan="10" Grid.RowSpan="10" Panel.ZIndex="999" Background="Black"/>
+        <Frame x:Name="FullWindowFrame" Grid.ColumnSpan="10" Grid.RowSpan="10" Panel.ZIndex="999" Background="Black" Visibility="Hidden" />
 
         <ContentControl x:Name="StartMenuMenu"  Style="{StaticResource TaskBarButtonBox}" Grid.Column="0" Grid.Row="1"
                          MinWidth="150" Panel.ZIndex="1" Margin="0,0,0,-6"
