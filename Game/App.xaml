@@ -369,12 +369,12 @@
                                     <StackPanel TextElement.FontSize="12" Grid.Column="3"  Orientation="Horizontal" Panel.ZIndex="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="18" Width="41" Margin="-1,0,0,0">
 
                                         <ContentControl Margin="1,0,1,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="18" Height="18">
-                                            <s:MinButton Margin="-1.8,-3.1,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}">
+                                            <s:MinButton Margin="-1.8,-3.1,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Width="20" Height="20">
                                             </s:MinButton>
                                         </ContentControl>
 
                                         <ContentControl Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
-                                            <s:MaxButton Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Margin="-1.8,-3.1,0,0">
+                                            <s:MaxButton Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Margin="-1.8,-3.1,0,0" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
                                             </s:MaxButton>
                                         </ContentControl>
 
@@ -474,12 +474,12 @@
                                     <StackPanel TextElement.FontSize="12" Grid.Column="3"  Orientation="Horizontal" Panel.ZIndex="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="18" Width="41" Margin="-1,0,0,0">
 
                                         <ContentControl x:Name="minButton" Margin="1,0,1,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="18" Height="18">
-                                            <s:MinButton Margin="-1.8,-3.1,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}">
+                                            <s:MinButton Margin="-1.8,-3.1,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Width="20" Height="20">
                                             </s:MinButton>
                                         </ContentControl>
 
                                         <ContentControl x:Name="maxButton" Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
-                                            <s:MaxButton Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Margin="-1.8,-3.1,0,0">
+                                            <s:MaxButton Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Margin="-1.8,-3.1,0,0" Width="20" Height="20">
                                             </s:MaxButton>
                                         </ContentControl>
 

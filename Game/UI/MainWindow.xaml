@@ -17,11 +17,11 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <Frame x:Name="FullWindowFrame" Grid.ColumnSpan="10" Grid.RowSpan="10" Panel.ZIndex="999" Background="Black" Visibility="Hidden" />
+        <Frame x:Name="FullWindowFrame" Grid.ColumnSpan="10" Grid.RowSpan="10" Panel.ZIndex="999" Background="Black" Visibility="Visible" />
 
         <ContentControl x:Name="StartMenuMenu"  Style="{StaticResource TaskBarButtonBox}" Grid.Column="0" Grid.Row="1"
                          MinWidth="150" Panel.ZIndex="1" Margin="0,0,0,-6"
-                        Visibility="Visible" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="300">
+                        Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="300">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="20" />
@@ -141,7 +141,7 @@
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <ContentControl Grid.Column="0" Style="{StaticResource InlayedBorder}" Background="Black">
+                        <ContentControl Grid.Column="0" Style="{StaticResource InlayedBorder}" Background="Black" Margin="0,2,0,0">
                             <Border Background="Black">
                                 <TextBlock x:Name="SystemTimeBoxTime" Text="HH MM SS" Foreground="#FF606000" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,0,5,0" FontSize="20" Height="24" Width="81" />
                             </Border>
@@ -183,7 +183,7 @@
             </s:ProgramWindowNoButtons>
 
             <s:ProgramWindow x:Name="MapControl"
-                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Collapsed" Canvas.Left="200" Canvas.Top="160" Width="300" MinWidth="300" MinHeight="200" Height="200"
+                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Visible" Canvas.Left="200" Canvas.Top="160" Width="500" MinWidth="300" MinHeight="200" Height="300"
                              IsVisibleChanged="MapControl_IsVisibleChanged">
                 <s:ProgramWindow.icon>
                     <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />

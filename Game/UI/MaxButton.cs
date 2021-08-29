@@ -26,7 +26,11 @@ namespace Game.UI
             {
                 this.Visibility = System.Windows.Visibility.Collapsed;
                 (this.Parent as Control).Visibility = System.Windows.Visibility.Collapsed;
+                return;
             }
+            ProgramWindow programWindow = (ProgramWindow)this.DataContext;
+            programWindow.MaxButton = this;
+
         }
 
         private void MainCanvas_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
@@ -47,7 +51,19 @@ namespace Game.UI
             }
         }
 
-        private void MaxButton_Click(object sender, System.Windows.RoutedEventArgs e)
+        public void ToggleButtonText()
+        {
+            if(this.ButtonText.Text == MaxText)
+            {
+                this.ButtonText.Text = WindowFyText;
+            }
+            else
+            {
+                this.ButtonText.Text = MaxText;
+            }
+        }
+
+        public void MaxButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             ProgramWindow programWindow = (ProgramWindow)this.DataContext;
 

@@ -41,6 +41,8 @@ namespace Game.UI
             set { SetValue(mainContentProperty, value); }
         }
 
+        public MaxButton MaxButton { get; internal set; }
+
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty mainContentProperty = DependencyProperty.Register("mainContent", typeof(object), typeof(ProgramWindow), null);
 
