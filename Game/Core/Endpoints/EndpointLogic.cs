@@ -273,19 +273,23 @@ namespace Game.Core.Endpoints
 
         internal void AdminSystemCheck()
         {
+            if (this.IsLocalEndpoint)
+            {
+                return;
+            }
             #region logs
             //Trim Logs to 20 entries.
             List<LogItem> sysLog = this.SystemLog;
             while(sysLog.Count > 20)
             {
-                sysLog.RemoveAt(this.SystemLog.Count - 1);
+                sysLog.RemoveAt(sysLog.Count - 1);
             }
             this.SystemLog = sysLog;
 
             List<LogItem> conLog = this.ConnectionLog;
             while (conLog.Count > 20)
             {
-                conLog.RemoveAt(this.SystemLog.Count - 1);
+                conLog.RemoveAt(conLog.Count - 1);
             }
             this.ConnectionLog = conLog;
             #endregion
@@ -397,8 +401,6 @@ namespace Game.Core.Endpoints
         }
         internal bool AllowsConnection(Endpoint from)
         {
-            Debug.WriteLine("Connecting from: " + from.name);
-            Debug.WriteLine("AllowedConnections: ");
             foreach (Endpoint e in AllowedConnections)
             {
                 Debug.WriteLine(e.name);
@@ -422,6 +424,19 @@ namespace Game.Core.Endpoints
             {
                 EndpointConnectedEventArgs args = new EndpointConnectedEventArgs(null);
                 OnConnected(this, args);
+            }
+        }
+
+        internal void MockLogInToo(string username, string password, Endpoint from)
+        {
+            LoggConnectionAttempt(username, from);
+            LoggConnectionSucces(username, from, this.AccessLevel);
+            this.LoginHistory.Add((username, password));
+            if (OnLogin != null)
+            {
+                EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password);
+                OnLogin(this, args);
+
             }
         }
 
@@ -545,6 +560,10 @@ namespace Game.Core.Endpoints
 
         internal void AutoRestart()
         {
+            if (this.IsLocalEndpoint)
+            {
+                return;
+            }
             this.Restart();
             this.EndpointEvents.ScheduleNextRestart();
         }
@@ -557,6 +576,7 @@ namespace Game.Core.Endpoints
 
         private void startup()
         {
+            this.FileSystem.CurrentFolder = this.FileSystem;
             State = EndpointState.STARTING;
             RunStartupPrograms();
             if ((int)State > (int)EndpointState.STARTING)
@@ -574,7 +594,17 @@ namespace Game.Core.Endpoints
         private void shutdown()
         {
             State = EndpointState.SHUTTINGDOWN;
-            if(Global.RemoteSystem == this)
+            this.SoftConnection = false;
+            FileSystem.ResetConnection();
+            CurrentUsername = string.Empty;
+            CurrentPassword = string.Empty;
+            this.FileSystem.AllFolders.ForEach(folder => folder.Programs.Values.ToList().ForEach(program => program.StopProgram()));
+
+            if (Global.RemoteSystem == null)
+            {
+                return;
+            }
+            if(Global.RemoteSystem.Id == this.Id)
             {
                 Global.RemoteConsole.CommandParser.ExitDisconnect();
                 Discconect();

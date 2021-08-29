@@ -41,7 +41,6 @@ namespace Game.Core.World
                 .EventInterval(1)
                 .EventVoid(this.TraceToNext)
                 .RegisterWithVoid();
-            Debug.WriteLine("Starting Active Trace at: " + this.CurrentEndpoint.IPAddress);
         }
 
         public void StopTrace()

@@ -11,6 +11,7 @@ namespace Game.Core.FileSystem
         public bool Executable = false;
         public Guid Id { private set; get; }
         public bool IsMalicious = false;
+        protected bool Running = false;
 
         public Program(string name, bool executable = false)
         {
@@ -39,11 +40,17 @@ namespace Game.Core.FileSystem
 
         public virtual string RunProgram(Endpoint ranOn)
         {
+            this.Running = true;
             return "";
         }
 
         public virtual void StopProgram()
         {
+            if (!this.Running)
+            {
+                return;
+            }
+            this.Running = false;
 
         }
     }

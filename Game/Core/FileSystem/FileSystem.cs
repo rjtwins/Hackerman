@@ -315,10 +315,6 @@ namespace Game.Core.FileSystem
             Folder F = this;
             List<string> folders = path.Split('\\').ToList<string>();
             folders.RemoveAt(0); //Remove "root" because we are root
-
-            Debug.WriteLine(this.ParrentEndpoint.name);
-            Debug.WriteLine(this.ParrentEndpoint.IsLocalEndpoint);
-
             foreach (string FString in folders)
             {
                 try
@@ -326,7 +322,7 @@ namespace Game.Core.FileSystem
                     F = F.Folders[FString];
                 }
                 catch (KeyNotFoundException ex)
-                {;
+                {
                     throw new Exception("The system cannot find the path specified to.");
                 }
             }
@@ -358,7 +354,7 @@ namespace Game.Core.FileSystem
 
         internal void RunStartupPrograms()
         {
-            foreach (Program p in GetFolderFromPath(@"root\system\autostart").Programs.Values)
+            foreach (Program p in GetFolderFromPath(@"root\system").Programs.Values)
             {
                 p.RunProgram(this.ParrentEndpoint);
             }

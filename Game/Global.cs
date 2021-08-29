@@ -9,6 +9,7 @@ using Game.Core.World;
 using Game.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -42,7 +43,19 @@ namespace Game
         public static List<Endpoint> PersonalEndpoints = new();
         public static LocalSystem LocalSystem;
         public static Endpoint StartEndPoint;
-        public static Endpoint RemoteSystem;
+
+        private static Endpoint remoteSystem;
+        public static Endpoint RemoteSystem
+        {
+            get {
+                Debug.WriteLine("Get RemoteSystem:");
+                return remoteSystem; 
+            }
+            set {
+                Debug.WriteLine("Set RemoteSystem: " + value);
+                remoteSystem = value; 
+            }
+        }
 
         public static DateTime GameTime;
         public static bool GamePaused;

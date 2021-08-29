@@ -53,8 +53,8 @@ namespace Game.Core.Endpoints
             List<Endpoint> EndpointList = new List<Endpoint>();
             List<Endpoint> AvailableEmployes = new();
 
-            //Generate 1000 personal machines:
-            for (int i = 0; i < 1000; i++)
+            //Generate 250 personal machines:
+            for (int i = 0; i < 250; i++)
             {
                 Person Person = UTILS.PickRandomPerson();
                 Endpoint e = new Endpoint(Person, EndpointType.PERSONAL);

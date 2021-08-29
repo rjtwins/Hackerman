@@ -26,12 +26,12 @@ namespace Game.Core.Endpoints
             this.BaseRestartInterval = restartInterval;
 
             EventBuilder.BuildEvent("EndpointRestart")
-                .EventInterval(Global.Rand.Next(Math.Max(this.BaseRestartInterval - 7200, 3600), BaseRestartInterval + 7200))
+                .EventInterval(Global.Rand.Next(Math.Max(this.BaseRestartInterval - 43200, 3600), BaseRestartInterval + 43200))
                 .EventVoid(AttachedEndpoint.AutoRestart)
                 .RegisterWithVoid();
 
             EventBuilder.BuildEvent("EndpointAdminCheck")
-                .EventInterval(Global.Rand.Next(Math.Max(this.BaseAdminCheckInterval - 7200, 3600), BaseAdminCheckInterval + 7200))
+                .EventInterval(Global.Rand.Next(Math.Max(this.BaseAdminCheckInterval - 43200, 3600), BaseAdminCheckInterval + 43200))
                 .EventVoid(AttachedEndpoint.AdminSystemCheck)
                 .RegisterWithVoid();
         }

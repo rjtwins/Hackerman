@@ -67,8 +67,7 @@ namespace Game.Core.World
                 Debug.WriteLine("Simulated Traffic Between:");
                 Debug.WriteLine("--From " + A.IPAddress);
                 Debug.WriteLine("--Too " + B.IPAddress);
-                A.LogInToo(userName, password, B, true);
-                A.Discconect();
+                A.MockLogInToo(userName, password, B);
             }
 
             EventBuilder.BuildEvent("TrafficSimulatorRun")

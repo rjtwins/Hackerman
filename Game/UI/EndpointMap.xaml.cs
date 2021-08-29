@@ -153,7 +153,8 @@ namespace Game.UI
                 return;
             }
 
-            //Debug.WriteLine("Drawing:" + (Guid)(sender as Button).Tag);
+            //
+            //.WriteLine("Drawing:" + (Guid)(sender as Button).Tag);
             Guid id = (Guid)(sender as Button).Tag;
 
             if (!DrawnEndpointsDict.ContainsKey(id))

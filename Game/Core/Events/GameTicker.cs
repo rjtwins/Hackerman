@@ -91,27 +91,30 @@ namespace Core.Events
         private void HandleEvents()
         {
             List<Event> EventsToHandle = new List<Event>();
-            Event e;
-            for (int i = 0; i < EventQueue.Count; i++)
+            lock (this.EventQueue)
             {
-                Guid EventId = EventQueue[EventQueue.Keys[i]];
-                if (!IDEventDict.TryGetValue(EventId, out e))
+                Event e;
+                for (int i = 0; i < EventQueue.Count; i++)
                 {
-                    throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
+                    Guid EventId = EventQueue[EventQueue.Keys[i]];
+                    if (!IDEventDict.TryGetValue(EventId, out e))
+                    {
+                        throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
+                    }
+                    if (e.StartTime > Global.GameTime)
+                    {
+                        break;
+                    }
+                    EventsToHandle.Add(e);
+                    foreach (Event eventToHandle in EventsToHandle)
+                    {
+                        EventQueue.Remove(eventToHandle.StartTime);
+                    }
                 }
-                if (e.StartTime > Global.GameTime)
-                {
-                    break;
-                }
-                EventsToHandle.Add(e);
             }
 
             lock (EventsToHandle)
             {
-                foreach (Event eventToHandle in EventsToHandle)
-                {
-                    EventQueue.Remove(eventToHandle.StartTime);
-                }
                 foreach(Event eventToHandle in EventsToHandle)
                 {
                     TryStartEvent(eventToHandle);

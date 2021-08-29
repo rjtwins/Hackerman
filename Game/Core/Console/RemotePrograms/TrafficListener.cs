@@ -27,6 +27,7 @@ namespace Game.Core.Console.RemotePrograms
 
         private void Target_OnLogin(object sender, EndpointLoginEventArgs e)
         {
+            this.Running = true;
             this.UsernamePasswordList.Add((e.Username, e.Password));
             if (!Global.IRCWindow.ChannelExsits(this.Name))
             {
@@ -40,8 +41,25 @@ namespace Game.Core.Console.RemotePrograms
 
         public override void StopProgram()
         {
-            AttachedToo.OnLogin -= Target_OnLogin;
-            this.AttachedToo = null;
+            if (!this.Running)
+            {
+                return;
+            }
+
+            if (!Global.IRCWindow.ChannelExsits(this.Name))
+            {
+                Global.IRCWindow.AddChannelFromThread(this.Name);
+            }
+            Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, "SHUTDOWN:\n"
+                + "FROM: IP: " + this.AttachedToo.IPAddress);
+
+            this.Running = false;
+
+            if(AttachedToo != null)
+            {
+                AttachedToo.OnLogin -= Target_OnLogin;
+                this.AttachedToo = null;
+            }
         }
     }
 }
