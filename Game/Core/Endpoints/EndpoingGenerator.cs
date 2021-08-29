@@ -18,9 +18,9 @@ namespace Game.Core.Endpoints
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public Endpoint MakeEndpoint(int x, int y, Owner owner, EndpointType endpointType)
+        public Endpoint MakeEndpoint(int x, int y, Person Person, EndpointType endpointType)
         {
-            Endpoint e = new Endpoint(owner, endpointType);
+            Endpoint e = new Endpoint(Person, endpointType);
 
             e.x = x;
             e.y = y;
@@ -40,9 +40,9 @@ namespace Game.Core.Endpoints
         /// Add Endpoint with random coordinates.
         /// </summary>
         /// <returns></returns>
-        public Endpoint MakeEndpoint(Owner owner, EndpointType endpointType)
+        public Endpoint MakeEndpoint(Person Person, EndpointType endpointType)
         {
-            Endpoint e = new Endpoint(owner, endpointType);
+            Endpoint e = new Endpoint(Person, endpointType);
             (e.x, e.y) = GenerateCoordinate();
             return e;
         }
@@ -51,31 +51,46 @@ namespace Game.Core.Endpoints
         {
             this.EndpointCoordinates = UTILS.getBoolBitmap(20, Resources.WorldMapDensity);
             List<Endpoint> EndpointList = new List<Endpoint>();
+            List<Endpoint> AvailableEmployes = new();
 
-            //Generate 30 personal machines:
-            for (int i = 0; i < 100; i++)
+            //Generate 1000 personal machines:
+            for (int i = 0; i < 1000; i++)
             {
-                Owner owner = UTILS.PickRandomPerson();
-                Endpoint e = new Endpoint(owner, EndpointType.PERSONAL);
+                Person Person = UTILS.PickRandomPerson();
+                Endpoint e = new Endpoint(Person, EndpointType.PERSONAL);
                 (e.x, e.y) = GenerateCoordinate();
+                e.AddUser(Person, Person.PersonalPassword, AccessLevel.ROOT);
+                Person.PersonalComputer = e;
                 EndpointList.Add(e);
+                Global.PerosnalEndpoints.Add(e);
+                AvailableEmployes.Add(e);
             }
 
             //Generate 20 companies machines:
             for (int i = 0; i < 20; i++)
             {
-                Owner owner = UTILS.PickRandomCompany();
-                Endpoint external = new Endpoint(owner, EndpointType.EXTERNALACCES);
+                Endpoint[] employes = PickRandomEmploye(10, AvailableEmployes);
+
+                Person Person = UTILS.PickRandomCompany();
+                Endpoint external = new Endpoint(Person, EndpointType.EXTERNALACCES);
                 (external.x, external.y) = GenerateCoordinate();
+                external.AddEmployes(employes);
                 EndpointList.Add(external);
+                Global.CompanyEndpoints.Add(external);
 
-                Endpoint inter = new Endpoint(owner, EndpointType.INTERNAL);
+                Endpoint inter = new Endpoint(Person, EndpointType.INTERNAL);
                 (inter.x, inter.y) = GenerateCoordinate();
+                inter.AddEmployes(employes);
                 EndpointList.Add(inter);
+                Global.CompanyEndpoints.Add(inter);
 
-                Endpoint database = new Endpoint(owner, EndpointType.DATABASE);
+
+                Endpoint database = new Endpoint(Person, EndpointType.DATABASE);
                 (database.x, database.y) = GenerateCoordinate();
+                database.AddEmployes(employes);
                 EndpointList.Add(database);
+                Global.CompanyEndpoints.Add(database);
+
 
                 inter.AllowedConnections.Add(database);
                 inter.AllowedConnections.Add(external);
@@ -87,14 +102,25 @@ namespace Game.Core.Endpoints
             //Generate 5 bank machines:
             for (int i = 0; i < 5; i++)
             {
-                Owner owner = UTILS.PickRandomBank();
-                Endpoint e = new Endpoint(owner, EndpointType.BANK);
+                Person Person = UTILS.PickRandomBank();
+                Endpoint e = new Endpoint(Person, EndpointType.BANK);
                 (e.x, e.y) = GenerateCoordinate();
                 EndpointList.Add(e);
             }
 
             EndpointList.Add(GenerateStartEndpoint());
             return EndpointList;
+        }
+
+        private Endpoint[] PickRandomEmploye(int nr, List<Endpoint> availableEmployes)
+        {
+            Endpoint[] randomEmployes = new Endpoint[nr];
+            for (int i = 0; i < nr; i++)
+            {
+                randomEmployes[i] = availableEmployes[Rand.Next(availableEmployes.Count)];
+                availableEmployes.Remove(randomEmployes[i]);
+            }
+            return randomEmployes;
         }
 
         private (int, int) GenerateCoordinate()

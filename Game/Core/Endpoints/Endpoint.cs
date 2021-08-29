@@ -11,7 +11,7 @@ namespace Game.Core.Endpoints
 
         private string IconType = "";
 
-        public Owner Owner;
+        public Person Owner;
         public EndpointMonitor Monitor = Endpoint.EndpointMonitor.NONE;
         public EndpointFirewall Firewall = Endpoint.EndpointFirewall.NONE;
 
@@ -23,11 +23,12 @@ namespace Game.Core.Endpoints
         public int TraceSpeed = 1;
         public bool isHidden { protected set; get; } = false;
 
-        public Endpoint(Owner owner, EndpointType endpointType)
+        public Endpoint(Person Person, EndpointType endpointType)
         {
             this.EndpointType = endpointType;
-            this.Owner = owner;
+            this.Owner = Person;
             this.SetupEndpoint();
+
 
             //For testing:
             Person p1 = new Person();

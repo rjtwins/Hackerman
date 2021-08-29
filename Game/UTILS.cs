@@ -44,6 +44,39 @@ namespace Game
             return ar;
         }
 
+        internal static Endpoint PickRandomEndpointWithAccess(Endpoint e)
+        {
+            if(e.AllowedConnections.Count == 0)
+            {
+                return e.GetRandomUser().PersonalComputer;
+            }
+            return e.AllowedConnections[Rand.Next(e.AllowedConnections.Count)];
+
+        }
+
+        internal static Endpoint PickRandomCompanyEdnpoint()
+        {
+            int randomIndex = Rand.Next(Global.CompanyEndpoints.Count);
+            var temp = Global.CompanyEndpoints[randomIndex];
+
+            if (temp.Id == Global.StartEndPoint.Id)
+            {
+                return PickRandomEndpoint();
+            }
+
+            if (Global.RemoteSystem == temp)
+            {
+                return PickRandomEndpoint();
+            }
+
+            if (temp.HasConnection())
+            {
+                return PickRandomEndpoint();
+            }
+
+            return temp;
+        }
+
         public static string AccessLevelString(AccessLevel a)
         {
             switch (a)
@@ -95,7 +128,16 @@ namespace Game
 
         internal static Person PickRandomPerson()
         {
-            return PersonList[UTILS.Rand.Next(PersonList.Count)];
+            Person p = PersonList[UTILS.Rand.Next(PersonList.Count)];
+            if (string.IsNullOrEmpty(p.PersonalPassword))
+            {
+                p.PersonalPassword = UTILS.PickRandomPassword();
+            }
+            if (string.IsNullOrEmpty(p.WorkPassword))
+            {
+                p.WorkPassword = UTILS.PickRandomPassword();
+            }
+            return p;
         }
 
         public static string GenerateRandomString(int n)
@@ -112,7 +154,7 @@ namespace Game
             return new String(stringChars);
         }
 
-        public static Owner PickRandomBank()
+        public static Person PickRandomBank()
         {
             return BankList[UTILS.Rand.Next(BankList.Count)];
         }
@@ -192,7 +234,7 @@ namespace Game
                 return PickRandomEndpoint();
             }
 
-            if (temp.SoftConnection)
+            if (temp.HasConnection())
             {
                 return PickRandomEndpoint();
             }
@@ -206,7 +248,7 @@ namespace Game
             return GenerateRandomString(4) + ".data";
         }
 
-        public class Owner
+        public class Person
         {
             public Guid Guid;
             public string Gender;
@@ -214,7 +256,8 @@ namespace Game
             public string Surname;
             public string Email;
             public string Username;
-            public string Password;
+            public string PersonalPassword;
+            public string WorkPassword;
             public string Birthday;
             public string Age;
             public string CCType;
@@ -227,10 +270,9 @@ namespace Game
             public string Centimiters;
             public string Description;
             public string TagLine;
-        }
+            public Endpoint PersonalComputer;
 
-        public class Person : Owner
-        {
+
             public static Person FromCSV(string csvLine)
             {
                 string[] values = csvLine.Split(',');
@@ -241,7 +283,7 @@ namespace Game
                 person.Surname = values[2];
                 person.Email = values[3];
                 person.Username = values[4];
-                person.Password = values[5];
+                //person.Password = values[5];
                 person.Birthday = values[6];
                 person.Age = values[7];
                 person.CCType = values[8];
@@ -256,7 +298,7 @@ namespace Game
             }
         }
 
-        public class Company : Owner
+        public class Company : Person
         {
             public static Company FromCSV(string csvLine)
             {

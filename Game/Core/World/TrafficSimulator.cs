@@ -51,11 +51,11 @@ namespace Game.Core.World
             }
 
             //TODO filter pick on endpoint type.
-            Endpoint A = UTILS.PickRandomEndpoint();
-            Endpoint B = UTILS.PickRandomEndpoint();
+            Endpoint A = UTILS.PickRandomCompanyEdnpoint();
+            Endpoint B = UTILS.PickRandomEndpointWithAccess(A);
 
-            Person person = A.GetRandomUser();
-            string password = A.GetPassword(person);
+            Person person = B.Owner;
+            string password = B.Owner.WorkPassword;
 
             if (person != null && password != string.Empty)
             {

@@ -21,9 +21,9 @@ namespace Game.Core.FileSystem
             this.ParentFileSystem.AllFolders.Add(this);
         }
 
-        public bool IsOwner(string owner)
+        public bool IsPerson(string Person)
         {
-            return this.Owner == owner;
+            return this.Owner == Person;
         }
 
         public void AddProgram(Program p)

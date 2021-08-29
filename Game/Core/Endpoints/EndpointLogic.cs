@@ -135,20 +135,16 @@ namespace Game.Core.Endpoints
             switch (this.EndpointType)
             {
                 case EndpointType.PERSONAL:
-                    GerateRootUsers(1);
-                    GenerateRandomUsers(2);
                     this.name = this.Owner.Name + "'s Desktop";
                     //TODO: Set back to actual values
                     this.isHidden = true;
                     break;
 
                 case EndpointType.EXTERNALACCES:
-                    GenerateRandomUsers(10);
                     this.name = this.Owner.Name + " External Acces Server";
                     break;
 
                 case EndpointType.INTERNAL:
-                    GenerateRandomUsers(10);
                     this.name = this.Owner.Name + " Internal Services";
                     this.isHidden = false;
                     this.MonitorActive = false;
@@ -156,7 +152,6 @@ namespace Game.Core.Endpoints
                     break;
 
                 case EndpointType.BANK:
-                    GenerateRandomUsers(10);
                     this.name = this.Owner.Name;
                     break;
 
@@ -166,7 +161,6 @@ namespace Game.Core.Endpoints
                 case EndpointType.DATABASE:
                     this.name = this.Owner.Name + " Storage Server";
                     this.isHidden = true;
-                    GenerateRandomUsers(5);
                     break;
 
                 case EndpointType.GOVERMENT:
@@ -178,6 +172,16 @@ namespace Game.Core.Endpoints
             }
         }
 
+        internal bool HasConnection()
+        {
+            if (this.SoftConnection)
+            {
+                return true;
+            }
+            return false;
+
+        }
+
         private void GenerateAdminUsers(int nr)
         {
             for (int i = 0; i < nr; i++)
@@ -185,7 +189,7 @@ namespace Game.Core.Endpoints
                 this.AddUser(UTILS.PickRandomPerson(), UTILS.PickRandomPassword(), AccessLevel.ADMIN);
             }
         }
-        private void GerateRootUsers(int nr)
+        private void GenerateRootUsers(int nr)
         {
             for (int i = 0; i < nr; i++)
             {
@@ -262,6 +266,15 @@ namespace Game.Core.Endpoints
             }
             return result;
         }
+
+        internal void AddEmployes(Endpoint[] employes)
+        {
+            foreach(Endpoint e in employes)
+            {
+                this.AddUser(e.Owner, e.Owner.WorkPassword, AccessLevel.USER);
+            }
+        }
+
 
         public void AddUser(Person person, string password, AccessLevel accessLevel)
         {

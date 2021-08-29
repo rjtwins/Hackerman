@@ -29,8 +29,9 @@ namespace Game.Core.Console.LocalPrograms
         {
             if(Global.RemoteSystem == null)
             {
-                return "";
+                return "Not connected to a remote system.";
             }
+            //TODO check if we can run this program.
         }
 
         public void AttachTooEndpoint(Endpoint target)
