@@ -15,10 +15,8 @@ namespace Game.Core.Console
 
         public EndpointFirewall FirewallBypass = EndpointFirewall.NONE;
         public EndpointMonitor MonitorBypass = EndpointMonitor.NONE;
-
-        internal bool FirewallBypassActive;
-
-        public bool MonitorBypassActive { get; internal set; }
+        public bool FirewallBypassActive { get; private set; }
+        public bool MonitorBypassActive { get; private set; }
 
         //private Dictionary<string, Program> SavedFiles = new Dictionary<string, Program>();
 
