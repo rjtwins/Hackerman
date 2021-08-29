@@ -249,7 +249,7 @@ namespace Game.Core.Console
             {
                 return;
             }
-            DisconnectedEventArgs args = new DisconnectedEventArgs(null);
+            RemoteConsoleDisconnectedEventArgs args = new RemoteConsoleDisconnectedEventArgs(null);
             OnDisconnected(this, args);
         }
 
@@ -323,10 +323,10 @@ namespace Game.Core.Console
             this.ConnectingFrom = from;
             this.AttachedSystem = too;
             Global.RemoteSystem = too;
-            Global.RemoteSystem.SoftConnection = true;
+            Global.RemoteSystem.ConnectToo(from);
             this.GivingUsername = true;
 
-            this.ConsoleContent.ConsoleOutput.Add("Connected to: " + too.IPAddress + "\nPlease input username and password.\n");
+            this.ConsoleContent.ConsoleOutput.Add("Connected too: " + too.IPAddress + "\nPlease input username and password.\n");
             this.ConsoleContent.ConsolePrefix = "LOGIN USERNAME:";
         }
 
@@ -341,16 +341,16 @@ namespace Game.Core.Console
             ConsoleContent.ConsoleOutput.Add(result);
         }
 
-        public delegate void DisconnectedEventHandler(object sender, DisconnectedEventArgs e);
-        public event DisconnectedEventHandler OnDisconnected;
+        public delegate void RemoteConsoleDisconnectedEventHandler(object sender, RemoteConsoleDisconnectedEventArgs e);
+        public event RemoteConsoleDisconnectedEventHandler OnDisconnected;
 
     }
 
-    public class DisconnectedEventArgs : EventArgs
+    public class RemoteConsoleDisconnectedEventArgs : EventArgs
     {
         public string Status { get; private set; }
 
-        public DisconnectedEventArgs(string status)
+        public RemoteConsoleDisconnectedEventArgs(string status)
         {
             Status = status;
         }

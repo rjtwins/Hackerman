@@ -66,9 +66,18 @@ namespace Game.Core.Endpoints
             }
         }
 
+        private bool SoftConnection { get; set; }
+
         //Location and icon data
         protected FileSystem.FileSystem FileSystem;
         public Endpoint ConnectedFrom;
+
+        public delegate void EndpointDisconnectedEventHandler(object sender, EndpointDisconnectedEventArgs e);
+        public event EndpointDisconnectedEventHandler OnDisconnected;
+        public delegate void EndpointConnectedEventHandler(object sender, EndpointConnectedEventArgs e);
+        public event EndpointConnectedEventHandler OnConnected;
+        public delegate void EndpointLoginEventHandler(object sender, EndpointLoginEventArgs e);
+        public event EndpointLoginEventHandler OnLogin;
 
         public void UnderDictHack()
         {
@@ -295,6 +304,8 @@ namespace Game.Core.Endpoints
             CurrentUsername = string.Empty;
             CurrentPassword = string.Empty;
             this.ConnectedFrom = null;
+            EndpointDisconnectedEventArgs args = new EndpointDisconnectedEventArgs(null);
+            OnDisconnected(this, args);
         }
 
         internal string CurrentPath()
@@ -384,6 +395,13 @@ namespace Game.Core.Endpoints
             return false;
         }
 
+        internal void ConnectToo(Endpoint from)
+        {
+            this.SoftConnection = true;
+            EndpointConnectedEventArgs args = new EndpointConnectedEventArgs(null);
+            OnConnected(this, args);
+        }
+
         internal string LogInToo(string username, string password, Endpoint from, bool fromProgram = false)
         {
             if ((int)State > (int)EndpointState.STARTING)
@@ -398,7 +416,7 @@ namespace Game.Core.Endpoints
             if (from == null)
             {
                 //??? not possible
-                throw new Exception("Attempted to connect to endpoint from a null adrress this should not be possible.");
+                throw new Exception("Attempted to connect to endpoint from a null address this should not be possible.");
             }
 
             Task.Factory.StartNew(() => IncomingConnectionEvent(username, password, from));
@@ -412,13 +430,13 @@ namespace Game.Core.Endpoints
                 CurrentUsername = username;
                 CurrentPassword = password;
                 this.ConnectedFrom = from;
-                Task.Factory.StartNew(() => ConnectionEstablishedEvent(username, password, from));
+                EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password);
+                OnLogin(this, args);
                 return "Logged in as: " + username;
             }
             else
             {
                 LoggConnectionFailed(username, from);
-                Task.Factory.StartNew(() => ConnectionFailedEvent(username, password, from));
                 if (!fromProgram)
                     throw new Exception("Username password combination not found.");
                 return string.Empty;
@@ -526,4 +544,40 @@ namespace Game.Core.Endpoints
             }
         }
     }
+
+    public class EndpointConnectedEventArgs : EventArgs
+    {
+        public string Status { get; private set; }
+
+        public EndpointConnectedEventArgs(string status)
+        {
+            Status = status;
+        }
+    }
+
+
+    public class EndpointDisconnectedEventArgs : EventArgs
+    {
+        public string Status { get; private set; }
+
+        public EndpointDisconnectedEventArgs(string status)
+        {
+            Status = status;
+        }
+    }
+
+    public class EndpointLoginEventArgs : EventArgs
+    {
+        public Endpoint From;
+        public string Username;
+        public string Password;
+
+        public EndpointLoginEventArgs(Endpoint from, string username, string password)
+        {
+            From = from;
+            Username = username;
+            Password = password;
+        }
+    }
+
 }

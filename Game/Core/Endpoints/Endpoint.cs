@@ -22,7 +22,6 @@ namespace Game.Core.Endpoints
         public int PassiveTraceDificulty = 1;
         public int TraceSpeed = 1;
         public bool isHidden { protected set; get; } = false;
-        public bool SoftConnection { get; internal set; }
 
         public Endpoint(Owner owner, EndpointType endpointType)
         {
