@@ -644,7 +644,7 @@ namespace Game.Core.Endpoints
             }
             if(Global.RemoteSystem.Id == this.Id)
             {
-                Global.RemoteConsole.CommandParser.ExitDisconnect();
+                Global.RemoteConsole.CommandParser.ExitDisconnectFromThread();
                 Discconect();
             }
         }

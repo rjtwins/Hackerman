@@ -237,7 +237,11 @@ namespace Game.Core.Console
             ConsoleContent.ConsoleOutput.Add(AttachedSystem.ListFromCurrentFolder());
         }
 
-        //TODO: fix error when running exit command when not connected to a system
+        public void ExitDisconnectFromThread()
+        {
+            Global.App.Dispatcher.Invoke(() => { ExitDisconnect(); });
+        }
+
         public void ExitDisconnect(string obj = null)
         {
             if (AttachedSystem != null)
