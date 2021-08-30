@@ -111,6 +111,7 @@ namespace Game.Core.Console.LocalPrograms
 
                 Global.RemoteSystem.LogInToo(userName, randomPassword, Global.Bounce.BounceList[Global.Bounce.BounceList.Count - 1], true);
 
+                //We wanna print in bulk so as not to get to much thread switching overhead.
                 switch (Global.EventTicker.GameSpeed)
                 {
                     case 1:
@@ -146,7 +147,7 @@ namespace Game.Core.Console.LocalPrograms
                         break;
                 }
 
-                Global.EventTicker.SleepSeconds(1);
+                Global.EventTicker.SleepSeconds(0.5d);
             }
             this.PasswordToGet = string.Empty;
             this.Running = false;

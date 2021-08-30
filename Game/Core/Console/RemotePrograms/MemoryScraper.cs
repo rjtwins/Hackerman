@@ -12,7 +12,7 @@ namespace Game.Core.Console.RemotePrograms
     {
         public MemoryScraper() : base("MemoryScraper", true)
         {
-
+            this.IsMalicious = true;
         }
 
         public override string RunProgram(Endpoint ranOn)

@@ -2,6 +2,7 @@
 using Game.Core.Events;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Core.Events
@@ -37,7 +38,7 @@ namespace Core.Events
 
         public void ChangeSpeed(int level)
         {
-            this.GameSpeed = level;
+            //this.GameSpeed = level;
             TimeIntervalInSecondes = GameSpeedDict[level];
             //TimeIntervalInSecondes = (double)(15 * GameSpeed);
         }
@@ -86,6 +87,10 @@ namespace Core.Events
                 Global.MainWindow.UpdateDateTime();
                 HandleEvents();
             }
+            if(invokeCount % 1000 == 0)
+            {
+                Debug.WriteLine("Invoke nr: " + invokeCount);
+            }
         }
 
         private void HandleEvents()
@@ -93,23 +98,24 @@ namespace Core.Events
             List<Event> EventsToHandle = new List<Event>();
             lock (this.EventQueue)
             {
+                Debug.WriteLine(EventQueue.Count);
                 Event e;
-                for (int i = 0; i < EventQueue.Count; i++)
+                foreach(KeyValuePair<DateTime,Guid> pair in EventQueue)
                 {
-                    Guid EventId = EventQueue[EventQueue.Keys[i]];
-                    if (!IDEventDict.TryGetValue(EventId, out e))
+                    if(!IDEventDict.TryGetValue(pair.Value, out e))
                     {
-                        throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
+                        Debug.WriteLine("Event: event in queue but not in event id dict!");
+                        //throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
                     }
                     if (e.StartTime > Global.GameTime)
                     {
                         break;
                     }
                     EventsToHandle.Add(e);
-                    foreach (Event eventToHandle in EventsToHandle)
-                    {
-                        EventQueue.Remove(eventToHandle.StartTime);
-                    }
+                }
+                foreach (Event eventToHandle in EventsToHandle)
+                {
+                    EventQueue.Remove(eventToHandle.StartTime);
                 }
             }
 

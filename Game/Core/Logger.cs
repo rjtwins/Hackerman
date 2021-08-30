@@ -10,7 +10,6 @@ namespace Core
         public static void GenericLog(string s)
         {
             Logger.OutputLogs.Add(s);
-            Debug.WriteLine(s);
         }
 
         public static string PrintLogs()

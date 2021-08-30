@@ -40,11 +40,9 @@ namespace Game.UI
                 Canvas.SetTop(programWindow, MY);
                 programWindow.MaxButton.ToggleButtonText();
                 programWindow.maxed = false;
-                Refresh(this);
                 return;
             }
 
-            
             double left = Math.Min(Math.Max(Canvas.GetLeft(programWindow) + e.HorizontalChange, 0), Global.MainWindow.MainCanvas.ActualWidth - programWindow.ActualWidth);
             double top = Math.Min(Math.Max(Canvas.GetTop(programWindow) + e.VerticalChange, 0), Global.MainWindow.MainCanvas.ActualHeight);
 
@@ -53,12 +51,6 @@ namespace Game.UI
 
             Canvas.SetLeft(programWindow, left);
             Canvas.SetTop(programWindow, top);
-        }
-
-        private static readonly Action EmptyDelegate = delegate { };
-        public static void Refresh(UIElement uiElement)
-        {
-            uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
         }
     }
 }

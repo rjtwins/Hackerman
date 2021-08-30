@@ -17,41 +17,30 @@ namespace Game.Core.FileSystem
             string result = "CONNECTION LOG:\n";
             foreach (LogItem item in this.Log)
             {
-                string acceslevel = string.Empty;
-                switch (item.AccessLevel)
+                string acceslevel = item.AccessLevel.ToString();
+                string ipAddress = "127.0.0.1";
+
+                if(item.From != null)
                 {
-                    case AccessLevel.USER:
-                        acceslevel = "USER";
-                        break;
-
-                    case AccessLevel.ADMIN:
-                        acceslevel = "ADMIN";
-                        break;
-
-                    case AccessLevel.ROOT:
-                        acceslevel = "ROOT";
-                        break;
-
-                    default:
-                        break;
+                    ipAddress = item.From.IPAddress;
                 }
 
                 switch (item.LogType)
                 {
                     case LogType.CONNECTION_ATTEMPT:
-                        result += "LOGIN ATTEMPT:\t\t\t\t" + item.From.IPAddress;
+                        result += "LOGIN ATTEMPT:\t\t\t\t" + ipAddress;
                         break;
 
                     case LogType.CONNECTION_FAILED:
-                        result += "FAILED AUTHENTICAION:\t\t\t" + item.From.IPAddress;
+                        result += "FAILED AUTHENTICAION:\t\t\t" + ipAddress;
                         break;
 
                     case LogType.CONNECTION_SUCCES:
-                        result += "CONNECTION SUCCESFULL:\t\t\t" + item.From.IPAddress + " WITH: " + acceslevel;
+                        result += "CONNECTION SUCCESFULL:\t\t\t" + ipAddress + " WITH: " + acceslevel;
                         break;
 
                     case LogType.CONNECTION_ROUTED:
-                        result += "ROUTED:\t\t\t\t" + item.From.IPAddress + " : " + item.Too.IPAddress;
+                        result += "ROUTED:\t\t\t\t" + ipAddress + " : " + item.Too.IPAddress;
                         break;
 
                     default:

@@ -354,7 +354,7 @@ namespace Game.Core.FileSystem
 
         internal void RunStartupPrograms()
         {
-            foreach (Program p in GetFolderFromPath(@"root\system").Programs.Values)
+            foreach (Program p in GetFolderFromPath(@"root\system\autostart").Programs.Values)
             {
                 p.RunProgram(this.ParrentEndpoint);
             }

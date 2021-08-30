@@ -12,18 +12,17 @@ namespace Game.Core.Endpoints
         private string IconType = "";
 
         public Person Owner;
-        public EndpointMonitor Monitor = Endpoint.EndpointMonitor.NONE;
-        public EndpointFirewall Firewall = Endpoint.EndpointFirewall.NONE;
-
+        public EndpointMonitor Monitor = EndpointMonitor.NONE;
+        public EndpointFirewall Firewall = EndpointFirewall.NONE;
+        public EndpointHashing MemoryHashing = EndpointHashing.NONE;
         public EndpointState State = EndpointState.ONLINE;
-        public EndpointType EndpointType;
+        public EndpointType EndpointType = EndpointType.PERSONAL;
+
         public string name = "*";
         public double ActiveTraceDificulty = 1;
         public int PassiveTraceDificulty = 1;
         public int TraceSpeed = 1;
-        public bool isHidden { protected set; get; } = false;
-        public DateTime NextAdminCheckDate { get; internal set; }
-        public DateTime NextRestartDate { get; internal set; }
+        public bool isHidden { set; get; } = false;
 
         public Endpoint(Person Person, EndpointType endpointType)
         {
@@ -43,15 +42,6 @@ namespace Game.Core.Endpoints
 
             this.AddUser(p1, "root", AccessLevel.ROOT);
             this.AddUser(p2, "guest", AccessLevel.USER);
-        }
-
-
-        internal string PrintSchedule()
-        {
-            string result = "SCHEDULE:\n"
-                + this.NextRestartDate.ToString() + "Scheduled automatic restart.\n"
-                + this.NextAdminCheckDate.ToString() + "Scheduled administrative maintenance.\n";
-            return result;
         }
     }
 }

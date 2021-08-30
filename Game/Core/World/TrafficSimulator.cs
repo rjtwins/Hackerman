@@ -50,6 +50,37 @@ namespace Game.Core.World
                 System.Threading.Thread.Sleep(100);
             }
 
+            for (int i = 0; i < 5; i++)
+            {
+                SimulateTraffic();
+            }
+
+            EventBuilder.BuildEvent("TrafficSimulatorRun")
+                .EventInterval(600)
+                .EventVoid(this.Simulating)
+                .RegisterWithVoid();
+        }
+
+        private void SimulateTraffic()
+        {
+            double roll = Global.Rand.NextDouble();
+
+            if (roll < 0.33)
+            {
+                SimulateRemoteCompanyLogin();
+            }
+            else if (roll > 0.33 && roll < 0.66)
+            {
+                SimulateLocalCompanyLogin();
+            }
+            else if (roll > 0.66)
+            {
+                SimulatePersonalLogin();
+            }
+        }
+
+        private void SimulateRemoteCompanyLogin()
+        {
             //TODO filter pick on endpoint type.
             Endpoint A = UTILS.PickRandomCompanyEdnpoint();
             (bool isGuestUser, Endpoint B) = UTILS.PickRandomEndpointWithAccess(A);
@@ -64,16 +95,46 @@ namespace Game.Core.World
 
             if (userName != null && password != string.Empty)
             {
-                Debug.WriteLine("Simulated Traffic Between:");
-                Debug.WriteLine("--From " + A.IPAddress);
-                Debug.WriteLine("--Too " + B.IPAddress);
-                A.MockLogInToo(userName, password, B);
+                A.MockRemoteLogInToo(userName, password, B);
+            }
+        }
+
+        private void SimulateLocalCompanyLogin()
+        {
+            Endpoint A = UTILS.PickRandomCompanyEdnpoint();
+            (bool isGuestUser, Endpoint B) = UTILS.PickRandomEndpointWithAccess(A);
+
+            string password = "guest";
+            string userName = "guest";
+            if (!isGuestUser)
+            {
+                password = B.Owner.WorkPassword;
+                userName = B.Owner.Name;
             }
 
-            EventBuilder.BuildEvent("TrafficSimulatorRun")
-                .EventInterval(600)
-                .EventVoid(this.Simulating)
-                .RegisterWithVoid();
+            if (userName != null && password != string.Empty)
+            {
+                A.MockLocalLogInToo(userName, password);
+            }
+        }
+
+        private void SimulatePersonalLogin()
+        {
+            Endpoint A = UTILS.PickRandomEmployeEndpoint();
+            (bool isGuestUser, Endpoint B) = UTILS.PickRandomEndpointWithAccess(A);
+
+            string password = "guest";
+            string userName = "guest";
+            if (!isGuestUser)
+            {
+                password = B.Owner.WorkPassword;
+                userName = B.Owner.Name;
+            }
+
+            if (userName != null && password != string.Empty)
+            {
+                A.MockLocalLogInToo(userName, password);
+            }
         }
     }
 }

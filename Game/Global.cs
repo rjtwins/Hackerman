@@ -40,6 +40,7 @@ namespace Game
 
         public static List<Endpoint> AllEndpoints = new();
         public static List<Endpoint> CompanyEndpoints = new();
+        public static List<Endpoint> EmployeEndpoints = new();
         public static List<Endpoint> PersonalEndpoints = new();
         public static LocalSystem LocalSystem;
         public static Endpoint StartEndPoint;
@@ -48,11 +49,9 @@ namespace Game
         public static Endpoint RemoteSystem
         {
             get {
-                Debug.WriteLine("Get RemoteSystem:");
                 return remoteSystem; 
             }
             set {
-                Debug.WriteLine("Set RemoteSystem: " + value);
                 remoteSystem = value; 
             }
         }

@@ -24,6 +24,10 @@ namespace Game.Core.Endpoints
         public enum EndpointMonitor { NONE, LVL1, LVL2, LVL3, LVL4 }
         public enum EndpointFirewall { NONE, LVL1, LVL2, LVL3, LVL4 }
         public enum EndpointState { ONLINE, SHUTTINGDOWN, STARTING, CRASHED, DESTROYED1, DESTROYED2, DESTROYED3 };
+        public enum EndpointHashing { NONE, LVL1, LVL2, LVL3, LVL4 };
+
+        public DateTime NextAdminCheckDate { get; internal set; }
+        public DateTime NextRestartDate { get; internal set; }
 
         public List<Endpoint> AllowedConnections = new();
 
@@ -141,19 +145,14 @@ namespace Game.Core.Endpoints
             {
                 case EndpointType.PERSONAL:
                     this.name = this.Owner.Name + "'s Desktop";
-                    //TODO: Set back to actual values
-                    this.isHidden = true;
                     break;
 
                 case EndpointType.EXTERNALACCES:
-                    this.name = this.Owner.Name + " External Acces Server";
+                    this.name = this.Owner.Name + " External Access Server";
                     break;
 
                 case EndpointType.INTERNAL:
                     this.name = this.Owner.Name + " Internal Services";
-                    this.isHidden = false;
-                    this.MonitorActive = false;
-                    this.Monitor = EndpointMonitor.LVL1;
                     break;
 
                 case EndpointType.BANK:
@@ -176,6 +175,13 @@ namespace Game.Core.Endpoints
                     break;
             }
             this.EndpointEvents = new EndpointEvents(this);
+        }
+        internal string PrintSchedule()
+        {
+            string result = "SCHEDULE:\n"
+                + this.NextRestartDate.ToString() + "Scheduled automatic restart.\n"
+                + this.NextAdminCheckDate.ToString() + "Scheduled administrative maintenance.\n";
+            return result;
         }
         internal bool HasConnection()
         {
@@ -273,6 +279,8 @@ namespace Game.Core.Endpoints
 
         internal void AdminSystemCheck()
         {
+            this.UsernamePasswordDict.ToList().ForEach(x => LoginIfAdmin(x));
+
             if (this.IsLocalEndpoint)
             {
                 return;
@@ -309,6 +317,14 @@ namespace Game.Core.Endpoints
             #endregion
 
             this.EndpointEvents.ScheduleNextAdminCheck();
+
+            void LoginIfAdmin(KeyValuePair<Person, string> x)
+            {
+                if(UsernamePasswordAccessDict[x.Key.Name + x.Value] == AccessLevel.ADMIN)
+                {
+                    this.MockLocalLogInToo(x.Key.Name, x.Value);
+                }
+            }
         }
 
         internal void Discconect()
@@ -427,16 +443,35 @@ namespace Game.Core.Endpoints
             }
         }
 
-        internal void MockLogInToo(string username, string password, Endpoint from)
+        /// <summary>
+        /// Faking a user remotely logging in on this machine.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="from"></param>
+        internal void MockRemoteLogInToo(string username, string password, Endpoint from)
         {
             LoggConnectionAttempt(username, from);
             LoggConnectionSucces(username, from, this.AccessLevel);
             this.LoginHistory.Add((username, password));
             if (OnLogin != null)
             {
-                EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password);
+                EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password, this.MemoryHashing);
                 OnLogin(this, args);
+            }
+        }
 
+        /// <summary>
+        /// Faking a user logging in physically on this machine.
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        internal void MockLocalLogInToo(string username, string password)
+        {
+            LoggConnectionSucces(username, null, this.AccessLevel);
+            if (OnLogin != null)
+            {
+                EndpointLoginEventArgs args = new EndpointLoginEventArgs(null, username, password, this.MemoryHashing);
+                OnLogin(this, args);
             }
         }
 
@@ -470,7 +505,7 @@ namespace Game.Core.Endpoints
 
                 if(OnLogin != null)
                 {
-                    EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password);
+                    EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password, this.MemoryHashing);
                     OnLogin(this, args);
 
                 }
@@ -571,7 +606,10 @@ namespace Game.Core.Endpoints
         public void Restart()
         {
             shutdown();
-            startup();
+            Task.Factory.StartNew(() => {
+                Global.EventTicker.SleepSeconds(120);
+                startup();
+            });
         }
 
         private void startup()
@@ -638,12 +676,14 @@ namespace Game.Core.Endpoints
         public Endpoint From;
         public string Username;
         public string Password;
+        public Endpoint.EndpointHashing EndpointHashing;
 
-        public EndpointLoginEventArgs(Endpoint from, string username, string password)
+        public EndpointLoginEventArgs(Endpoint from, string username, string password, Endpoint.EndpointHashing endpointHashing)
         {
             From = from;
             Username = username;
             Password = password;
+            EndpointHashing = endpointHashing;
         }
     }
 

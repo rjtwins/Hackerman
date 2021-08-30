@@ -8,10 +8,20 @@ namespace Game.Core.Console
 {
     public class LocalSystem
     {
-        //TODO make components to fix placeholders for speed exct
+        //TODO make components to fix placeholders for speed exact.
+
+        //In KiloBytes
+        public long DiskMemory = 1048576;
+        public long UsedDiskMemory = 0;
+        //In MHz
+        public int ProcessorSpeed = 150;
+        //in Kbit/s
+        public int ModumSpeed = 20;
 
         public Bouncer Bouncer = new Bouncer();
         private Dictionary<string, Endpoint[]> SavedBounceLists = new Dictionary<string, Endpoint[]>();
+        private HashSet<Traffic> TrafficListnerUsernamePasswordList = new();
+        private HashSet<Traffic> MemoryScraperUsernamePasswordList = new();
 
         public EndpointFirewall FirewallBypass = EndpointFirewall.NONE;
         public EndpointMonitor MonitorBypass = EndpointMonitor.NONE;
@@ -19,6 +29,34 @@ namespace Game.Core.Console
         public bool MonitorBypassActive { get; private set; }
 
         //private Dictionary<string, Program> SavedFiles = new Dictionary<string, Program>();
+
+        public void TrafficListnerAddEntry(Endpoint from, Endpoint too, string username, string password, EndpointHashing hashed = EndpointHashing.NONE, string hash = null)
+        {
+            this.TrafficListnerUsernamePasswordList.Add(new Traffic() 
+            {
+                From = from,
+                Too = too,
+                Username = username,
+                Password = password,
+                Hashed = hashed,
+                LoginHash = hash,
+                TimeStamp = Global.GameTime.ToString()
+            });
+        }
+
+        public void MemoryScraperAddEntry(Endpoint from, Endpoint too, string username, string password, EndpointHashing hashed = EndpointHashing.NONE, string hash = null)
+        {
+            this.MemoryScraperUsernamePasswordList.Add(new Traffic()
+            {
+                From = from,
+                Too = too,
+                Username = username,
+                Password = password,
+                Hashed = hashed,
+                LoginHash = hash,
+                TimeStamp = Global.GameTime.ToString()
+            });
+        }
 
         internal void SaveCurrentBounceListsAs(string commandBody)
         {
@@ -51,27 +89,38 @@ namespace Game.Core.Console
 
         public int GetModumSpeed()
         {
-            return 99;
+            return ModumSpeed;
         }
 
         public int GetProcessorSpeed()
         {
-            return 99;
+            return this.ProcessorSpeed;
         }
 
-        public int GetDiskMemory()
+        public long GetDiskMemory()
         {
-            return 999999;
+            return this.DiskMemory;
         }
 
-        public int GetDiskFreeMemory()
+        public long GetDiskFreeMemory()
         {
-            return 99999;
+            return this.DiskMemory - this.UsedDiskMemory;
         }
 
-        public int GetDiskUsedMemory()
+        public long GetDiskUsedMemory()
         {
-            return 0;
+            return this.UsedDiskMemory;
         }
+    }
+
+    public class Traffic
+    {
+        public Endpoint From;
+        public Endpoint Too;
+        public string Username;
+        public string Password;
+        public string LoginHash;
+        public EndpointHashing Hashed;
+        public string TimeStamp;
     }
 }
