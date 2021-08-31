@@ -21,9 +21,10 @@ namespace Game.Core.Console
 
         private void FillCommandDictionary()
         {
+            CommandDictionary["decoder"] = this.RunHashLookup;
             CommandDictionary["bounce"] = this.ParseBounceCommand;
             CommandDictionary["cat"] = this.Concatenate;
-            //CommandDictionary["cd"] = this.CurrentDirectory;
+            CommandDictionary["cd"] = this.CurrentDirectory;
             CommandDictionary["help"] = this.PrintHelp;
             CommandDictionary["cls"] = this.ClearConsole;
             CommandDictionary["clear"] = this.ClearConsole;
@@ -36,6 +37,11 @@ namespace Game.Core.Console
             CommandDictionary["DictHack"] = this.DictHack;
         }
 
+        private void RunHashLookup(string obj)
+        {
+            ConsoleContent.ConsoleOutput.Add(HashLookup.Instance.DecodeTraffic(obj));
+        }
+
         private void DictHack(string userName)
         {
             ConsoleContent.ConsoleOutput.Add(DictionaryHack.Instance.StartHack(userName));
@@ -46,15 +52,25 @@ namespace Game.Core.Console
             throw new NotImplementedException();
         }
 
-        //private void MakeConnection(string obj)
-        //{
-        //    (Endpoint from, Endpoint too, bool Succes) =  Global.Bounce.MakeConnection();
-        //    if (!Succes)
-        //    {
-        //        return;
-        //    }
-        //    AttachSystem(from, too);
-        //}
+        private void CurrentDirectory(string commandBody)
+        {
+            if (string.IsNullOrWhiteSpace(commandBody))
+            {
+                return;
+            }
+
+            string result;
+            try
+            {
+                result = Global.LocalEndpoint.NavigateTo(commandBody);
+                ConsoleContent.ConsolePrefix = result;
+            }
+            catch (System.Exception ex)
+            {
+                result = ex.Message;
+            }
+            ConsoleContent.ConsoleOutput.Add(result);
+        }
 
         private void ParseBounceCommand(string commandBody)
         {
@@ -98,7 +114,7 @@ namespace Game.Core.Console
 
         private void List(string obj)
         {
-            ConsoleContent.ConsoleOutput.Add(Global.StartEndPoint.ListFromCurrentFolder());
+            ConsoleContent.ConsoleOutput.Add(Global.LocalEndpoint.ListFromCurrentFolder());
         }
 
         //TODO: fix error when running exit command when not connected to a system
@@ -134,30 +150,10 @@ namespace Game.Core.Console
         private void Concatenate(string commandBody)
         {
             string result = "";
-            result = Global.StartEndPoint.TryPrintFile(commandBody);
+            result = Global.LocalEndpoint.TryPrintFile(commandBody);
             ConsoleContent.ConsoleOutput.Add(result);
             return;
         }
-
-        //private void CurrentDirectory(string commandBody)
-        //{
-        //    if (string.IsNullOrWhiteSpace(commandBody))
-        //    {
-        //        return;
-        //    }
-
-        //    string result;
-        //    try
-        //    {
-        //        result = Global.StartEndPoint.NavigateTo(commandBody);
-        //        ConsoleContent.ConsolePrefix = result;
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        result = ex.Message;
-        //    }
-        //    ConsoleContent.ConsoleOutput.Add(result);
-        //}
 
         public void AttachConsole(ConsoleContent consoleContent)
         {

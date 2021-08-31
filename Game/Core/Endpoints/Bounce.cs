@@ -64,9 +64,9 @@ namespace Game.Core.Endpoints
 
             if (BounceList.Count == 1)
             {
-                return (Global.StartEndPoint, BounceList[0], true);
+                return (Global.LocalEndpoint, BounceList[0], true);
             }
-            BounceList[0].BounceTo(Global.StartEndPoint, BounceList[1]);
+            BounceList[0].BounceTo(Global.LocalEndpoint, BounceList[1]);
 
             if (BounceList.Count == 2)
             {
@@ -75,7 +75,7 @@ namespace Game.Core.Endpoints
                 return (from, too, true);
             }
 
-            BounceList[0].BounceTo(Global.StartEndPoint, BounceList[1]);
+            BounceList[0].BounceTo(Global.LocalEndpoint, BounceList[1]);
             for (int i = 1; i < BounceList.Count - 1; i++)
             {
                 from = BounceList[i - 1];

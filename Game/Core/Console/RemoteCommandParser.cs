@@ -88,7 +88,7 @@ namespace Game.Core.Console
                     ConsoleContent.ConsoleOutput.Add("File \"" + commandBody + "\" not found.\n");
                     return;
                 }
-                Global.StartEndPoint.UploadFileToo(null, p);
+                Global.LocalEndpoint.UploadFileToo(null, p);
                 ConsoleContent.ConsoleOutput.Add("File \"" + commandBody + "\" downloaded.\n");
                 return;
             }
@@ -96,13 +96,13 @@ namespace Game.Core.Console
             string fileName = splitCommand[splitCommand.Length - 1];
             string filePath = string.Join('\\', new List<string>(splitCommand).Remove(fileName));
             p = this.AttachedSystem.GetFile(filePath, fileName);
-            Global.StartEndPoint.UploadFileToo(null, p);
+            Global.LocalEndpoint.UploadFileToo(null, p);
         }
 
         private void Upload(string commandBody)
         {
             string[] splitCommand = commandBody.Split(" ");
-            Program P = Global.StartEndPoint.GetFile("root", splitCommand[0]);
+            Program P = Global.LocalEndpoint.GetFile("root", splitCommand[0]);
             if (P == null)
             {
                 ConsoleContent.ConsoleOutput.Add("\"" + splitCommand[0] + "\"" + " cannot be found on the local machine.\n");

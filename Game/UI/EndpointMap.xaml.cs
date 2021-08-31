@@ -174,14 +174,14 @@ namespace Game.UI
         {
             this.Polyline.Points.Clear();
             this.PointDict.Clear();
-            if (Global.StartEndPoint == null)
+            if (Global.LocalEndpoint == null)
             {
                 return;
             }
 
-            var from = ButtonDict[Global.StartEndPoint.Id];
-            PointDict[Global.StartEndPoint.Id] = new Point(Canvas.GetLeft(from) + 1.5, Canvas.GetTop(from) + 1.5);
-            Polyline.Points.Add(PointDict[Global.StartEndPoint.Id]);
+            var from = ButtonDict[Global.LocalEndpoint.Id];
+            PointDict[Global.LocalEndpoint.Id] = new Point(Canvas.GetLeft(from) + 1.5, Canvas.GetTop(from) + 1.5);
+            Polyline.Points.Add(PointDict[Global.LocalEndpoint.Id]);
 
             foreach (Endpoint e in Global.Bounce.BounceList)
             {

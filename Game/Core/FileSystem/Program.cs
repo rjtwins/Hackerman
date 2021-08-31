@@ -6,12 +6,13 @@ namespace Game.Core.FileSystem
     public class Program : ICloneable
     {
         public Folder Folder { set; get; }
-        public string Name { private set; get; }
+        public string Name { protected set; get; }
         public byte[] content { private set; get; }
         public bool Executable = false;
         public Guid Id { private set; get; }
         public bool IsMalicious = false;
         protected bool Running = false;
+        protected int Version = 1;
 
         public Program(string name, bool executable = false)
         {

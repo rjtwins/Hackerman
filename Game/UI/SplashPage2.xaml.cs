@@ -28,6 +28,9 @@ namespace Game.UI
 
         private void SplashPage2_Loaded(object sender, RoutedEventArgs e)
         {
+            this.CPUTypeTextBlock.Text += Global.LocalSystem.ProcessorNameShort;
+            this.CPUClockTextBlock.Text += Global.LocalSystem.ProcessorSpeed + "MHz";
+            this.PrimaryDiskTextBlock.Text += Global.LocalSystem.MemoryDiskName;
             PlayStartUp();
         }
 

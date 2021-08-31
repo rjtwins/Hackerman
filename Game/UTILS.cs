@@ -25,17 +25,16 @@ namespace Game
             Color.DarkSlateGray
         };
 
-        public static int[,] getBoolBitmap(uint treshold, Bitmap b)
+        public static double[,] getBoolBitmap(Bitmap b)
         {
-            int[,] ar = new int[b.Width, b.Height];
+            double[,] ar = new double[b.Width, b.Height];
             for (int y = 0; y < b.Height; y++)
             {
                 for (int x = 0; x < b.Width; x++)
                 {
-                    if (b.GetPixel(x, y).A >= treshold)
+                    if (b.GetPixel(x, y).A >= 200)
                     {
-                        ar[x, y] = 2;
-                        //Debug.WriteLine(false);
+                        ar[x, y] = Math.Max((double)b.GetPixel(x,y).R, 1d)/255d;
                     }
                     else
                     {
@@ -65,7 +64,7 @@ namespace Game
             int randomIndex = Rand.Next(Global.CompanyEndpoints.Count);
             var temp = Global.CompanyEndpoints[randomIndex];
 
-            if (temp.Id == Global.StartEndPoint.Id)
+            if (temp.Id == Global.LocalEndpoint.Id)
             {
                 return PickRandomEndpoint();
             }
@@ -235,7 +234,7 @@ namespace Game
             int randomIndex = Rand.Next(Global.AllEndpoints.Count);
             var temp = Global.AllEndpoints[randomIndex];
 
-            if (temp.Id == Global.StartEndPoint.Id)
+            if (temp.Id == Global.LocalEndpoint.Id)
             {
                 return PickRandomEndpoint();
             }

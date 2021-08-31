@@ -47,7 +47,7 @@ namespace Game.UI
             //Get or Send commands
             if (commandBody.StartsWith("Send"))
             {
-                if (Global.StartEndPoint.GetFile(null, splitCommandBody[1]) == null)
+                if (Global.LocalEndpoint.GetFile(null, splitCommandBody[1]) == null)
                 {
                     return "DCC file not found.";
                 }

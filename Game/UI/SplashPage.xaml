@@ -30,10 +30,10 @@
                 Copyright (C) 1998-2001, Millenium Software, LLC.
                     </TextBlock>
                     <TextBlock x:Name="CPUTextBlock1" FontSize="18" TextWrapping="Wrap" Foreground="#FFA4A5A2" Margin="0,29,0,0">
-                (53XXUQ0F) TORNADO 120VK PCIset(TM)
+                PCIset(TM)
                     </TextBlock>
                     <TextBlock x:Name="CPUTextBlock2" Margin="0,25,0,0">
-                TORNADO-NNX CPU at 256MHz
+                
                     </TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock>

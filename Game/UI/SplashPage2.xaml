@@ -21,14 +21,12 @@
                                 <TextBlock>
                                     CPU Type
                                 </TextBlock>
-                                <TextBlock x:Name="CPUTypeTextBlock">
-                                    : XXXXXXXXXXX
-                                </TextBlock>
+                                <TextBlock x:Name="CPUTypeTextBlock" Text=": " />
                                 <TextBlock>
                                     Base Memory
                                 </TextBlock>
                                 <TextBlock>
-                                    : xxxK
+                                    : 1024K
                                 </TextBlock>
                                 <TextBlock>
                                     Co-Processor
@@ -40,14 +38,13 @@
                                     Extended Memory
                                 </TextBlock>
                                 <TextBlock x:Name="ExtendedMemoryTextBlock">
-                                    : xxxxxxK
+                                    : 32768K
                                 </TextBlock>
                                 <TextBlock>
                                     CPU Clock
                                 </TextBlock>
-                                <TextBlock x:Name="CPUClockTextBlock">
-                                    : xxxMHZ
-                                </TextBlock>
+                                <TextBlock x:Name="CPUClockTextBlock" Text=": "/>
+
                                 <TextBlock>
                                     Cache Memory
                                 </TextBlock>
@@ -84,9 +81,7 @@
                                 <TextBlock>
                                     Pri. Master Disk
                                 </TextBlock>
-                                <TextBlock x:Name="PrimaryDiskTextBlock">
-                                    : XXXXXXXXXXXXXX
-                                </TextBlock>
+                                <TextBlock x:Name="PrimaryDiskTextBlock" Text=": " />
                                 <TextBlock>
                                     Parallel Port(s)
                                 </TextBlock>

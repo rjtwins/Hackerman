@@ -63,7 +63,7 @@ namespace Game.Core.World
 
             Debug.WriteLine("Passive Trace Inspecting: " + Inspected.IPAddress);
 
-            if (Inspected.Id == Global.StartEndPoint.Id)
+            if (Inspected.Id == Global.LocalEndpoint.Id)
             {
                 //TODO: DO SOMETHING
                 //We are now at the player machine do something bad to it.

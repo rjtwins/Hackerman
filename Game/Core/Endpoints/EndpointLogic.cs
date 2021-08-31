@@ -72,7 +72,6 @@ namespace Game.Core.Endpoints
                 this.iPAddress = System.Net.IPAddress.Parse(value);
             }
         }
-
         private bool SoftConnection { get; set; }
 
         //Location and icon data
@@ -384,7 +383,6 @@ namespace Game.Core.Endpoints
             FileSystem.NavigateTo(command, CurrentUsername);
             return CurrentPath();
         }
-
         internal string UploadFileToo(string path, Program p, bool log = true)
         {
             string result = this.FileSystem.CopyFileToFonder(path, p, CurrentUsername);

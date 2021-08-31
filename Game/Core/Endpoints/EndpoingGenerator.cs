@@ -11,7 +11,7 @@ namespace Game.Core.Endpoints
         public static int XMax = 4984;
         public static int YMax = 2576;
         public static int EndpointBaseSize = 6;
-        private int[,] EndpointCoordinates;
+        private double[,] EndpointCoordinates;
         private Random Rand = new Random();
 
         /// <summary>
@@ -30,10 +30,10 @@ namespace Game.Core.Endpoints
 
         public Endpoint GenerateStartEndpoint()
         {
-            Endpoint e = new LocalEndpoint();
+            LocalEndpoint e = new LocalEndpoint();
             (e.x, e.y) = GenerateCoordinate();
             e.name = "LOCAL";
-            Global.StartEndPoint = e;
+            Global.LocalEndpoint = e;
             return e;
         }
 
@@ -50,15 +50,9 @@ namespace Game.Core.Endpoints
 
         public List<Endpoint> GenerateEndpoints()
         {
-            this.EndpointCoordinates = UTILS.getBoolBitmap(20, Resources.WorldMapDensity);
+            this.EndpointCoordinates = UTILS.getBoolBitmap(Resources.WorldMapDensity);
             List<Endpoint> EndpointList = new List<Endpoint>();
             List<Endpoint> AvailableEmployes = new();
-
-            //Generate 250 personal machines:
-            for (int i = 0; i < 1000; i++)
-            {
-                GeneatePersonalEndpoint(EndpointList, AvailableEmployes);
-            }
 
             //Generate 20 random companies machines:
             for (int i = 0; i < 10; i++)
@@ -89,11 +83,22 @@ namespace Game.Core.Endpoints
                 Person Person = UTILS.PickRandomBank();
                 Endpoint e = new Endpoint(Person, EndpointType.BANK);
                 (e.x, e.y) = GenerateCoordinate();
+                e.isHidden = true;
                 EndpointList.Add(e);
             }
 
             EndpointList.Add(GenerateStartEndpoint());
+            EndpointList.Add(GenerateTestEndpoint(AvailableEmployes));
             return EndpointList;
+        }
+
+        private Endpoint GenerateTestEndpoint(List<Endpoint> availableEmployes)
+        {
+            Endpoint ownerEndpoint = PickRandomEmploye(1, availableEmployes)[0];
+            Endpoint e = new Endpoint(ownerEndpoint.Owner, EndpointType.EXTERNALACCES);
+            (e.x, e.y) = GenerateCoordinate();
+            e.name = "TEST ENDPOINT";
+            return e;
         }
 
         private void GeneatePersonalEndpoint(List<Endpoint> EndpointList, List<Endpoint> AvailableEmployes)
@@ -111,6 +116,12 @@ namespace Game.Core.Endpoints
 
         private void GenerateCompanyEndpoint(int nrOfEmployes, EndpointDifficulty dificulty, List<Endpoint> EndpointList, List<Endpoint> AvailableEmployes)
         {
+
+            for (int i = 0; i < nrOfEmployes + 10; i++)
+            {
+                GeneatePersonalEndpoint(EndpointList, AvailableEmployes);
+            }
+
             EndpointMonitor Monitor = EndpointMonitor.NONE;
             EndpointFirewall Firewall = EndpointFirewall.NONE;
             EndpointHashing MemoryHashing = EndpointHashing.NONE;
@@ -134,6 +145,7 @@ namespace Game.Core.Endpoints
                     Monitor = EndpointMonitor.LVL1;
                     Firewall = EndpointFirewall.LVL1;
                     MemoryHashing = EndpointHashing.LVL1;
+                    hidden = true;
                     break;
                 case EndpointDifficulty.LVL4:
                     break;
@@ -213,16 +225,25 @@ namespace Game.Core.Endpoints
 
         private (int, int) GenerateCoordinate()
         {
-            int d = 100;
+            int d = 50;
             int x = Rand.Next(0, XMax);
             int y = Rand.Next(0, YMax);
 
+            double prop = EndpointCoordinates[x, y];
+
             //water check
-            if (EndpointCoordinates[x, y] == 0)
+            if (prop == 0)
             {
-                //var range = EndpointCoordinates[new Range(x-5, x+5), new Range(y-5, y+5)];
                 return GenerateCoordinate();
             }
+
+            double roll = Global.Rand.NextDouble();
+
+            if (roll > prop)
+            {
+                return GenerateCoordinate();
+            }
+
             //Proximity check
             bool reject = false;
             for (int xmin = x - d; xmin < x + d; xmin++)
@@ -252,7 +273,7 @@ namespace Game.Core.Endpoints
             }
             if (reject)
             {
-                (x, y) = GenerateCoordinate();
+                return GenerateCoordinate();
             }
 
             EndpointCoordinates[x, y] = 1;

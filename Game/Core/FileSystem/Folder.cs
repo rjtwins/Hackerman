@@ -26,10 +26,11 @@ namespace Game.Core.FileSystem
             return this.Owner == Person;
         }
 
-        public void AddProgram(Program p)
+        public Program AddProgram(Program p)
         {
             p.Folder = this;
             this.Programs[p.Name] = p;
+            return p;
         }
 
         public Folder(string name)

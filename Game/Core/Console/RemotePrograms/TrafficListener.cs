@@ -11,11 +11,11 @@ namespace Game.Core.Console.RemotePrograms
     class TrafficListener : Program
     {
         private Endpoint AttachedToo;
-        private List<(string, string)> UsernamePasswordList = new();
 
         public TrafficListener() : base("TrafficListner", true)
         {
             this.IsMalicious = true;
+            this.Name += "v" + this.Version.ToString();
         }
 
         public override string RunProgram(Endpoint ranOn)
@@ -30,7 +30,6 @@ namespace Game.Core.Console.RemotePrograms
 
         private void Target_OnLogin(object sender, EndpointLoginEventArgs e)
         {
-            this.UsernamePasswordList.Add((e.Username, e.Password));
             if (!Global.IRCWindow.ChannelExsits(this.Name))
             {
                 Global.IRCWindow.AddChannelFromThread(this.Name);
@@ -40,25 +39,25 @@ namespace Game.Core.Console.RemotePrograms
             {
                 fromIP = e.From.IPAddress;
             }
-            if(((int)e.EndpointHashing) > ((int)Endpoint.EndpointHashing.NONE))
+            string result = string.Empty;
+            string login = UTILS.GetHashString(e.Username + e.Password);
+            result += "Traffic Detected:\n";
+            result += "ON: IP: " + this.AttachedToo.IPAddress + " \tHOST: " + this.AttachedToo.name + "\n";
+            if (((int)e.EndpointHashing) > ((int)Endpoint.EndpointHashing.NONE))
             {
-                string login = e.Username + e.Password;
-                login = UTILS.GetHashString(login);
-
-                Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, "Traffic Detected:\n"
-                    + "FROM: IP: " + fromIP + "\n"
-                    + "TOO: IP: " + this.AttachedToo.IPAddress + " \tHOST: " + this.AttachedToo.name + "\n"
-                    + "LOGIN HASH: " + login);
-
-                Global.LocalSystem.TrafficListnerAddEntry(e.From, this.AttachedToo, e.Username, e.Password, e.EndpointHashing, login);
-                return;
+                result += "LOGIN HASH: " + login + "\n";
+            }
+            else
+            {
+                result += "USER: " + e.Username + "\nPWRD: " + e.Password;
+            }
+            if(this.Version > 1)
+            {
+                result += "FROM: IP: " + fromIP + "\n";
             }
 
-            Global.LocalSystem.TrafficListnerAddEntry(e.From, this.AttachedToo, e.Username, e.Password);
-            Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, "Traffic Detected:\n"
-                + "FROM: IP: " + fromIP + "\n"
-                + "TOO: IP: " + this.AttachedToo.IPAddress + " \tHOST: " + this.AttachedToo.name + "\n"
-                + "USER: " + e.Username + "\nPWRD: " + e.Password);
+            Global.LocalSystem.TrafficListnerAddEntry(e.From, this.AttachedToo, e.Username, e.Password, this.Version, e.EndpointHashing, login);
+            Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, result);
         }
 
         public override void StopProgram()
@@ -73,7 +72,7 @@ namespace Game.Core.Console.RemotePrograms
                 Global.IRCWindow.AddChannelFromThread(this.Name);
             }
             Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, "SHUTDOWN:\n"
-                + "FROM: IP: " + this.AttachedToo.IPAddress
+                + "ON: IP: " + this.AttachedToo.IPAddress
                 + "\tHOST: " + this.AttachedToo.name);
 
             this.Running = false;

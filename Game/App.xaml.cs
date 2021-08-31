@@ -23,12 +23,15 @@ namespace Game
         {
             base.OnStartup(e);
             //declaring globals
+            Global.App = this;
+
+            Global.LocalSystem = new LocalSystem();
+
             UTILS.LoadExternalLists();
             MissionDictionaries.ParseFromFiles();
 
             Global.GameState = new GameState();
             Global.GameState.SetUserName("RJ");
-            Global.App = this;
             Global.SplashPage = new UI.SplashPage();
             Global.SplashPage2 = new UI.SplashPage2();
 
@@ -38,14 +41,13 @@ namespace Game
 
             Global.EventTicker = new GameTicker();
             Global.EndpointGenerator = new EndpointGenerator();
+            Global.LocalConsole = new UI.LocalConsole();
 
             Global.RemoteConsole = new UI.RemoteConsole();
-            Global.LocalConsole = new UI.LocalConsole();
             Global.EndPointMap = new UI.EndpointMap();
             Global.IRCWindow = new UI.IRC();
 
             Global.Bounce = new Bounce();
-            Global.LocalSystem = new LocalSystem();
             Global.ActiveTraceTracker = new Core.World.ActiveTraceTracker();
             Global.PassiveTraceTracker = new Core.World.PassiveTraceTracker();
 

@@ -121,10 +121,8 @@
     <Resource Include="Icons\UIPixels\WindowBorder.svg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\WorldMap.png" />
     <Resource Include="Icons\WorldMapDensity.png" />
     <Resource Include="Icons\WorldMapPixelHighRes.png" />
-    <Resource Include="Icons\WorldMapPixels.jpg" />
     <Content Include="Misc\faux_id_fake_companies.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

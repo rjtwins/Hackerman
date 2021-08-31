@@ -65,7 +65,7 @@ namespace Game.Core.Mission.MissionTypes
             }
             foreach (var file in this.FilesToUpload)
             {
-                Global.StartEndPoint.UploadFileToo(null, file);
+                Global.LocalEndpoint.UploadFileToo(null, file);
             }
             return true;
         }
