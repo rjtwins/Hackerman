@@ -24,7 +24,7 @@ namespace Game.UI
             {
                 return;
             }
-            if (programWindow.maxed)
+            if (programWindow.Maxed)
             {
                 return;
             }

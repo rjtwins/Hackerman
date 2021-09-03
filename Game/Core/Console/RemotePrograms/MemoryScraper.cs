@@ -1,10 +1,5 @@
 ﻿using Game.Core.Endpoints;
 using Game.Core.FileSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game.Core.Console.RemotePrograms
 {
@@ -18,7 +13,7 @@ namespace Game.Core.Console.RemotePrograms
         public override string RunProgram(Endpoint ranOn)
         {
             string result = "LOGINS IN MEMORY:\n";
-            foreach((string, string) login in ranOn.LoginHistory)
+            foreach ((string, string) login in ranOn.LoginHistory)
             {
                 result += "USER: ";
                 result += login.Item1 + "\n";

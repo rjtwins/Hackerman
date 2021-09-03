@@ -1,7 +1,6 @@
 ﻿using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,12 +9,12 @@ using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
 using Point = System.Windows.Point;
 
-namespace Game.UI
+namespace Game.UI.Pages
 {
     /// <summary>
     /// Interaction logic for EndpointMap.xaml
     /// </summary>
-    public partial class EndpointMap : System.Windows.Controls.Page
+    public partial class EndpointMap : Game.UI.Pages.DisplayablePage
     {
         private Dictionary<Guid, Endpoint> DrawnEndpointsDict = new();
         private Dictionary<Guid, Button> ButtonDict = new();
@@ -115,7 +114,7 @@ namespace Game.UI
                 btn.Height = 3;
                 txb.HorizontalAlignment = HorizontalAlignment.Left;
                 txb.VerticalAlignment = VerticalAlignment.Top;
-                txb.Text = e.name;
+                txb.Text = e.Name;
 
                 //Location
                 int x = e.x / 10;
@@ -145,7 +144,7 @@ namespace Game.UI
             /*BeginAnimation(SolidColorBrush.ColorProperty, animation)*/
         }
 
-    private void EndpointClick(object sender, RoutedEventArgs e)
+        private void EndpointClick(object sender, RoutedEventArgs e)
         {
             //No map editing when we are in a connection.
             if (isConnected)
@@ -221,9 +220,8 @@ namespace Game.UI
 
         public void UnmakeConnection()
         {
-            if(Global.Bounce.BounceList.Count == 0)
+            if (Global.Bounce.BounceList.Count == 0)
             {
-
             }
             Button last = this.ButtonDict
                 [

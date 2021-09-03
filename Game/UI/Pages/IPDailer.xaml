@@ -1,0 +1,146 @@
+﻿<local:DisplayablePage x:Class="Game.UI.Pages.IPDailer"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:local="clr-namespace:Game.UI.Pages"
+                       mc:Ignorable="d"
+      Title="IP Dailer"
+      TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA" Height="242" Width="299" MinWidth="299" MinHeight="242" MaxHeight="242" MaxWidth="299">
+
+    <Grid Background="Silver">
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Margin="10,0,10,0">
+                <TextBlock Text="IP to dial:" Margin="2,5,0,10" />
+                <ContentControl Style="{StaticResource InlayedBorder}">
+                    <TextBox x:Name="IPTextBox">
+                    </TextBox>
+                </ContentControl>
+                <ContentControl Style="{StaticResource TaskBarButtonBox}" x:Name="DialButton" Margin="0,5,0,0">
+                    <Button x:Name="DailButton" Margin="-2,-2,-2,-2" Click="DailButton_Click">
+                        Dail
+                    </Button>
+                </ContentControl>
+                <UniformGrid Rows="4" Columns="3" Margin="10,10,10,10" Width="110" Height="150">
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1" Margin="0,0,0,0">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            1
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            2
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            3
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            4
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1"  Click="Button_Click">
+                            5
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            6
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            7
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            8
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            9
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            .
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            0
+                        </Button>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource SpeedDailButton}" Padding="1,1,1,1">
+                        <Button Margin="-1,-1,-1,-1" Click="Button_Click">
+                            #
+                        </Button>
+                    </ContentControl>
+                </UniformGrid>
+            </StackPanel>
+            <ContentControl Style="{StaticResource ControllBox}" Uid="Speed Dial" Width="148" Margin="0,8,0,0">
+                <StackPanel Margin="0,9,2,0" HorizontalAlignment="Right" Width="129">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Margin" Value="0,5,0,0" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="128">
+                        <TextBlock Text="1" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="10" />
+                        <ContentControl Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Stretch" Width="118" Panel.ZIndex="4" Height="20">
+                            <Button />
+                        </ContentControl>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="128">
+                        <TextBlock Text="2" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="10" />
+                        <ContentControl Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Stretch" Width="118" Panel.ZIndex="4" Height="20">
+                            <Button />
+                        </ContentControl>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="128">
+                        <TextBlock Text="3" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="10" />
+                        <ContentControl Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Stretch" Width="118" Panel.ZIndex="4" Height="20">
+                            <Button />
+                        </ContentControl>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="128">
+                        <TextBlock Text="4" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="10" />
+                        <ContentControl Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Stretch" Width="118" Panel.ZIndex="4" Height="20">
+                            <Button />
+                        </ContentControl>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="128">
+                        <TextBlock Text="5" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="10" />
+                        <ContentControl Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Stretch" Width="118" Panel.ZIndex="4" Height="20">
+                            <Button />
+                        </ContentControl>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="128">
+                        <TextBlock Text="6" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="10" />
+                        <ContentControl Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Stretch" Width="118" Panel.ZIndex="4" Height="20">
+                            <Button />
+                        </ContentControl>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="128">
+                        <TextBlock Text="7" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="10" />
+                        <ContentControl Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Stretch" Width="118" Panel.ZIndex="4" Height="20">
+                            <Button />
+                        </ContentControl>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="128">
+                        <TextBlock Text="8" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="10" />
+                        <ContentControl Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Stretch" Width="118" Panel.ZIndex="4" Height="20">
+                            <Button />
+                        </ContentControl>
+                    </StackPanel>
+                </StackPanel>
+            </ContentControl>
+        </StackPanel>
+    </Grid>
+</local:DisplayablePage>

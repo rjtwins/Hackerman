@@ -17,7 +17,7 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <Frame x:Name="FullWindowFrame" Grid.ColumnSpan="10" Grid.RowSpan="10" Panel.ZIndex="999" Background="Black" Visibility="Visible" />
+        <Frame x:Name="FullWindowFrame" Grid.ColumnSpan="10" Grid.RowSpan="10" Panel.ZIndex="999" Background="Black" Visibility="Hidden" />
 
         <ContentControl x:Name="StartMenuMenu"  Style="{StaticResource TaskBarButtonBox}" Grid.Column="0" Grid.Row="1"
                          MinWidth="150" Panel.ZIndex="1" Margin="0,0,0,-6"
@@ -56,9 +56,10 @@
         <Border Grid.Row="2" BorderBrush="#FF0C0B0B" Background="Silver" BorderThickness="0,0,0,0" Margin="0,0,0,0" Padding="0,0,0,0" Height="30" Grid.ColumnSpan="2"
                 TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
             <Grid>
-                <StackPanel Name="TaskBar" Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Column="1"
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Column="1"
                             TextElement.FontSize="15"
                             Margin="0,0,0,0" Height="30">
+
                     <ContentControl x:Name="StartMenu"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3,2,0,2">
                         <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="MenuButtonClick" Padding="1,1,1,1" Margin="0,0,0,0">
                             <Grid HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">
@@ -66,45 +67,14 @@
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-
                                 <Image Grid.Column="0" Source="/Icons/OtherIcons/side-menu.png" Width="18" Height="17" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,-1" />
                                 <TextBlock Grid.Column="1" Text="Menu" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="0,0,0,0" />
                             </Grid>
                         </ToggleButton>
                     </ContentControl>
                     <ContentControl Style="{StaticResource DividerBorder}" Padding="0,0,0,0" Margin="4,3,4,3" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" />
-                    <ContentControl x:Name="BounceTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0">
-                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
-                            <StackPanel HorizontalAlignment="Left" Margin="-70,0,0,0" VerticalAlignment="Top" Orientation="Horizontal" FlowDirection="LeftToRight" ScrollViewer.VerticalScrollBarVisibility="Disabled" UseLayoutRounding="False">
-                                <Image Source="/Icons/OtherIcons/001-network.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,-1" />
-                                <TextBlock Text="Bounce" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0" />
-                            </StackPanel>
-                        </ToggleButton>
-                    </ContentControl>
-                    <ContentControl x:Name="ZeeChatTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0" Height="27">
-                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click" Margin="0,0,0,0">
-                            <StackPanel HorizontalAlignment="Stretch" Margin="-64,0,0,0" Orientation="Horizontal">
-                                <Image Grid.Column="0" Source="/Icons/OtherIcons/005-chat-1.png" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                <TextBlock Grid.Column="1" Text="Zee Chat" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
-                            </StackPanel>
-                        </ToggleButton>
-                    </ContentControl>
-                    <ContentControl x:Name="LocalConsoleTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0" Height="27">
-                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="-69,0,0,0" VerticalAlignment="Stretch">
-                                <Image Grid.Column="0" Source="/Icons/OtherIcons/014-programing-1.png" Width="19" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
-                                <TextBlock Grid.Column="1" Text="CMD" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
-                            </StackPanel>
-                        </ToggleButton>
-                    </ContentControl>
-                    <ContentControl x:Name="RemoteConsoleTaskBarButton"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" Margin="0,0,4,0" Height="27">
-                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="ToggleButton_Click">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="-69,0,0,0">
-                                <Image Grid.Column="0" Source="/Icons/OtherIcons/015-configuration.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                <TextBlock Grid.Column="1" Text="TracON" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" />
-                            </StackPanel>
-                        </ToggleButton>
-                    </ContentControl>
+                    <StackPanel x:Name="TaskBar" TextElement.FontSize="15" Orientation="Horizontal">
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Name="Tray" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
                     <ContentControl Style="{StaticResource DividerBorder}" Margin="0,3,0,3" />
@@ -122,10 +92,10 @@
                 </StackPanel>
             </Grid>
         </Border>
-        
+
         <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Teal" Margin="0,0,0,0" Grid.ColumnSpan="2" TextElement.FontSize="20" TextElement.FontWeight="Bold">
 
-            <s:ProgramWindowNoButtons x:Name="SystemTime"
+            <!--<s:ProgramWindowNoButtons x:Name="SystemTime"
                              Style="{StaticResource ProgramWindowActiveStyle}"
                              Margin="5,5,0,0" Canvas.Left="213" Canvas.Top="33"
                              Height="89" Width="221" MinWidth="221" MinHeight="89" MaxHeight="89" MaxWidth="221">
@@ -181,6 +151,48 @@
                     </Grid>
                 </s:ProgramWindowNoButtons.mainContent>
             </s:ProgramWindowNoButtons>
+
+            <s:ProgramWindow x:Name="IPDailer"
+                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Hidden" Canvas.Left="200" Canvas.Top="160" Width="500" MinWidth="300" MinHeight="200" Height="300"
+                             IsVisibleChanged="MapControl_IsVisibleChanged">
+                <s:ProgramWindow.icon>
+                    <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />
+                </s:ProgramWindow.icon>
+                <s:ProgramWindow.title>
+                    <TextBlock Text="IP Dailer" Foreground="White" />
+                </s:ProgramWindow.title>
+                <s:ProgramWindow.mainContent>
+                    <Frame x:Name="IPDailerFrame" />
+                </s:ProgramWindow.mainContent>
+            </s:ProgramWindow>
+
+            <s:ProgramWindow x:Name="BankInterface"
+                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Visible" Canvas.Left="200" Canvas.Top="160"
+                             IsVisibleChanged="MapControl_IsVisibleChanged">
+                <s:ProgramWindow.icon>
+                    <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />
+                </s:ProgramWindow.icon>
+                <s:ProgramWindow.title>
+                    <TextBlock Text="M-Banking" Foreground="White" />
+                </s:ProgramWindow.title>
+                <s:ProgramWindow.mainContent>
+                    <Frame x:Name="BankFrame" />
+                </s:ProgramWindow.mainContent>
+            </s:ProgramWindow>
+
+            <s:ProgramWindow x:Name="SystemOverview"
+                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Hidden" Canvas.Left="200" Canvas.Top="160" Width="500" MinWidth="300" MinHeight="200" Height="300"
+                             IsVisibleChanged="MapControl_IsVisibleChanged">
+                <s:ProgramWindow.icon>
+                    <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />
+                </s:ProgramWindow.icon>
+                <s:ProgramWindow.title>
+                    <TextBlock Text="System" Foreground="White" />
+                </s:ProgramWindow.title>
+                <s:ProgramWindow.mainContent>
+                    <Frame x:Name="SystemOverviewFrame" />
+                </s:ProgramWindow.mainContent>
+            </s:ProgramWindow>
 
             <s:ProgramWindow x:Name="MapControl"
                              Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Visible" Canvas.Left="200" Canvas.Top="160" Width="500" MinWidth="300" MinHeight="200" Height="300"
@@ -245,7 +257,7 @@
                         <Frame x:Name="IRCFrame" />
                     </ContentControl>
                 </s:ProgramWindow.mainContent>
-            </s:ProgramWindow>
+            </s:ProgramWindow>-->
         </Canvas>
     </Grid>
 </Window>

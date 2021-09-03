@@ -11,6 +11,7 @@ namespace Core.Events
     {
         //Main ticker
         private Timer MainTimer;
+
         public int GameSpeed { private set; get; } = 1;
         public double TimeIntervalInSecondes = 0.1d;
 
@@ -19,6 +20,7 @@ namespace Core.Events
 
         //Dictionaries for all events past present and future.
         public SortedList<DateTime, Guid> EventQueue = new SortedList<DateTime, Guid>();
+
         public Dictionary<Guid, Event> IDEventDict = new Dictionary<Guid, Event>();
         private Dictionary<int, double> GameSpeedDict = new Dictionary<int, double>();
 
@@ -36,11 +38,16 @@ namespace Core.Events
             GameSpeedDict[4] = 720;
         }
 
+        public void StartUpTicker()
+        {
+            MainTimer.Change(0, 100);
+        }
+
         public void ChangeSpeed(int level)
         {
-            //this.GameSpeed = level;
             TimeIntervalInSecondes = GameSpeedDict[level];
-            //TimeIntervalInSecondes = (double)(15 * GameSpeed);
+            this.GameSpeed = level;
+            Global.GamePaused = false;
         }
 
         public void RegisterEvent(Event e)
@@ -67,14 +74,8 @@ namespace Core.Events
 
         public void StartTicker()
         {
-            if (TimeIntervalInSecondes == 0d)
-            {
-                TimeIntervalInSecondes = GameSpeedDict[1];
-                this.GameSpeed = 1;
-                Global.GamePaused = false;
-                return;
-            }
-            MainTimer.Change(100, 100);
+            TimeIntervalInSecondes = GameSpeedDict[1];
+            this.GameSpeed = 1;
             Global.GamePaused = false;
         }
 
@@ -87,7 +88,7 @@ namespace Core.Events
                 Global.MainWindow.UpdateDateTime();
                 HandleEvents();
             }
-            if(invokeCount % 1000 == 0)
+            if (invokeCount % 1000 == 0)
             {
                 Debug.WriteLine("Invoke nr: " + invokeCount);
             }
@@ -98,11 +99,10 @@ namespace Core.Events
             List<Event> EventsToHandle = new List<Event>();
             lock (this.EventQueue)
             {
-                Debug.WriteLine(EventQueue.Count);
                 Event e;
-                foreach(KeyValuePair<DateTime,Guid> pair in EventQueue)
+                foreach (KeyValuePair<DateTime, Guid> pair in EventQueue)
                 {
-                    if(!IDEventDict.TryGetValue(pair.Value, out e))
+                    if (!IDEventDict.TryGetValue(pair.Value, out e))
                     {
                         Debug.WriteLine("Event: event in queue but not in event id dict!");
                         //throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
@@ -121,7 +121,7 @@ namespace Core.Events
 
             lock (EventsToHandle)
             {
-                foreach(Event eventToHandle in EventsToHandle)
+                foreach (Event eventToHandle in EventsToHandle)
                 {
                     TryStartEvent(eventToHandle);
                 }

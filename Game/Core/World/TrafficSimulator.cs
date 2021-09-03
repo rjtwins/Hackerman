@@ -1,14 +1,13 @@
 ﻿using Game.Core.Endpoints;
 using Game.Core.Events;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using static Game.UTILS;
 
 namespace Game.Core.World
 {
     internal class TrafficSimulator
     {
         private static readonly TrafficSimulator instance = new TrafficSimulator();
+
         public static TrafficSimulator Instance
         {
             get

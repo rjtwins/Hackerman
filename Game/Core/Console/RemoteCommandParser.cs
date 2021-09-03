@@ -281,7 +281,6 @@ namespace Game.Core.Console
             }
             string result = AttachedSystem.RunProgram(commmandBody);
             ConsoleContent.ConsoleOutput.Add(result);
-
         }
 
         private void Concatenate(string commandBody)
@@ -359,8 +358,8 @@ namespace Game.Core.Console
         }
 
         public delegate void RemoteConsoleDisconnectedEventHandler(object sender, RemoteConsoleDisconnectedEventArgs e);
-        public event RemoteConsoleDisconnectedEventHandler OnDisconnected;
 
+        public event RemoteConsoleDisconnectedEventHandler OnDisconnected;
     }
 
     public class RemoteConsoleDisconnectedEventArgs : EventArgs

@@ -1,11 +1,11 @@
 ﻿using Game.Core.FileSystem;
+using Game.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using static Game.UTILS;
 
 namespace Game.Core.Endpoints
 {
@@ -22,8 +22,11 @@ namespace Game.Core.Endpoints
         public EndpointEvents EndpointEvents;
 
         public enum EndpointMonitor { NONE, LVL1, LVL2, LVL3, LVL4 }
+
         public enum EndpointFirewall { NONE, LVL1, LVL2, LVL3, LVL4 }
+
         public enum EndpointState { ONLINE, SHUTTINGDOWN, STARTING, CRASHED, DESTROYED1, DESTROYED2, DESTROYED3 };
+
         public enum EndpointHashing { NONE, LVL1, LVL2, LVL3, LVL4 };
 
         public DateTime NextAdminCheckDate { get; internal set; }
@@ -51,6 +54,7 @@ namespace Game.Core.Endpoints
                 FileSystem.SetConnectionLog(value);
             }
         }
+
         public List<Endpoint> WatchedEndpoints = new();
 
         public Dictionary<Person, string> UsernamePasswordDict = new();
@@ -72,17 +76,24 @@ namespace Game.Core.Endpoints
                 this.iPAddress = System.Net.IPAddress.Parse(value);
             }
         }
+
         private bool SoftConnection { get; set; }
 
         //Location and icon data
         protected FileSystem.FileSystem FileSystem;
+
         public Endpoint ConnectedFrom;
 
         public delegate void EndpointDisconnectedEventHandler(object sender, EndpointDisconnectedEventArgs e);
+
         public event EndpointDisconnectedEventHandler OnDisconnected;
+
         public delegate void EndpointConnectedEventHandler(object sender, EndpointConnectedEventArgs e);
+
         public event EndpointConnectedEventHandler OnConnected;
+
         public delegate void EndpointLoginEventHandler(object sender, EndpointLoginEventArgs e);
+
         public event EndpointLoginEventHandler OnLogin;
 
         public void UnderDictHack()
@@ -91,17 +102,18 @@ namespace Game.Core.Endpoints
             {
                 return;
             }
-            if(((int)this.Monitor) <= ((int)EndpointMonitor.NONE))
+            if (((int)this.Monitor) <= ((int)EndpointMonitor.NONE))
             {
                 return;
             }
-            if(((int)Global.LocalSystem.MonitorBypass) > ((int)this.Monitor) 
+            if (((int)Global.LocalSystem.MonitorBypass) > ((int)this.Monitor)
                 && Global.LocalSystem.MonitorBypassActive)
             {
                 return;
             }
             Global.ActiveTraceTracker.StartTrace(this.TraceSpeed);
         }
+
         //TODO: make it so if you spoof the network it will not block you.
         public bool CanBreachFirewall()
         {
@@ -109,13 +121,14 @@ namespace Game.Core.Endpoints
                 return true;
             if (!FirewallActive)
                 return true;
-            if(((int)Global.LocalSystem.FirewallBypass) > ((int)this.Firewall) 
+            if (((int)Global.LocalSystem.FirewallBypass) > ((int)this.Firewall)
                 && Global.LocalSystem.FirewallBypassActive)
             {
                 return true;
             }
             return false;
         }
+
         public bool HasFirewall()
         {
             if (((int)this.Firewall) > ((int)EndpointFirewall.NONE))
@@ -124,6 +137,7 @@ namespace Game.Core.Endpoints
             }
             return false;
         }
+
         private void SetupEndpoint()
         {
             this.Id = Guid.NewGuid();
@@ -143,31 +157,31 @@ namespace Game.Core.Endpoints
             switch (this.EndpointType)
             {
                 case EndpointType.PERSONAL:
-                    this.name = this.Owner.Name + "'s Desktop";
+                    this.Name = this.Owner.Name + "'s Desktop";
                     break;
 
                 case EndpointType.EXTERNALACCES:
-                    this.name = this.Owner.Name + " External Access Server";
+                    this.Name = this.Owner.Name + " External Access Server";
                     break;
 
                 case EndpointType.INTERNAL:
-                    this.name = this.Owner.Name + " Internal Services";
+                    this.Name = this.Owner.Name + " Internal Services";
                     break;
 
                 case EndpointType.BANK:
-                    this.name = this.Owner.Name;
+                    this.Name = this.Owner.Name;
                     break;
 
                 case EndpointType.MEDIA:
                     break;
 
                 case EndpointType.DATABASE:
-                    this.name = this.Owner.Name + " Storage Server";
+                    this.Name = this.Owner.Name + " Storage Server";
                     this.isHidden = true;
                     break;
 
                 case EndpointType.GOVERMENT:
-                    this.name = this.Owner.Name;
+                    this.Name = this.Owner.Name;
                     break;
 
                 default:
@@ -175,6 +189,7 @@ namespace Game.Core.Endpoints
             }
             this.EndpointEvents = new EndpointEvents(this);
         }
+
         internal string PrintSchedule()
         {
             string result = "SCHEDULE:\n"
@@ -182,6 +197,7 @@ namespace Game.Core.Endpoints
                 + this.NextAdminCheckDate.ToString() + "Scheduled administrative maintenance.\n";
             return result;
         }
+
         internal bool HasConnection()
         {
             if (this.SoftConnection)
@@ -189,13 +205,13 @@ namespace Game.Core.Endpoints
                 return true;
             }
             return false;
-
         }
+
         internal string GetPassword(string user)
         {
             foreach (var person in UsernamePasswordDict.Keys)
             {
-                if(person.Name != user)
+                if (person.Name != user)
                 {
                     continue;
                 }
@@ -203,6 +219,7 @@ namespace Game.Core.Endpoints
             }
             return string.Empty;
         }
+
         internal string GetPassword(Person user)
         {
             if (UsernamePasswordDict.TryGetValue(user, out string password))
@@ -211,13 +228,14 @@ namespace Game.Core.Endpoints
             }
             return string.Empty;
         }
+
         internal Person GetRandomUser(bool noSystemUsers = true)
         {
             int nrUsers = this.UsernamePasswordDict.Keys.Count;
 
             Person randomUser = UsernamePasswordDict.Keys.ToList()[Global.Rand.Next(nrUsers)];
 
-            if(nrUsers == 1)
+            if (nrUsers == 1)
             {
                 return null;
             }
@@ -238,6 +256,7 @@ namespace Game.Core.Endpoints
 
             return randomUser;
         }
+
         internal string PrintUsers()
         {
             string result = "USER:\t\tTYPE:\n";
@@ -247,9 +266,10 @@ namespace Game.Core.Endpoints
             }
             return result;
         }
+
         internal void AddEmployes(Endpoint[] employes)
         {
-            foreach(Endpoint e in employes)
+            foreach (Endpoint e in employes)
             {
                 this.AddUser(e.Owner, e.Owner.WorkPassword, AccessLevel.USER);
             }
@@ -284,10 +304,12 @@ namespace Game.Core.Endpoints
             {
                 return;
             }
+
             #region logs
+
             //Trim Logs to 20 entries.
             List<LogItem> sysLog = this.SystemLog;
-            while(sysLog.Count > 20)
+            while (sysLog.Count > 20)
             {
                 sysLog.RemoveAt(sysLog.Count - 1);
             }
@@ -299,12 +321,14 @@ namespace Game.Core.Endpoints
                 conLog.RemoveAt(conLog.Count - 1);
             }
             this.ConnectionLog = conLog;
-            #endregion
+
+            #endregion logs
 
             #region virus scan
+
             foreach (Folder f in this.FileSystem.AllFolders)
             {
-                foreach(Program p in f.Programs.Values)
+                foreach (Program p in f.Programs.Values)
                 {
                     if (p.IsMalicious)
                     {
@@ -313,13 +337,14 @@ namespace Game.Core.Endpoints
                     }
                 }
             }
-            #endregion
+
+            #endregion virus scan
 
             this.EndpointEvents.ScheduleNextAdminCheck();
 
             void LoginIfAdmin(KeyValuePair<Person, string> x)
             {
-                if(UsernamePasswordAccessDict[x.Key.Name + x.Value] == AccessLevel.ADMIN)
+                if (UsernamePasswordAccessDict[x.Key.Name + x.Value] == AccessLevel.ADMIN)
                 {
                     this.MockLocalLogInToo(x.Key.Name, x.Value);
                 }
@@ -336,7 +361,7 @@ namespace Game.Core.Endpoints
             CurrentPassword = string.Empty;
             this.ConnectedFrom = null;
             EndpointDisconnectedEventArgs args = new EndpointDisconnectedEventArgs("");
-            if(OnDisconnected == null)
+            if (OnDisconnected == null)
             {
                 return;
             }
@@ -383,6 +408,7 @@ namespace Game.Core.Endpoints
             FileSystem.NavigateTo(command, CurrentUsername);
             return CurrentPath();
         }
+
         internal string UploadFileToo(string path, Program p, bool log = true)
         {
             string result = this.FileSystem.CopyFileToFonder(path, p, CurrentUsername);
@@ -398,6 +424,7 @@ namespace Game.Core.Endpoints
             }
             return result;
         }
+
         internal string RemoveFileFrom(string path, Program p, bool log = true)
         {
             string result = this.FileSystem.RemoveFileFromFolder(path, p, CurrentUsername);
@@ -413,14 +440,15 @@ namespace Game.Core.Endpoints
             }
             throw new NotImplementedException();
         }
+
         internal bool AllowsConnection(Endpoint from)
         {
             foreach (Endpoint e in AllowedConnections)
             {
-                Debug.WriteLine(e.name);
+                Debug.WriteLine(e.Name);
             }
 
-            if(AllowedConnections.Count == 0)
+            if (AllowedConnections.Count == 0)
             {
                 return true;
             }
@@ -430,11 +458,12 @@ namespace Game.Core.Endpoints
             }
             return false;
         }
+
         internal void ConnectToo(Endpoint from)
         {
             this.SoftConnection = true;
 
-            if(OnConnected != null)
+            if (OnConnected != null)
             {
                 EndpointConnectedEventArgs args = new EndpointConnectedEventArgs(null);
                 OnConnected(this, args);
@@ -501,11 +530,10 @@ namespace Game.Core.Endpoints
                 this.ConnectedFrom = from;
                 this.LoginHistory.Add((username, password));
 
-                if(OnLogin != null)
+                if (OnLogin != null)
                 {
                     EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password, this.MemoryHashing);
                     OnLogin(this, args);
-
                 }
                 return "Logged in as: " + username;
             }
@@ -530,6 +558,7 @@ namespace Game.Core.Endpoints
                 TimeStamp = Global.GameTime
             });
         }
+
         private void LoggConnectionFailed(string username, Endpoint from)
         {
             this.ConnectionLog.Add(LogItemBuilder
@@ -590,7 +619,6 @@ namespace Game.Core.Endpoints
 
         #endregion Connection logs
 
-
         internal void AutoRestart()
         {
             if (this.IsLocalEndpoint)
@@ -604,7 +632,8 @@ namespace Game.Core.Endpoints
         public void Restart()
         {
             shutdown();
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 Global.EventTicker.SleepSeconds(120);
                 startup();
             });
@@ -640,7 +669,7 @@ namespace Game.Core.Endpoints
             {
                 return;
             }
-            if(Global.RemoteSystem.Id == this.Id)
+            if (Global.RemoteSystem.Id == this.Id)
             {
                 Global.RemoteConsole.CommandParser.ExitDisconnectFromThread();
                 Discconect();
@@ -657,7 +686,6 @@ namespace Game.Core.Endpoints
             Status = status;
         }
     }
-
 
     public class EndpointDisconnectedEventArgs : EventArgs
     {
@@ -684,5 +712,4 @@ namespace Game.Core.Endpoints
             EndpointHashing = endpointHashing;
         }
     }
-
 }

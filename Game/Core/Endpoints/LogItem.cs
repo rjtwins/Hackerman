@@ -105,7 +105,6 @@ namespace Game.Core.Endpoints
 
         public IFILE_RUN FILE_RUN(string path)
         {
-
             this._LogType = LogType.FILE_RUN;
             return this;
         }

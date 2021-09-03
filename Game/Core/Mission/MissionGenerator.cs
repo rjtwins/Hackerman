@@ -1,6 +1,7 @@
 ﻿using Game.Core.Dialog;
 using Game.Core.Endpoints;
 using Game.Core.Mission.MissionTypes;
+using Game.Model;
 using System;
 
 namespace Game.Core.Mission

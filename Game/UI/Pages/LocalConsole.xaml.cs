@@ -1,4 +1,5 @@
 ﻿using Game.Core.Console;
+using Game.UI.Pages;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +10,7 @@ namespace Game.UI
     /// <summary>
     /// Interaction logic for Console.xaml
     /// </summary>
-    public partial class LocalConsole : System.Windows.Controls.Page
+    public partial class LocalConsole : DisplayablePage
     {
         private ConsoleContent ConsoleContent = new ConsoleContent();
         private LocalCommandParser CommandParser;

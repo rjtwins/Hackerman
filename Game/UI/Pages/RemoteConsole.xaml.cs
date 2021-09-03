@@ -1,4 +1,5 @@
 ﻿using Game.Core.Console;
+using Game.UI.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +14,7 @@ namespace Game.UI
     /// <summary>
     /// Interaction logic for Console.xaml
     /// </summary>
-    public partial class RemoteConsole : System.Windows.Controls.Page
+    public partial class RemoteConsole : DisplayablePage
     {
         public ConsoleContent ConsoleContent = new ConsoleContent();
         public RemoteCommandParser CommandParser;

@@ -1,12 +1,12 @@
-﻿using Game.Properties;
+﻿using Game.Model;
+using Game.Properties;
 using System;
 using System.Collections.Generic;
 using static Game.Core.Endpoints.Endpoint;
-using static Game.UTILS;
 
 namespace Game.Core.Endpoints
 {
-    public class EndpointGenerator
+    public class WorldGenerator
     {
         public static int XMax = 4984;
         public static int YMax = 2576;
@@ -32,7 +32,7 @@ namespace Game.Core.Endpoints
         {
             LocalEndpoint e = new LocalEndpoint();
             (e.x, e.y) = GenerateCoordinate();
-            e.name = "LOCAL";
+            e.Name = "LOCAL";
             Global.LocalEndpoint = e;
             return e;
         }
@@ -71,36 +71,35 @@ namespace Game.Core.Endpoints
             {
                 GenerateCompanyEndpoint(10, EndpointDifficulty.LVL3, EndpointList, AvailableEmployes);
             }
-            for (int i = 0; i < 10; i++)
-            {
-                GenerateCompanyEndpoint(10, EndpointDifficulty.LVL4, EndpointList, AvailableEmployes);
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    GenerateCompanyEndpoint(10, EndpointDifficulty.LVL4, EndpointList, AvailableEmployes);
+            //}
 
             //TODO: setup clients and employees
             //Generate 5 bank machines:
             for (int i = 0; i < 5; i++)
             {
                 Person Person = UTILS.PickRandomBank();
-                Endpoint e = new Endpoint(Person, EndpointType.BANK);
+                BankEndpoint e = new BankEndpoint(Person, EndpointType.BANK);
                 (e.x, e.y) = GenerateCoordinate();
-                e.isHidden = true;
+                e.isHidden = false;
+                Global.BankEndpoints.Add(e);
                 EndpointList.Add(e);
             }
 
+            //Populate banks with users
+            foreach (Endpoint e in Global.PersonalEndpoints)
+            {
+                BankEndpoint b = UTILS.PickRandomBankEndpoint();
+                b.Clients.Add(e.Owner);
+                e.Owner.BankBalance = Global.Rand.Next(100, 1000000); //For testing;
+            }
+
             EndpointList.Add(GenerateStartEndpoint());
-            EndpointList.Add(GenerateTestEndpoint(AvailableEmployes));
+            //EndpointList.Add(GenerateTestEndpoint(AvailableEmployes));
             return EndpointList;
         }
-
-        private Endpoint GenerateTestEndpoint(List<Endpoint> availableEmployes)
-        {
-            Endpoint ownerEndpoint = PickRandomEmploye(1, availableEmployes)[0];
-            Endpoint e = new Endpoint(ownerEndpoint.Owner, EndpointType.EXTERNALACCES);
-            (e.x, e.y) = GenerateCoordinate();
-            e.name = "TEST ENDPOINT";
-            return e;
-        }
-
         private void GeneatePersonalEndpoint(List<Endpoint> EndpointList, List<Endpoint> AvailableEmployes)
         {
             Person Person = UTILS.PickRandomPerson();
@@ -116,7 +115,6 @@ namespace Game.Core.Endpoints
 
         private void GenerateCompanyEndpoint(int nrOfEmployes, EndpointDifficulty dificulty, List<Endpoint> EndpointList, List<Endpoint> AvailableEmployes)
         {
-
             for (int i = 0; i < nrOfEmployes + 10; i++)
             {
                 GeneatePersonalEndpoint(EndpointList, AvailableEmployes);
@@ -132,35 +130,46 @@ namespace Game.Core.Endpoints
                 case EndpointDifficulty.LVL0:
                     hidden = true;
                     break;
+
                 case EndpointDifficulty.LVL1:
                     Monitor = EndpointMonitor.LVL1;
                     hidden = true;
                     break;
+
                 case EndpointDifficulty.LVL2:
                     Monitor = EndpointMonitor.LVL1;
                     Firewall = EndpointFirewall.LVL1;
                     hidden = true;
                     break;
+
                 case EndpointDifficulty.LVL3:
                     Monitor = EndpointMonitor.LVL1;
                     Firewall = EndpointFirewall.LVL1;
                     MemoryHashing = EndpointHashing.LVL1;
-                    hidden = true;
+                    hidden = false;
                     break;
+
                 case EndpointDifficulty.LVL4:
                     break;
+
                 case EndpointDifficulty.LVL5:
                     break;
+
                 case EndpointDifficulty.LVL6:
                     break;
+
                 case EndpointDifficulty.LVL7:
                     break;
+
                 case EndpointDifficulty.LVL8:
                     break;
+
                 case EndpointDifficulty.LVL9:
                     break;
+
                 case EndpointDifficulty.LVL10:
                     break;
+
                 default:
                     break;
             }

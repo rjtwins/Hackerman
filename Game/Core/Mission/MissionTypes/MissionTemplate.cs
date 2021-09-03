@@ -1,5 +1,6 @@
 ﻿using Game.Core.Dialog;
 using Game.Core.Endpoints;
+using Game.Model;
 using System;
 using System.Collections.Generic;
 

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Game.Core.World
+﻿namespace Game.Core.World
 {
-    class Consequences
+    internal class Consequences
     {
         private static readonly Consequences instance = new Consequences();
 
@@ -18,7 +12,6 @@ namespace Game.Core.World
             }
             set
             {
-
             }
         }
 

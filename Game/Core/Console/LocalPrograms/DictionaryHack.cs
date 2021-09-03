@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Game.Core.Console.LocalPrograms
@@ -10,9 +11,10 @@ namespace Game.Core.Console.LocalPrograms
         public bool Running { get; private set; }
         private static readonly DictionaryHack instance = new DictionaryHack();
         private string PasswordToGet = string.Empty;
-        private double HackTime = 100; // in attempts before getting the password
+        private double HackTime = 50; // in attempts before getting the password
         private bool Stop = false;
-        
+        private readonly double DefaultHackSpeed = 1d;
+        private double HackSpeed = 2d;
 
         public static DictionaryHack Instance
         {
@@ -40,7 +42,7 @@ namespace Game.Core.Console.LocalPrograms
             this.Stop = false;
             if (this.Running)
             {
-                return null;
+                return "Another instance of this program is active.";
             }
             if (Global.RemoteSystem == null)
             {
@@ -50,6 +52,9 @@ namespace Game.Core.Console.LocalPrograms
             {
                 return "Unable to attach to login.";
             }
+
+            CalculateHackingSpeed();
+
             string PossiblePassword = Global.RemoteSystem.GetPassword(userName);
             if (PossiblePassword != string.Empty)
             {
@@ -58,15 +63,20 @@ namespace Game.Core.Console.LocalPrograms
             Global.RemoteSystem.UnderDictHack();
 
             this.Running = true;
-            Task.Factory.StartNew(() => this.HackOnRemote(new object[] { userName, 0 }));
+
+            Debug.WriteLine("StartinDictHack with Speed mod:" + this.HackSpeed);
+
+            Task.Factory.StartNew(() => this.HackOnRemote(userName));
             return "Starting dictionary attack";
         }
 
-        private void HackOnRemote(object[] arguments)
+        private void CalculateHackingSpeed()
         {
-            string userName = (string)arguments[0];
-            int index = (int)arguments[1];
+            this.HackSpeed = 1 / (DefaultHackSpeed * (1 + ((Global.LocalSystem.ProcessorSpeed - Global.LocalSystem.StartingProcessorSpeed) / 1000d)));
+        }
 
+        private void HackOnRemote(string userName)
+        {
             //TODO: Base hacktime on difficulty
 
             //If we have a non exsistant username we should never get the password.
@@ -78,7 +88,7 @@ namespace Game.Core.Console.LocalPrograms
             this.HackTime = Math.Min(HackTime, UTILS.PasswordList.Count);
             string resultString = string.Empty;
 
-            for (index = 0; index < UTILS.PasswordList.Count; index++)
+            for (int index = 0; index < UTILS.PasswordList.Count; index++)
             {
                 while (Global.GamePaused)
                 {
@@ -146,8 +156,8 @@ namespace Game.Core.Console.LocalPrograms
                     default:
                         break;
                 }
-
-                Global.EventTicker.SleepSeconds(0.5d);
+                CalculateHackingSpeed();
+                Global.EventTicker.SleepSeconds(HackSpeed);
             }
             this.PasswordToGet = string.Empty;
             this.Running = false;

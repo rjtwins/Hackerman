@@ -1,7 +1,7 @@
 ﻿using Game.Core.Console.RemotePrograms;
 using Game.Core.FileSystem;
+using Game.Model;
 using System;
-using static Game.UTILS;
 
 namespace Game.Core.Endpoints
 {
@@ -18,12 +18,12 @@ namespace Game.Core.Endpoints
             this.FileSystem.AllFolders.Clear();
             this.FileSystem.Folders.Clear();
             this.FileSystem.AddProgram(new TextFile("BOUNCE.exe"));
-            
+
             this.FileSystem.AddProgram(new TrafficListener());
             this.FileSystem.AddProgram(new MemoryScraper());
         }
 
-        internal void AddListnerTraffic(Console.Traffic traffic)
+        internal void AddListnerTraffic(Traffic traffic)
         {
             String fileName = "ListnerData" + Global.GameTime.ToString("yy-MM-dd");
             TrafficFile dataFile = (TrafficFile)this.FileSystem.GetFileFromPath(@"root\data", fileName, null);
@@ -37,7 +37,6 @@ namespace Game.Core.Endpoints
                 }
                 catch (Exception)
                 {
-
                     dataFolder = this.FileSystem.MakeFolderFromPath(@"root\data");
                 }
                 dataFile = (TrafficFile)dataFolder.AddProgram(new TrafficFile(fileName));

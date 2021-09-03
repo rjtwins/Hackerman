@@ -1,14 +1,10 @@
 ﻿using Game.Core.Endpoints;
 using Game.Core.FileSystem;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game.Core.Console.RemotePrograms
 {
-    class TrafficListener : Program
+    internal class TrafficListener : Program
     {
         private Endpoint AttachedToo;
 
@@ -24,7 +20,7 @@ namespace Game.Core.Console.RemotePrograms
             this.AttachedToo = ranOn;
             this.AttachedToo.OnLogin += Target_OnLogin;
             Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, "Listener Started:\n"
-                + "ON: IP: " + ranOn.IPAddress + "\tHOST: " + ranOn.name + "\n");
+                + "ON: IP: " + ranOn.IPAddress + "\tHOST: " + ranOn.Name + "\n");
             return "TrafficListner Initiated";
         }
 
@@ -35,14 +31,14 @@ namespace Game.Core.Console.RemotePrograms
                 Global.IRCWindow.AddChannelFromThread(this.Name);
             }
             String fromIP = "127.0.0.1";
-            if(e.From != null)
+            if (e.From != null)
             {
                 fromIP = e.From.IPAddress;
             }
             string result = string.Empty;
             string login = UTILS.GetHashString(e.Username + e.Password);
             result += "Traffic Detected:\n";
-            result += "ON: IP: " + this.AttachedToo.IPAddress + " \tHOST: " + this.AttachedToo.name + "\n";
+            result += "ON: IP: " + this.AttachedToo.IPAddress + " \tHOST: " + this.AttachedToo.Name + "\n";
             if (((int)e.EndpointHashing) > ((int)Endpoint.EndpointHashing.NONE))
             {
                 result += "LOGIN HASH: " + login + "\n";
@@ -51,7 +47,7 @@ namespace Game.Core.Console.RemotePrograms
             {
                 result += "USER: " + e.Username + "\nPWRD: " + e.Password;
             }
-            if(this.Version > 1)
+            if (this.Version > 1)
             {
                 result += "FROM: IP: " + fromIP + "\n";
             }
@@ -73,18 +69,15 @@ namespace Game.Core.Console.RemotePrograms
             }
             Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, "SHUTDOWN:\n"
                 + "ON: IP: " + this.AttachedToo.IPAddress
-                + "\tHOST: " + this.AttachedToo.name);
+                + "\tHOST: " + this.AttachedToo.Name);
 
             this.Running = false;
 
-            if(AttachedToo != null)
+            if (AttachedToo != null)
             {
                 AttachedToo.OnLogin -= Target_OnLogin;
                 this.AttachedToo = null;
             }
         }
-
-
-
     }
 }

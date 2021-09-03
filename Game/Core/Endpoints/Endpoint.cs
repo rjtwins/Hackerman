@@ -1,5 +1,4 @@
-﻿using System;
-using static Game.UTILS;
+﻿using Game.Model;
 
 namespace Game.Core.Endpoints
 {
@@ -7,6 +6,7 @@ namespace Game.Core.Endpoints
     {
         //Naming and location
         public int x = 0;
+
         public int y = 0;
 
         private string IconType = "";
@@ -18,7 +18,7 @@ namespace Game.Core.Endpoints
         public EndpointState State = EndpointState.ONLINE;
         public EndpointType EndpointType = EndpointType.PERSONAL;
 
-        public string name = "*";
+        public string Name { get; set; } = "*";
         public double ActiveTraceDificulty = 1;
         public int PassiveTraceDificulty = 1;
         public int TraceSpeed = 1;
@@ -29,7 +29,6 @@ namespace Game.Core.Endpoints
             this.EndpointType = endpointType;
             this.Owner = Person;
             this.SetupEndpoint();
-
 
             //For testing:
             Person p1 = new Person();

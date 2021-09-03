@@ -1,11 +1,16 @@
 ﻿using Game.Core.Endpoints;
+using Game.Model;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using Color = System.Drawing.Color;
 
 namespace Game
 {
@@ -34,7 +39,7 @@ namespace Game
                 {
                     if (b.GetPixel(x, y).A >= 200)
                     {
-                        ar[x, y] = Math.Max((double)b.GetPixel(x,y).R, 1d)/255d;
+                        ar[x, y] = Math.Max((double)b.GetPixel(x, y).R, 1d) / 255d;
                     }
                     else
                     {
@@ -47,10 +52,10 @@ namespace Game
 
         internal static (bool GuestUser, Endpoint) PickRandomEndpointWithAccess(Endpoint e)
         {
-            if(e.AllowedConnections.Count == 0)
+            if (e.AllowedConnections.Count == 0)
             {
                 Person randomUser = e.GetRandomUser();
-                if(randomUser.Name == "guest")
+                if (randomUser.Name == "guest")
                 {
                     return (true, PickRandomPersonWithEndpoint().PersonalComputer);
                 }
@@ -119,6 +124,11 @@ namespace Game
                 return PickRandomColor(toExclude);
             }
             return randomColor;
+        }
+
+        internal static BankEndpoint PickRandomBankEndpoint()
+        {
+            return Global.BankEndpoints[UTILS.Rand.Next(Global.BankEndpoints.Count)];
         }
 
         internal static string GetPasswordByIndex(int index)
@@ -248,7 +258,7 @@ namespace Game
             {
                 return PickRandomEndpoint();
             }
-            
+
             return temp;
         }
 
@@ -280,75 +290,47 @@ namespace Game
             }
             return sb.ToString();
         }
-        public class Person
+
+        public static void PlayBoob()
         {
-            public Guid Guid;
-            public string Gender;
-            public string Name;
-            public string Surname;
-            public string Email;
-            public string Username;
-            public string PersonalPassword;
-            public string WorkPassword;
-            public string Birthday;
-            public string Age;
-            public string CCType;
-            public string CCNumber;
-            public string CCExpire;
-            public string NationalID;
-            public string Occupation;
-            public string BloodType;
-            public string Kilograms;
-            public string Centimiters;
-            public string Description;
-            public string TagLine;
-            public Endpoint PersonalComputer;
+            
+            SoundPlayer player = new SoundPlayer(Environment.CurrentDirectory + @"\Resources\boop.wav");
+            player.Play();
 
-
-            public static Person FromCSV(string csvLine)
-            {
-                string[] values = csvLine.Split(',');
-                Person person = new Person();
-                person.Guid = Guid.NewGuid();
-                person.Gender = values[0];
-                person.Name = values[1];
-                person.Surname = values[2];
-                person.Email = values[3];
-                person.Username = values[4];
-                //person.Password = values[5];
-                person.Birthday = values[6];
-                person.Age = values[7];
-                person.CCType = values[8];
-                person.CCNumber = values[9];
-                person.CCExpire = values[10];
-                person.NationalID = values[11];
-                person.Occupation = values[12];
-                person.BloodType = values[13];
-                person.Kilograms = values[14];
-                person.Centimiters = values[15];
-                return person;
-            }
+            //Uri uri = new Uri(@"pack://application:,,,/Resources/beepbeep.wav");
+            //var player = new MediaPlayer();
+            //player.Open(uri);
+            //player.Play();
         }
 
-        public class Company : Person
+        public class FrequencyBooper
         {
-            public static Company FromCSV(string csvLine)
+            public Double Frequency = 1;
+            private bool StopBooper = false;
+            private SoundPlayer Player;
+            public FrequencyBooper(double frequency)
             {
-                string[] values = csvLine.Split(',');
-                Company company = new Company();
-                company.Guid = Guid.NewGuid();
-                company.Name = values[1];
-                company.Description = values[2];
-                company.TagLine = values[3];
-                return company;
+                this.Frequency = frequency;
+                Player = new SoundPlayer(Environment.CurrentDirectory + @"\Resources\boop.wav");
             }
 
-            public static Company FromNameLine(string name)
+            public void Start()
             {
-                Company company = new Company();
-                company.Guid = Guid.NewGuid();
-                company.Name = name;
-                return company;
+                this.StopBooper = false;
+
+                Task.Factory.StartNew(() =>
+                {
+                    while (!StopBooper)
+                    {
+                        Player.Play();
+                        Global.EventTicker.SleepSeconds((1 / Frequency));
+                    }
+                });
+            }
+
+            public void Stop()
+            {
+                this.StopBooper = true;
             }
         }
     }

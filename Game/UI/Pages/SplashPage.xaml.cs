@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Game.UI
 {
@@ -22,6 +11,7 @@ namespace Game.UI
     {
         //TODO supply total memory and compoments
         public long Memory = Global.LocalSystem.GetDiskMemory();
+
         public SplashPage()
         {
             InitializeComponent();
@@ -42,9 +32,9 @@ namespace Game.UI
 
         private void UpdateMemoryTest()
         {
-            for (int i = 0; i < this.Memory; i+=34952)
+            for (int i = 0; i < this.Memory; i += 34952)
             {
-                this.MemoryTestTextBlock.Dispatcher.Invoke(() => { this.MemoryTestTextBlock.Text = i.ToString()+"K"; });
+                this.MemoryTestTextBlock.Dispatcher.Invoke(() => { this.MemoryTestTextBlock.Text = i.ToString() + "K"; });
                 System.Threading.Thread.Sleep(100);
             }
             this.MemoryTestTextBlock.Dispatcher.Invoke(() => { this.MemoryTestTextBlock.Text = this.Memory.ToString() + "K OK"; });

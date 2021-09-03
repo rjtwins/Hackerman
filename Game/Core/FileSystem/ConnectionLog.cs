@@ -20,7 +20,7 @@ namespace Game.Core.FileSystem
                 string acceslevel = item.AccessLevel.ToString();
                 string ipAddress = "127.0.0.1";
 
-                if(item.From != null)
+                if (item.From != null)
                 {
                     ipAddress = item.From.IPAddress;
                 }

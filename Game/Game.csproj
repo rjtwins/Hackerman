@@ -51,6 +51,7 @@
     <None Remove="Icons\UIPixels\MapBlackBorder.png" />
     <None Remove="Icons\UIPixels\MapWhiteBorder.png" />
     <None Remove="Icons\UIPixels\SideBorder.PNG" />
+    <None Remove="Icons\UIPixels\TaskBarClickedBackground.png" />
     <None Remove="Icons\UIPixels\WhiteWhiteCorner.png" />
     <None Remove="Icons\UIPixels\WindowBorder.PNG" />
     <None Remove="Icons\UIPixels\WindowBorder.svg" />
@@ -62,6 +63,7 @@
     <None Remove="Misc\names.txt" />
     <None Remove="Misc\persons.csv" />
     <None Remove="Misc\top100000.txt" />
+    <None Remove="Resources\boop.wav" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Core\Mission\Dictionaries\steal0.spd">
@@ -116,6 +118,7 @@
     <Resource Include="Icons\UIPixels\MapBlackBorder.png" />
     <Resource Include="Icons\UIPixels\MapWhiteBorder.png" />
     <Resource Include="Icons\UIPixels\SideBorder.PNG" />
+    <Resource Include="Icons\UIPixels\TaskBarClickedBackground.png" />
     <Resource Include="Icons\UIPixels\WhiteWhiteCorner.png" />
     <Resource Include="Icons\UIPixels\WindowBorder.PNG" />
     <Resource Include="Icons\UIPixels\WindowBorder.svg" />
@@ -123,13 +126,14 @@
   <ItemGroup>
     <Resource Include="Icons\WorldMapDensity.png" />
     <Resource Include="Icons\WorldMapPixelHighRes.png" />
+    <Content Include="Resources\boop.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Misc\faux_id_fake_companies.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
-    <PackageReference Include="WpfAutoGrid" Version="1.4.0" />
     <PackageReference Include="xbloom.Spin" Version="0.1.1-beta7" />
   </ItemGroup>
   <ItemGroup>
@@ -162,7 +166,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="UI\LocalConsole.xaml">
+	  <Page Update="UI\Pages\LocalConsole.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
 	</ItemGroup>

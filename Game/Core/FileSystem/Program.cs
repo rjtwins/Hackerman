@@ -52,7 +52,6 @@ namespace Game.Core.FileSystem
                 return;
             }
             this.Running = false;
-
         }
     }
 }

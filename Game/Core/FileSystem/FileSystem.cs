@@ -1,7 +1,6 @@
 ﻿using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Game.Core.FileSystem
@@ -340,7 +339,7 @@ namespace Game.Core.FileSystem
             if (splitPath.Length > 0)
             {
                 tempFolder = GetFolderFromPath(string.Join("\\", splitPath[0..(splitPath.Length - 1)]));
-                if(tempFolder.Programs.TryGetValue(splitPath[splitPath.Length - 1], out Program p))
+                if (tempFolder.Programs.TryGetValue(splitPath[splitPath.Length - 1], out Program p))
                 {
                     return p.RunProgram(this.ParrentEndpoint);
                 }
@@ -349,7 +348,7 @@ namespace Game.Core.FileSystem
             {
                 return q.RunProgram(this.ParrentEndpoint);
             }
-            return "Program \""+ path +"\" not found.";
+            return "Program \"" + path + "\" not found.";
         }
 
         internal void RunStartupPrograms()

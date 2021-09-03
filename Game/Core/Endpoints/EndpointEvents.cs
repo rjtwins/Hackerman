@@ -1,9 +1,5 @@
 ﻿using Game.Core.Events;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game.Core.Endpoints
 {
@@ -47,14 +43,12 @@ namespace Game.Core.Endpoints
 
         public void ScheduleNextAdminCheck(int adminCheckInterval = 604800)
         {
-
             EventBuilder.BuildEvent("EndpointAdminCheck")
                 .EventInterval(Global.Rand.Next(Math.Max(adminCheckInterval - 7200, 3600), adminCheckInterval + 7200))
                 .EventVoid(AttachedEndpoint.AdminSystemCheck)
                 .RegisterWithVoid();
 
             this.AttachedEndpoint.NextAdminCheckDate = Global.GameTime.AddSeconds(adminCheckInterval);
-
         }
     }
 }

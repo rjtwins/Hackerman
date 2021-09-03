@@ -1,16 +1,28 @@
-﻿using System.Windows;
+﻿using Game.UI.Pages;
+using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace Game.UI
 {
     public class ProgramWindow : ContentControl
     {
-        public bool maxed = false;
-
+        public bool HasControlButtons = true;
+        public bool HasClose = true;
+        public bool Maxed = false;
         public double WindowedWidth = 0;
         public double WindowedHeight = 0;
         public double WindowedLeft = 0;
         public double WindowedTop = 0;
+
+        public ContentControl TaskBarButton;
+        public ToggleButton TaskBarToggleButton;
+
+        public Button MaxButton { get; internal set; }
+        public Button MinButton { get; internal set; }
+        public Button CloseButton { get; internal set; }
 
         #region DependencyProperties
 
@@ -41,15 +53,284 @@ namespace Game.UI
             set { SetValue(mainContentProperty, value); }
         }
 
-        public MaxButton MaxButton { get; internal set; }
-
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty mainContentProperty = DependencyProperty.Register("mainContent", typeof(object), typeof(ProgramWindow), null);
 
         #endregion DependencyProperties
+
+        public ProgramWindow(DisplayablePage pageToDisplay, bool hasMin = true, bool hasMax = true, bool hasClose = true) : base()
+        {
+            this.HasClose = hasClose;
+
+            this.Width = pageToDisplay.MinWidth + 5;
+            this.Height = pageToDisplay.MinHeight + 25;
+            this.DataContext = this;
+            this.PreviewMouseDown += ProgramWindow_PreviewMouseDown;
+            this.IsVisibleChanged += ProgramWindow_IsVisibleChanged;
+            Global.MainWindow.MainCanvas.SizeChanged += MainCanvas_SizeChanged;
+            this.Loaded += ProgramWindow_Loaded;
+
+            Global.MainWindow.MainCanvas.Children.Add(this);
+            Canvas.SetLeft(this, 100);
+            Canvas.SetTop(this, 100);
+
+            if (pageToDisplay == null)
+            {
+                return;
+            }
+            this.Style = (Style)FindResource("ProgramWindowActiveStyle");
+            this.title = new TextBlock();
+
+            this.title.Text = pageToDisplay.Title;
+            this.icon = new Image();
+            this.icon.Source = pageToDisplay.Icon;
+            this.icon.Width = 16;
+            this.icon.Height = 16;
+
+            //Register self with main window.
+            Global.MainWindow.ContentControlElements.Add(this);
+
+            Frame frame = new Frame();
+            this.mainContent = frame;
+            frame.Margin = new Thickness(1, 4, 1, 1);
+            frame.Navigate(pageToDisplay);
+            ProgramWindow_PreviewMouseDown(this, null);
+            SetupTaskBarButton();
+        }
+
+        private void ProgramWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void MainCanvas_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+        {
+            if (this.Maxed)
+            {
+                this.Width = Global.MainWindow.MainCanvas.ActualWidth;
+                this.Height = Global.MainWindow.MainCanvas.ActualHeight;
+                Canvas.SetLeft(this, 0);
+                Canvas.SetTop(this, 0);
+            }
+        }
+
+        private void ProgramWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.TaskBarButton == null)
+            {
+                return;
+            }
+            if (this.Visibility == Visibility.Visible)
+            {
+                this.TaskBarButton.Style = (Style)FindResource("TaskBarButtonBoxInverted");
+                this.TaskBarToggleButton.IsChecked = true;
+            }
+            else
+            {
+                this.TaskBarButton.Style = (Style)FindResource("TaskBarButtonBox");
+                this.TaskBarToggleButton.IsChecked = false;
+            }
+        }
+
+        private void SetupTaskBarButton()
+        {
+            this.TaskBarButton = new ContentControl();
+            TaskBarButton.Style = (Style)FindResource("TaskBarButtonBoxInverted");
+            TaskBarButton.VerticalAlignment = VerticalAlignment.Center;
+            TaskBarButton.HorizontalAlignment = HorizontalAlignment.Left;
+            TaskBarButton.Margin = new Thickness(0, 2, 1, 2);
+            TaskBarButton.Padding = new Thickness(0, 2, 0, 2);
+            TaskBarButton.Height = 27;
+
+            TaskBarToggleButton = new ToggleButton();
+            TaskBarToggleButton.VerticalAlignment = VerticalAlignment.Stretch;
+            TaskBarToggleButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            TaskBarToggleButton.BorderBrush = Brushes.Transparent;
+            TaskBarToggleButton.Foreground = Brushes.Black;
+            TaskBarToggleButton.Background = Brushes.Transparent;
+            TaskBarToggleButton.Click += ToggleButton_Click;
+            TaskBarToggleButton.Margin = new Thickness(0);
+            //TaskBarToggleButton.Style = (Style)FindResource("NoSelectionBoxButton");
+
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.HorizontalAlignment = HorizontalAlignment.Stretch;
+            stackPanel.Orientation = Orientation.Horizontal;
+
+            Image image = new Image();
+            image.Source = this.icon.Source;
+            image.Width = 20;
+            image.Height = 20;
+            image.VerticalAlignment = VerticalAlignment.Center;
+            image.HorizontalAlignment = HorizontalAlignment.Center;
+
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = this.title.Text;
+
+            stackPanel.Children.Add(image);
+            stackPanel.Children.Add(textBlock);
+
+            TaskBarToggleButton.Content = stackPanel;
+            TaskBarButton.Content = TaskBarToggleButton;
+
+            Global.MainWindow.AddToTaskBar(TaskBarButton);
+
+            this.TaskBarToggleButton.IsChecked = true;
+        }
+
+        private void ToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.TaskBarToggleButton.IsChecked == true)
+            {
+                this.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void ProgramWindow_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            SetActiveStyle();
+
+            Global.MainWindow.SetOntop(this);
+
+            foreach (ProgramWindow p in Global.MainWindow.ContentControlElements)
+            {
+                if (p == this)
+                {
+                    continue;
+                }
+                p.SetInactiveStyle();
+            }
+            if (e == null)
+            {
+                return;
+            }
+            e.Handled = false;
+        }
+
+        public void SetActiveStyle()
+        {
+            this.Style = (Style)FindResource("ProgramWindowActiveStyle");
+            try
+            {
+                if (this.Maxed)
+                {
+                    (MaxButton.Content as TextBlock).Text = "◈";
+                }
+                else
+                {
+                    (MaxButton.Content as TextBlock).Text = "◇";
+                }
+                (MinButton.Content as TextBlock).Text = "_";
+                (CloseButton.Content as TextBlock).Text = "X";
+            }
+            catch (Exception) { }
+        }
+
+        public void SetInactiveStyle()
+        {
+            this.Style = (Style)FindResource("ProgramWindowInActiveStyle");
+            try
+            {
+                if (this.Maxed)
+                {
+                    (MaxButton.Content as TextBlock).Text = "◈";
+                }
+                else
+                {
+                    (MaxButton.Content as TextBlock).Text = "◇";
+                }
+                (MinButton.Content as TextBlock).Text = "_";
+                (CloseButton.Content as TextBlock).Text = "X";
+            }
+            catch (Exception) { }
+        }
+
+        internal void OnMaxButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (this.Maxed)
+            {
+                this.Windowfy();
+            }
+            else
+            {
+                this.Maximize();
+            }
+        }
+
+        internal void OnMinButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.Minimize();
+        }
+
+        internal void OnCloseButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        public void Maximize()
+        {
+            if (!this.Maxed)
+            {
+                this.WindowedHeight = this.Height;
+                this.WindowedWidth = this.Width;
+                this.WindowedLeft = Canvas.GetLeft(this);
+                this.WindowedTop = Canvas.GetTop(this);
+                this.Width = Global.MainWindow.MainCanvas.ActualWidth;
+                this.Height = Global.MainWindow.MainCanvas.ActualHeight;
+
+                (MaxButton.Content as TextBlock).Text = "◈";
+
+                Canvas.SetLeft(this, 0);
+                Canvas.SetTop(this, 0);
+                this.Maxed = true;
+            }
+        }
+
+        public void Minimize()
+        {
+            this.Visibility = Visibility.Collapsed;
+        }
+
+        public void Windowfy()
+        {
+            if (this.Maxed)
+            {
+                this.Width = this.WindowedWidth;
+                this.Height = this.WindowedHeight;
+                Canvas.SetLeft(this, this.WindowedLeft);
+                Canvas.SetTop(this, this.WindowedTop);
+
+                (MaxButton.Content as TextBlock).Text = "◇";
+
+                this.Maxed = false;
+            }
+        }
+
+        public void Close()
+        {
+            if (!HasClose)
+            {
+                return;
+            }
+            Global.MainWindow.MainCanvas.Children.Remove(this);
+            Global.MainWindow.TaskBar.Children.Remove(this.TaskBarButton);
+            Global.MainWindow.ContentControlElements.Remove(this);
+            this.Visibility = Visibility.Collapsed;
+            this.IsEnabled = false;
+        }
+
+        public void Open()
+        {
+            //To something for programs that need to open
+        }
     }
 
     public class ProgramWindowNoButtons : ProgramWindow
     {
+        public ProgramWindowNoButtons(DisplayablePage pageToDisplay) : base(pageToDisplay)
+        {
+        }
     }
 }

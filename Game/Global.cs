@@ -1,17 +1,14 @@
 ﻿using Core.Events;
 using Game.Core;
 using Game.Core.Console;
-using Game.Core.Dialog;
 using Game.Core.Endpoints;
 using Game.Core.Mission;
-using Game.Core.Mission.MissionTypes;
 using Game.Core.World;
+using Game.Model;
 using Game.UI;
+using Game.UI.Pages;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Game
 {
@@ -34,7 +31,7 @@ namespace Game
 
         public static MissionManager MissionManager;
 
-        public static EndpointGenerator EndpointGenerator;
+        public static WorldGenerator EndpointGenerator;
         public static GameTicker EventTicker;
         public static Bounce Bounce;
 
@@ -42,17 +39,23 @@ namespace Game
         public static List<Endpoint> CompanyEndpoints = new();
         public static List<Endpoint> EmployeEndpoints = new();
         public static List<Endpoint> PersonalEndpoints = new();
+        public static List<BankEndpoint> BankEndpoints { get; set; } = new();
+
+        public static Person LocalPerson;
         public static LocalSystem LocalSystem;
         public static LocalEndpoint LocalEndpoint;
 
         private static Endpoint remoteSystem;
+
         public static Endpoint RemoteSystem
         {
-            get {
-                return remoteSystem; 
+            get
+            {
+                return remoteSystem;
             }
-            set {
-                remoteSystem = value; 
+            set
+            {
+                remoteSystem = value;
             }
         }
 
@@ -63,6 +66,15 @@ namespace Game
         public static PassiveTraceTracker PassiveTraceTracker;
 
         public static bool StopCurrentProgram { get; internal set; }
+    }
+
+    public enum SoftwareLevel
+    {
+        LVL0,
+        LVL1,
+        LVL2,
+        LVL3,
+        LVL4
     }
 
     public enum EndpointType
@@ -115,36 +127,5 @@ namespace Game
         FILE_RUN = 7,
         CONNECTION_ROUTED = 8,
         CONNECTION_DISCONNECTED = 9
-    }
-
-    public class IRCChannel
-    {
-        public IRCChannel(string channelName, GenericMissionDialogResolver dialogResolver)
-        {
-            this.Messages = new List<StackPanel>();
-            this.ChannelName = channelName;
-            this.ChannelNameTextBlock = new TextBlock();
-            this.ChannelNameTextBlock.Text = channelName;
-            this.ChannelNameTextBlock.Foreground = Brushes.White;
-            this.ChannelNameTextBlock.Background = Brushes.Black;
-            this.DialogResolver = dialogResolver;
-        }
-
-        public IRCChannel(string channelName)
-        {
-            this.Messages = new List<StackPanel>();
-            this.ChannelName = channelName;
-            this.ChannelNameTextBlock = new TextBlock();
-            this.ChannelNameTextBlock.Text = channelName;
-            this.ChannelNameTextBlock.Foreground = Brushes.White;
-            this.ChannelNameTextBlock.Background = Brushes.Black;
-        }
-
-        public string ChannelName;
-        public List<StackPanel> Messages;
-        public TextBlock ChannelNameTextBlock;
-        public MissionTemplate Mission;
-        public GenericMissionDialogResolver DialogResolver { get; set; }
-        public Dictionary<string, System.Drawing.Color> SenderColorDict = new();
     }
 }

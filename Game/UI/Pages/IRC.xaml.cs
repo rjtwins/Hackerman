@@ -1,4 +1,6 @@
 ﻿using Game.Core.Mission.MissionTypes;
+using Game.Model;
+using Game.UI.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +15,7 @@ namespace Game.UI
     /// <summary>
     /// Interaction logic for IRC.xaml
     /// </summary>
-    public partial class IRC : Page, INotifyPropertyChanged
+    public partial class IRC : DisplayablePage, INotifyPropertyChanged
     {
         //TODO seperate command from UI.
         public string Prefix { set; get; }
@@ -329,7 +331,7 @@ namespace Game.UI
         {
             if (this.NameChannelDict.TryGetValue(channelName, out IRCChannel iRCChannel))
             {
-                if(CurrentChannel != null)
+                if (CurrentChannel != null)
                 {
                     if (channelName == CurrentChannel.ChannelName)
                     {

@@ -1,8 +1,7 @@
 ﻿<Application x:Class="Game.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:s="clr-namespace:Game.UI"
-             Startup="StartupHandler">
+             xmlns:s="clr-namespace:Game.UI">
     <Application.Resources>
         <!--<ResourceDictionary>
 
@@ -13,6 +12,125 @@
         </ResourceDictionary>-->
 
         <FontFamily x:Key="PixelOperator">pack://application:,,,/Fonts/#PixelOperator</FontFamily>
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+                <Trigger Property="IsChecked" Value="true">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="s:CloseButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="s:CloseButton">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="s:MaxButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="s:MaxButton">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="s:MinButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="s:MinButton">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
         <Style x:Key="InlayedBorder" TargetType="{x:Type ContentControl}">
             <Setter Property="Template">
@@ -88,8 +206,8 @@
                             <Rectangle Fill="#808080" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="5" />
                             <Rectangle Fill="#ffffff" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="6" />
 
-                            <Rectangle Fill="#808080" Grid.Column="4" Grid.Row="0" Grid.RowSpan="3" />
-                            <Rectangle Fill="#ffffff" Grid.Column="5" Grid.Row="0" Grid.RowSpan="4" />
+                            <Rectangle Fill="#808080" Grid.Column="3" Grid.Row="0" Grid.RowSpan="3" />
+                            <Rectangle Fill="#ffffff" Grid.Column="4" Grid.Row="0" Grid.RowSpan="4" />
 
                             <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,-6,0,0" Grid.ColumnSpan="5" Panel.ZIndex="0" Grid.RowSpan="3" Background="Silver" Padding="2,0,3,0"
                                        Text="{TemplateBinding Uid}" Height="14" />
@@ -104,6 +222,52 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContentControl}">
                         <Grid Background="Silver">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="1" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="1" />
+                            </Grid.RowDefinitions>
+                            <!--//TODO change on click-->
+                            <ContentPresenter Grid.Column="3" Grid.Row="3" />
+                            <Rectangle x:Name="r1" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7" />
+                            <Rectangle x:Name="r2" Fill="White" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5" />
+                            <Rectangle x:Name="r3" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3" />
+
+                            <Rectangle x:Name="r4" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.RowSpan="7" />
+                            <Rectangle x:Name="r5" Fill="White" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4" />
+                            <Rectangle x:Name="r6" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" />
+
+                            <Rectangle x:Name="r7" Fill="Black" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="7" />
+                            <Rectangle x:Name="r8" Fill="Gray" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" />
+                            <Rectangle x:Name="r9" Fill="Silver" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="3" />
+
+                            <Rectangle x:Name="r10" Fill="Silver" Grid.Column="4" Grid.Row="3" Grid.RowSpan="2" />
+                            <Rectangle x:Name="r11" Fill="Gray" Grid.Column="5" Grid.Row="2" Grid.RowSpan="3" />
+                            <Rectangle x:Name="r12" Fill="Black" Grid.Column="6" Grid.Row="1" Grid.RowSpan="7" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SpeedDailButton" TargetType="{x:Type ContentControl}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                        <Grid Background="Silver" Margin="2,2,2,2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1" />
                                 <ColumnDefinition Width="1" />
@@ -195,7 +359,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContentControl}">
-                        <Grid Background="Silver">
+                        <Grid>
+                            <Grid.Background>
+                                <ImageBrush TileMode="Tile" ImageSource="/Icons/UIPixels/TaskBarClickedBackground.png" />
+                            </Grid.Background>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1" />
                                 <ColumnDefinition Width="1" />
@@ -289,7 +456,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type s:ProgramWindow}">
-                        <Grid Background="Silver" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                        <Grid Background="Silver" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}" TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1" />
                                 <ColumnDefinition Width="1" />
@@ -366,23 +533,38 @@
                                     <s:MoveThumb Grid.ColumnSpan="99" Cursor="SizeAll" Foreground="Transparent" OpacityMask="Transparent" BorderBrush="Transparent" Background="Transparent" Panel.ZIndex="1" Opacity="0" />
                                     <ContentPresenter Grid.Column="0" Content="{TemplateBinding icon}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0" />
                                     <ContentPresenter TextElement.FontWeight="Bold" Grid.Column="1" Content="{TemplateBinding title}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,10,0" />
-                                    <StackPanel TextElement.FontSize="12" Grid.Column="3"  Orientation="Horizontal" Panel.ZIndex="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="18" Width="41" Margin="-1,0,0,0">
-
-                                        <ContentControl Margin="1,0,1,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="18" Height="18">
-                                            <s:MinButton Margin="-1.8,-3.1,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Width="20" Height="20">
+                                    <StackPanel TextElement.FontSize="12" Grid.Column="3"  Orientation="Horizontal" Panel.ZIndex="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="18" Margin="-1,0,0,0"
+                                                Background="Transparent">
+                                        <ContentControl x:Name="MinControl" Margin="1,0,1,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="18" Height="18">
+                                            <s:MinButton x:Name="MinButton" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                         Margin="-1,-1,-1,-1">
+                                                <TextBlock>
+                                                    -
+                                                </TextBlock>
                                             </s:MinButton>
                                         </ContentControl>
 
-                                        <ContentControl Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
-                                            <s:MaxButton Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Margin="-1.8,-3.1,0,0" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <ContentControl x:Name="MaxControl" Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
+                                            <s:MaxButton x:Name="MaxButton" Background="Transparent" BorderBrush="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                         Margin="-1,-1,-1,-1">
+                                                <TextBlock>
+                                                    -
+                                                </TextBlock>
                                             </s:MaxButton>
                                         </ContentControl>
 
-                                        <!--<ContentPresenter Grid.Column="0" Content="{TemplateBinding minButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,5,0" />
-                                        <ContentPresenter Grid.Column="0" Content="{TemplateBinding maxButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,5,0" />-->
+                                        <ContentControl x:Name="CloseControl" Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
+                                            <s:CloseButton x:Name="CloseButton" Background="Transparent" BorderBrush="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                           Margin="-1,-1,-1,-1">
+                                                <TextBlock>
+                                                    -
+                                                </TextBlock>
+                                            </s:CloseButton>
+                                        </ContentControl>
                                     </StackPanel>
                                 </Grid>
-                                <ContentPresenter Grid.Row="1" Content="{TemplateBinding mainContent}" Panel.ZIndex="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="10" MinHeight="10" />
+                                <ContentPresenter Grid.Row="1" Content="{TemplateBinding mainContent}" Panel.ZIndex="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="10" MinHeight="10"
+                                                  TextElement.FontSize="12" />
                             </Grid>
                         </Grid>
                     </ControlTemplate>
@@ -394,7 +576,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type s:ProgramWindow}">
-                        <Grid Background="Silver" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                        <Grid Background="Silver" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}" TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1" />
                                 <ColumnDefinition Width="1" />
@@ -471,25 +653,103 @@
                                     <s:MoveThumb Grid.ColumnSpan="99" Cursor="SizeAll" Foreground="Transparent" OpacityMask="Transparent" BorderBrush="Transparent" Background="Transparent" Panel.ZIndex="1" Opacity="0" />
                                     <ContentPresenter Grid.Column="0" Content="{TemplateBinding icon}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0" />
                                     <ContentPresenter TextElement.FontWeight="Bold" Grid.Column="1" Content="{TemplateBinding title}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,10,0" />
-                                    <StackPanel TextElement.FontSize="12" Grid.Column="3"  Orientation="Horizontal" Panel.ZIndex="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="18" Width="41" Margin="-1,0,0,0">
-
-                                        <ContentControl x:Name="minButton" Margin="1,0,1,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="18" Height="18">
-                                            <s:MinButton Margin="-1.8,-3.1,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Width="20" Height="20">
+                                    <StackPanel TextElement.FontSize="12" Grid.Column="3"  Orientation="Horizontal" Panel.ZIndex="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="18" Margin="-1,0,0,0"
+                                                Background="Transparent">
+                                        <ContentControl x:Name="MinControl" Margin="1,0,1,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="18" Height="18">
+                                            <s:MinButton x:Name="MinButton" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                         Margin="-1,-1,-1,-1">
+                                                <TextBlock>
+                                                    -
+                                                </TextBlock>
                                             </s:MinButton>
                                         </ContentControl>
 
-                                        <ContentControl x:Name="maxButton" Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
-                                            <s:MaxButton Background="{x:Null}" BorderBrush="{x:Null}" OpacityMask="{x:Null}" Margin="-1.8,-3.1,0,0" Width="20" Height="20">
+                                        <ContentControl x:Name="MaxControl" Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
+                                            <s:MaxButton x:Name="MaxButton" Background="Transparent" BorderBrush="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                         Margin="-1,-1,-1,-1">
+                                                <TextBlock>
+                                                    -
+                                                </TextBlock>
                                             </s:MaxButton>
                                         </ContentControl>
 
-                                        <!--<ContentPresenter Grid.Column="0" Content="{TemplateBinding minButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,5,0" />
-                                        <ContentPresenter Grid.Column="0" Content="{TemplateBinding maxButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,5,0" />-->
+                                        <ContentControl x:Name="CloseControl" Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
+                                            <s:CloseButton x:Name="CloseButton" Background="Transparent" BorderBrush="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                           Margin="-1,-1,-1,-1">
+                                                <TextBlock>
+                                                    -
+                                                </TextBlock>
+                                            </s:CloseButton>
+                                        </ContentControl>
                                     </StackPanel>
                                 </Grid>
                                 <ContentPresenter Grid.Row="1" Content="{TemplateBinding mainContent}" Panel.ZIndex="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="10" MinHeight="10" />
                             </Grid>
                         </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Tab" TargetType="TabItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Grid Background="{x:Null}" Margin="0,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="1" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="1" />
+                                <RowDefinition Height="1" />
+                            </Grid.RowDefinitions>
+                            <!--//TODO change on click-->
+                            <!--<ContentPresenter Grid.Column="3" Grid.Row="3" ContentSource="{TemplateBinding Name}" />-->
+                            <TextBlock Grid.Column="3" Grid.Row="3" Text="{TemplateBinding Header}" />
+
+                            <Rectangle x:Name="r1" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7" />
+                            <Rectangle x:Name="r2" Fill="White" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5" />
+                            <Rectangle x:Name="r3" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3" />
+
+                            <Rectangle x:Name="r4" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" />
+                            <Rectangle x:Name="r5" Fill="White" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4" />
+                            <Rectangle x:Name="r6" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" />
+
+                            <Rectangle x:Name="r7" Fill="Silver" Grid.Column="3" Grid.Row="6" Grid.ColumnSpan="1" />
+                            <Rectangle x:Name="r8" Fill="Silver" Grid.Column="3" Grid.Row="5" Grid.ColumnSpan="1" />
+                            <Rectangle x:Name="r9" Fill="Silver" Grid.Column="3" Grid.Row="4" Grid.ColumnSpan="1" />
+
+                            <Rectangle x:Name="r10" Fill="Silver" Grid.Column="4" Grid.Row="3" Grid.RowSpan="1" />
+                            <Rectangle x:Name="r11" Fill="Gray" Grid.Column="5" Grid.Row="2" Grid.RowSpan="2" />
+                            <Rectangle x:Name="r12" Fill="Black" Grid.Column="6" Grid.Row="1" Grid.RowSpan="3" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="r7" Property="Fill" Value="Silver" />
+                                <Setter TargetName="r8" Property="Fill" Value="Silver" />
+                                <Setter TargetName="r9" Property="Fill" Value="Silver" />
+                                <Setter TargetName="r3" Property="Grid.RowSpan" Value="4" />
+                                <Setter TargetName="r10" Property="Grid.RowSpan" Value="4" />
+                                <Setter TargetName="r11" Property="Grid.RowSpan" Value="4" />
+                                <Setter TargetName="r12" Property="Grid.RowSpan" Value="5" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="r7" Property="Fill" Value="Transparent" />
+                                <Setter TargetName="r8" Property="Fill" Value="Transparent" />
+                                <Setter TargetName="r9" Property="Fill" Value="Transparent" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
