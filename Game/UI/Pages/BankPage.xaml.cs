@@ -1,4 +1,6 @@
 ﻿using Game.Core.Endpoints;
+using Game.Core.FileSystem;
+using Game.Core.UIPrograms;
 using Game.Model;
 using System;
 using System.ComponentModel;
@@ -16,22 +18,19 @@ namespace Game.UI.Pages
     /// </summary>
     public partial class BankPage : DisplayablePage, INotifyPropertyChanged
     {
-        //private List<string> banks = new List<string>();
-        //public List<string> Banks
-        //{
-        //    get { return banks; }
-        //    set
-        //    {
-        //        if (value != banks)
-        //        {
-        //            banks = value;
-        //            OnPropertyChanged("Banks");
-        //        }
-        //    }
-        //}
-
+        #region Backingfields
         private string selectedBank = string.Empty;
+        private string password = string.Empty;
+        private string username = string.Empty;
+        private string amount = string.Empty;
+        private string balance = string.Empty;
+        private string loan = string.Empty;
+        private string receiver = string.Empty;
+        private BankEndpoint bankLoggedInto;
+        private string receiverBank;
+        #endregion
 
+        #region Properties
         public string SelectedBank
         {
             get { return selectedBank; }
@@ -44,9 +43,6 @@ namespace Game.UI.Pages
                 }
             }
         }
-
-        private string password = string.Empty;
-
         public string Password
         {
             get { return password; }
@@ -59,9 +55,6 @@ namespace Game.UI.Pages
                 }
             }
         }
-
-        private string username = string.Empty;
-
         public string Username
         {
             get { return username; }
@@ -74,9 +67,6 @@ namespace Game.UI.Pages
                 }
             }
         }
-
-        private string amount = string.Empty;
-
         public string Amount
         {
             get { return amount; }
@@ -89,9 +79,6 @@ namespace Game.UI.Pages
                 }
             }
         }
-
-        private string balance = string.Empty;
-
         public string Balance
         {
             get { return balance; }
@@ -104,9 +91,6 @@ namespace Game.UI.Pages
                 }
             }
         }
-
-        private string loan = string.Empty;
-
         public string Loan
         {
             get { return loan; }
@@ -119,9 +103,6 @@ namespace Game.UI.Pages
                 }
             }
         }
-
-        private string receiver = string.Empty;
-
         public string Receiver
         {
             get { return receiver; }
@@ -134,24 +115,32 @@ namespace Game.UI.Pages
                 }
             }
         }
+        public BankEndpoint BankLoggedInto
+        {
+            get { return bankLoggedInto; }
+            set { bankLoggedInto = value; }
+        }
+        private MBanking Program { get; set; }
+        public string ReceiverBank
+        {
+            get { return receiverBank; }
+            set 
+            {
+                receiverBank = value;
+                OnPropertyChanged("ReceiverBank");
+            }
+        }
+        #endregion
 
-        private BankEndpoint BankLoggedInto;
-
-        public BankPage()
+        public BankPage(MBanking program)
         {
             InitializeComponent();
             this.DataContext = this;
+            this.Program = program;
             this.BalanceTab.IsEnabled = false;
             this.TransferTab.IsEnabled = false;
             this.Icon = new BitmapImage(
                 new Uri("pack://application:,,,/Game;component/Icons/OtherIcons/001-network.png"));
-        }
-
-        public string start()
-        {
-            this.BalanceTab.IsEnabled = false;
-            this.TransferTab.IsEnabled = false;
-            return "M-Banking started";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -163,28 +152,16 @@ namespace Game.UI.Pages
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            Person p = null;
-
-            foreach (BankEndpoint b in Global.BankEndpoints)
+            if(!Program.Login(selectedBank, username, password, out Person p, out BankEndpoint bankLoggedInto,out string[] result))
             {
-                if (b.Name != this.SelectedBank)
-                {
-                    continue;
-                }
-                p = b.LoginBankAcount(username, password);
-                if (p == null)
-                {
-                    new PopUpWindow("Login error", "Invalid username password combination.", this);
-                    return;
-                }
-                this.Balance = p.BankBalance.ToString();
-                this.BalanceTab.IsEnabled = true;
-                this.TransferTab.IsEnabled = true;
-                this.BankLoggedInto = b;
-                new PopUpWindow("Succes", "Login succesfull.", this);
+                new PopUpWindow(result[0], result[1], this);
                 return;
             }
-            new PopUpWindow("Bank not found", "Selected bank could not be reached.", this);
+            this.BankLoggedInto = bankLoggedInto;
+            this.Balance = p.BankBalance.ToString();
+            this.BalanceTab.IsEnabled = true;
+            this.TransferTab.IsEnabled = true;
+            new PopUpWindow(result[0], result[1], this);
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -194,11 +171,12 @@ namespace Game.UI.Pages
             this.Balance = string.Empty;
             this.BalanceTab.IsEnabled = false;
             this.TransferTab.IsEnabled = false;
+            this.Program.Logout();
         }
 
         private void TransferButton_Click(object sender, RoutedEventArgs e)
         {
-            string result = BankLoggedInto.TransferMoney(Username, Receiver, BankLoggedInto, int.Parse(Amount));
+            string result = this.Program.Transfer(this.Username, this.Receiver, this.ReceiverBank, Convert.ToInt32(this.Amount));
             new PopUpWindow("Transfer", result, this);
         }
 
@@ -228,6 +206,16 @@ namespace Game.UI.Pages
         private bool IsTextAllowed(string text)
         {
             return !_regex.IsMatch(text);
+        }
+
+        public override void Close()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Open()
+        {
+            throw new NotImplementedException();
         }
     }
 }

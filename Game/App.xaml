@@ -420,6 +420,23 @@
             </Setter>
         </Style>
 
+        <Style x:Key="DividerBorderHorizontal" TargetType="{x:Type ContentControl}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                        <Grid Background="Silver">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1"/>
+                                <RowDefinition Height="1"/>
+                            </Grid.RowDefinitions>
+                            <Rectangle Fill="#808080" Grid.Row="0" />
+                            <Rectangle Fill="White" Grid.Row="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="ClockInlay" TargetType="{x:Type ContentControl}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -476,7 +493,7 @@
                                 <RowDefinition Height="1" />
                             </Grid.RowDefinitions>
 
-                            <Rectangle x:Name="r1" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7" />
+                            <Rectangle x:Name="r1" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7"/>
                             <Rectangle x:Name="r2" Fill="White" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5" />
                             <Rectangle x:Name="r3" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3" />
 
@@ -510,6 +527,7 @@
                                 VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
 
                             <Grid Grid.Column="3" Grid.Row="3">
+
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
                                     <RowDefinition Height="*" />
@@ -517,13 +535,33 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Grid Grid.Row="0" Panel.ZIndex="0">
-                                    <Grid.Background>
-                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
-                                            <GradientStop Color="Navy" Offset="0" />
-                                            <GradientStop Color="#FF195689" Offset="1" />
-                                        </LinearGradientBrush>
-                                    </Grid.Background>
+                                <Grid  Grid.Row="0">
+                                    <Grid.Style>
+                                        <Style TargetType="{x:Type Grid}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsActive}" Value="1">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
+                                                                <GradientStop Color="Navy" Offset="0" />
+                                                                <GradientStop Color="#FF195689" Offset="1" />
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=IsActive}" Value="0">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
+                                                                <GradientStop Color="Gray" Offset="0" />
+                                                                <GradientStop Color="#FFB5B5B5" Offset="1" />
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
@@ -565,125 +603,6 @@
                                 </Grid>
                                 <ContentPresenter Grid.Row="1" Content="{TemplateBinding mainContent}" Panel.ZIndex="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="10" MinHeight="10"
                                                   TextElement.FontSize="12" />
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="ProgramWindowInActiveStyle" TargetType="{x:Type s:ProgramWindow}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type s:ProgramWindow}">
-                        <Grid Background="Silver" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}" TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1" />
-                                <ColumnDefinition Width="1" />
-                                <ColumnDefinition Width="1" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="1" />
-                                <ColumnDefinition Width="1" />
-                                <ColumnDefinition Width="1" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="1" />
-                                <RowDefinition Height="1" />
-                                <RowDefinition Height="1" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="1" />
-                                <RowDefinition Height="1" />
-                                <RowDefinition Height="1" />
-                            </Grid.RowDefinitions>
-
-                            <Rectangle x:Name="r1" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7" />
-                            <Rectangle x:Name="r2" Fill="White" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="5" />
-                            <Rectangle x:Name="r3" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="3" />
-
-                            <Rectangle x:Name="r4" Fill="LightGray" Grid.Column="0" Grid.Row="0" Grid.RowSpan="7" />
-                            <Rectangle x:Name="r5" Fill="White" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4" />
-                            <Rectangle x:Name="r6" Fill="Silver" Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" />
-
-                            <Rectangle x:Name="r7" Fill="Black" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="7" />
-                            <Rectangle x:Name="r8" Fill="Gray" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="5" />
-                            <Rectangle x:Name="r9" Fill="Silver" Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="3" />
-
-                            <Rectangle x:Name="r10" Fill="Silver" Grid.Column="4" Grid.Row="3" Grid.RowSpan="2" />
-                            <Rectangle x:Name="r11" Fill="Gray" Grid.Column="5" Grid.Row="2" Grid.RowSpan="3" />
-                            <Rectangle x:Name="r12" Fill="Black" Grid.Column="6" Grid.Row="1" Grid.RowSpan="7" />
-
-                            <s:ResizeThumb Height="3" Cursor="SizeNS" Margin="0 -4 0 0 "
-                                VerticalAlignment="Top" HorizontalAlignment="Stretch" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
-                            <s:ResizeThumb Width="3" Cursor="SizeWE" Margin="-4 0 0 0"
-                                VerticalAlignment="Stretch" HorizontalAlignment="Left" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
-                            <s:ResizeThumb Width="3" Cursor="SizeWE" Margin="0 0 -4 0"
-                                VerticalAlignment="Stretch" HorizontalAlignment="Right" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
-                            <s:ResizeThumb Height="3" Cursor="SizeNS" Margin="0 0 0 -4"
-                                VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
-                            <s:ResizeThumb Width="7" Height="7" Cursor="SizeNWSE" Margin="-6,-6,0,0"
-                                VerticalAlignment="Top" HorizontalAlignment="Left" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
-                            <s:ResizeThumb Width="7" Height="7" Cursor="SizeNESW" Margin="0 -6 -6 0"
-                                VerticalAlignment="Top" HorizontalAlignment="Right" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
-                            <s:ResizeThumb Width="7" Height="7" Cursor="SizeNESW" Margin="-6 0 0 -6"
-                                VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
-                            <s:ResizeThumb Width="7" Height="7" Cursor="SizeNWSE" Margin="0 0 -6 -6"
-                                VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0" Grid.ColumnSpan="10" Grid.RowSpan="10" Background="Transparent" BorderBrush="Transparent" Foreground="Transparent" OpacityMask="Transparent" />
-
-                            <Grid Grid.Column="3" Grid.Row="3">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Row="0" Panel.ZIndex="0">
-                                    <Grid.Background>
-                                        <LinearGradientBrush EndPoint="0.8,1" StartPoint="0,0">
-                                            <GradientStop Color="Gray" Offset="0" />
-                                            <GradientStop Color="#FFB5B5B5" Offset="1" />
-                                        </LinearGradientBrush>
-                                    </Grid.Background>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <s:MoveThumb Grid.ColumnSpan="99" Cursor="SizeAll" Foreground="Transparent" OpacityMask="Transparent" BorderBrush="Transparent" Background="Transparent" Panel.ZIndex="1" Opacity="0" />
-                                    <ContentPresenter Grid.Column="0" Content="{TemplateBinding icon}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0" />
-                                    <ContentPresenter TextElement.FontWeight="Bold" Grid.Column="1" Content="{TemplateBinding title}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,10,0" />
-                                    <StackPanel TextElement.FontSize="12" Grid.Column="3"  Orientation="Horizontal" Panel.ZIndex="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="18" Margin="-1,0,0,0"
-                                                Background="Transparent">
-                                        <ContentControl x:Name="MinControl" Margin="1,0,1,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="18" Height="18">
-                                            <s:MinButton x:Name="MinButton" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                         Margin="-1,-1,-1,-1">
-                                                <TextBlock>
-                                                    -
-                                                </TextBlock>
-                                            </s:MinButton>
-                                        </ContentControl>
-
-                                        <ContentControl x:Name="MaxControl" Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
-                                            <s:MaxButton x:Name="MaxButton" Background="Transparent" BorderBrush="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                         Margin="-1,-1,-1,-1">
-                                                <TextBlock>
-                                                    -
-                                                </TextBlock>
-                                            </s:MaxButton>
-                                        </ContentControl>
-
-                                        <ContentControl x:Name="CloseControl" Margin="1,0,2,0" Style="{StaticResource TaskBarButtonBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="18" Height="18">
-                                            <s:CloseButton x:Name="CloseButton" Background="Transparent" BorderBrush="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                           Margin="-1,-1,-1,-1">
-                                                <TextBlock>
-                                                    -
-                                                </TextBlock>
-                                            </s:CloseButton>
-                                        </ContentControl>
-                                    </StackPanel>
-                                </Grid>
-                                <ContentPresenter Grid.Row="1" Content="{TemplateBinding mainContent}" Panel.ZIndex="50" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="10" MinHeight="10" />
                             </Grid>
                         </Grid>
                     </ControlTemplate>

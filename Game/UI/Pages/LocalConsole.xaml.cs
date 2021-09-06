@@ -25,6 +25,7 @@ namespace Game.UI
             ConsoleContent.AttachCommandParser(CommandParser);
             ConsoleContent.ConsoleOutput.Add("M-Soft Apature [Version 10.3]");
             ConsoleContent.ConsoleOutput.Add("(c) M-Soft LLC. All Rights Reserved\n");
+            this.HasClose = false;
         }
 
         private void ConsolePageLoaded(object sender, RoutedEventArgs e)
@@ -61,6 +62,7 @@ namespace Game.UI
 
         private void InputBlock_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            e.Handled = false;
             if (e.Key == Key.Up)
             {
                 //Debug.WriteLine(e.Key);
@@ -99,6 +101,16 @@ namespace Game.UI
         public void SetCaretToLast(TextBox t)
         {
             t.CaretIndex = t.Text.Length;
+        }
+
+        public override void Close()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Open()
+        {
+            throw new NotImplementedException();
         }
     }
 }

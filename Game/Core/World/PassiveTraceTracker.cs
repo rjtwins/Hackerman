@@ -5,6 +5,8 @@ using System.Diagnostics;
 
 namespace Game.Core.World
 {
+
+    //TODO rework passive trace
     public class PassiveTraceTracker
     {
         public double TraceTimeInSecondes = 300d;
@@ -71,7 +73,7 @@ namespace Game.Core.World
                 this.Stop = true;
             }
 
-            foreach (LogItem item in Inspected.ConnectionLog)
+            foreach (LogItem item in Inspected.SystemLog)
             {
                 //Filter all logs that are not connection routed logs
                 if (item.LogType != LogType.CONNECTION_ROUTED)

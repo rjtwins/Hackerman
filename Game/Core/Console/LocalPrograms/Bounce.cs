@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace Game.Core.Console.LocalPrograms
 {
-    public class Bouncer
+    public class Bounce
     {
         private Dictionary<string, Func<string, string>> CommandDictionary = new Dictionary<string, Func<string, string>>();
 
-        public Bouncer()
+        public Bounce()
         {
             FillCommands();
         }

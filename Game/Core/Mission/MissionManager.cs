@@ -43,7 +43,6 @@ namespace Game.Core.Mission
             if (ActiveListings.Count < 5)
             {
                 //We must do this on the UI thread sinse we are eding UI elements,
-                //TODO move the invoker to the actual UI
                 Global.App.Dispatcher.Invoke((Action)delegate
                 {
                     this.ActiveListings.Add(MissionGenerator.GenerateMission(this.Rand.Next(Math.Max(Global.GameState.Reputation - 2, 0), Global.GameState.Reputation)));

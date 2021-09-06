@@ -8,20 +8,20 @@ namespace Game.UI
 {
     public class MoveThumb : Thumb
     {
-        private double MX = 0;
-        private double MY = 0;
-        private bool Windofied = false;
+        //private double MX = 0;
+        //private double MY = 0;
 
         public MoveThumb()
         {
             DragDelta += new DragDeltaEventHandler(this.MoveThumb_DragDelta);
-            PreviewMouseDown += MoveThumb_PreviewMouseDown;
+            //PreviewMouseDown += MoveThumb_PreviewMouseDown;
+            Loaded += MoveThumb_Loaded;
         }
 
-        private void MoveThumb_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void MoveThumb_Loaded(object sender, RoutedEventArgs e)
         {
-            this.MX = e.GetPosition(Global.MainWindow.MainCanvas).X;
-            this.MY = e.GetPosition(Global.MainWindow.MainCanvas).Y;
+            ProgramWindow programWindow = DataContext as ProgramWindow;
+            programWindow.MoveThumb = this;
         }
 
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
@@ -34,53 +34,11 @@ namespace Game.UI
             }
             if (programWindow.Maxed)
             {
-                Windofied = true;
-                Debug.WriteLine("DragDelta maxed = true");
-                programWindow.Width = programWindow.WindowedWidth;
-                programWindow.Height = programWindow.WindowedHeight;
-                Canvas.SetLeft(programWindow, MX);
-                Canvas.SetTop(programWindow, MY);
-                e.Handled = true;
-                Debug.WriteLine(Canvas.GetLeft(programWindow));
-                Debug.WriteLine(Canvas.GetTop(programWindow));
-
-                programWindow.Maxed = false;
-
-                //AutomationPeer button1AP = UIElementAutomationPeer.CreatePeerForElement(this);
-                //(button1AP.GetPattern(PatternInterface.Invoke) as IInvokeProvider).Invoke();
-
-                this.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-
-                return;
-            }
-
-            if (Windofied)
-            {
-                Windofied = false;
                 return;
             }
 
             double verticalChange = e.VerticalChange;
             double horizontalChange = e.HorizontalChange;
-
-            //double maxChange = 20;
-
-            //if (e.VerticalChange > maxChange)
-            //{
-            //    verticalChange = maxChange;
-            //}
-            //if (e.VerticalChange < -1* maxChange)
-            //{
-            //    verticalChange = -1*maxChange;
-            //}
-            //if (e.HorizontalChange > maxChange)
-            //{
-            //    horizontalChange = maxChange;
-            //}
-            //if (e.HorizontalChange < -1*maxChange)
-            //{
-            //    horizontalChange = -1*maxChange;
-            //}
 
             Debug.WriteLine(Canvas.GetLeft(programWindow));
             Debug.WriteLine(Canvas.GetTop(programWindow));

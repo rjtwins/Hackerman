@@ -1,5 +1,6 @@
 ﻿using Game.Core.Console.RemotePrograms;
 using Game.Core.FileSystem;
+using Game.Core.UIPrograms;
 using Game.Model;
 using System;
 
@@ -7,7 +8,6 @@ namespace Game.Core.Endpoints
 {
     public class LocalEndpoint : Endpoint
     {
-        //TODO: Modify so this is the users system
         //this is the players endpoint
         public LocalEndpoint() : base(new Person(), EndpointType.PLAYER)
         {
@@ -17,10 +17,13 @@ namespace Game.Core.Endpoints
             this.FileSystem.CurrentFolder = this.FileSystem;
             this.FileSystem.AllFolders.Clear();
             this.FileSystem.Folders.Clear();
-            this.FileSystem.AddProgram(new TextFile("BOUNCE.exe"));
-
+            //this.FileSystem.AddProgram(new TextFile("BOUNCE.exe"));
+            this.FileSystem.AddProgram(new Router());
             this.FileSystem.AddProgram(new TrafficListener());
             this.FileSystem.AddProgram(new MemoryScraper());
+            this.FileSystem.AddProgram(new MBanking());
+            this.FileSystem.AddProgram(new Worm("worm.exe", SoftwareLevel.LVL4, typeof(Router)));
+
         }
 
         internal void AddListnerTraffic(Traffic traffic)

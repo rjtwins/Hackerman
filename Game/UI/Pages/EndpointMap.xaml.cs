@@ -1,6 +1,8 @@
 ﻿using Game.Core.Endpoints;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -14,7 +16,7 @@ namespace Game.UI.Pages
     /// <summary>
     /// Interaction logic for EndpointMap.xaml
     /// </summary>
-    public partial class EndpointMap : Game.UI.Pages.DisplayablePage
+    public partial class EndpointMap : Game.UI.Pages.DisplayablePage, INotifyPropertyChanged
     {
         private Dictionary<Guid, Endpoint> DrawnEndpointsDict = new();
         private Dictionary<Guid, Button> ButtonDict = new();
@@ -26,18 +28,50 @@ namespace Game.UI.Pages
         private Polyline Polyline = new();
         private bool isConnected = false;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private int _traceTimer = int.MaxValue;
+        public int TraceTimer
+        {
+            get { return _traceTimer; }
+            set 
+            {
+                _traceTimer = value;
+                OnPropertyChanged("TraceTimer");
+            }
+        }
+
         public EndpointMap()
         {
+            this.DataContext = this;
             this.Loaded += EndpointMap_Loaded;
             InitializeComponent();
             Map.Children.Add(Polyline);
             Polyline.Stroke = System.Windows.Media.Brushes.Red;
             Polyline.StrokeDashArray = new DoubleCollection(new double[] { 2, 3, 2 });
+            this.HasClose = false;
         }
 
         private void EndpointMap_Loaded(object sender, RoutedEventArgs e)
         {
             this.Map_Loaded(sender, e);
+            //EnableTraceTimer();
+            Global.BounceNetwork.ListChanged += BounceNetwork_ListChanged;
+        }
+
+        private void BounceNetwork_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            Global.MainWindow.Dispatcher.Invoke(() =>
+            {
+                foreach (Endpoint endpoint in Global.BounceNetwork)
+                {
+                    if (!ButtonDict.TryGetValue(endpoint.Id, out Button endpointButton))
+                    {
+                        return;
+                    }
+                    endpointButton.Background = Brushes.Purple;
+                }
+            });
         }
 
         public void FilterOnEndpoint(string Ip)
@@ -77,6 +111,11 @@ namespace Game.UI.Pages
                 }
                 ButtonDict[id].Background = Brushes.Violet;
             }
+        }
+
+        internal void UpdateTraceTimer(int TimeLeft)
+        {
+            this.TraceTimer = TimeLeft;
         }
 
         public void DisplayEndpoints()
@@ -152,20 +191,35 @@ namespace Game.UI.Pages
                 return;
             }
 
-            //
-            //.WriteLine("Drawing:" + (Guid)(sender as Button).Tag);
             Guid id = (Guid)(sender as Button).Tag;
 
             if (!DrawnEndpointsDict.ContainsKey(id))
             {
                 throw new Exception("Clicked endpoint is not rendered on the map? How was it clicked?");
             }
-            if (DrawnEndpointsDict[id].IsLocalEndpoint)
+
+            Endpoint endpoint = DrawnEndpointsDict[id];
+
+            if (endpoint.IsLocalEndpoint)
             {
                 return;
             }
 
-            Global.Bounce.ToggleBounde(DrawnEndpointsDict[id]);
+            if (Global.Bounce.BounceList.Contains(endpoint))
+            {
+                Global.Bounce.RemoveBounce(endpoint);
+                DrawBouncePath();
+                return;
+            }
+
+            if (!UTILS.CanAddBounce(endpoint))
+            {
+                Global.Bounce.RemoveBounce(endpoint);
+                DrawBouncePath();
+                return;
+            }
+
+            Global.Bounce.AddBounce(endpoint);
             DrawBouncePath();
         }
 
@@ -237,9 +291,16 @@ namespace Game.UI.Pages
             EnableEndpointButtons();
             DrawBouncePath();
 
-            foreach (Button btn in this.ButtonDict.Values)
+            foreach (KeyValuePair<Guid, Button> pair in this.ButtonDict)
             {
-                btn.Background = Brushes.Yellow;
+                if(DrawnEndpointsDict.TryGetValue(pair.Key, out Endpoint e))
+                {
+                    if (Global.BounceNetwork.Contains(e))
+                    {
+                        continue;
+                    }
+                }
+                pair.Value.Background = Brushes.Yellow;
             }
         }
 
@@ -274,6 +335,31 @@ namespace Game.UI.Pages
                     btn.Background = Brushes.Yellow;
                 }
             }
+        }
+
+        public void EnableTraceTimer()
+        {
+            this.TraceTimerControl.Visibility = Visibility.Visible;
+        }
+
+        public void DisableTraceTimer()
+        {
+            this.TraceTimerControl.Visibility = Visibility.Collapsed;
+        }
+
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override void Close()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Open()
+        {
+            throw new NotImplementedException();
         }
     }
 }

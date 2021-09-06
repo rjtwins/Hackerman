@@ -9,8 +9,6 @@ namespace Game.Core.Console
 {
     public class LocalSystem
     {
-        //TODO make components to fix placeholders for speed exact.
-
         //In KiloBytes
         public long DiskMemory = 1048576;
 
@@ -30,8 +28,7 @@ namespace Game.Core.Console
         public string ModumName = "LINE BLAZER 99";
 
         //Software levels
-        public SoftwareLevel TraceTracker { get; set; } = SoftwareLevel.LVL0;
-
+        public SoftwareLevel TraceTracker { get; set; } = SoftwareLevel.LVL4;
         public SoftwareLevel DictionaryHacker { get; set; } = SoftwareLevel.LVL0;
         public SoftwareLevel HashLookup { get; set; } = SoftwareLevel.LVL0;
         public SoftwareLevel FirewallBypass { get; set; } = SoftwareLevel.LVL0;
@@ -43,7 +40,7 @@ namespace Game.Core.Console
         public SoftwareLevel BotnetManager { get; set; } = SoftwareLevel.LVL0;
         public SoftwareLevel LogInterface { get; set; } = SoftwareLevel.LVL0;
 
-        public Bouncer Bouncer = new Bouncer();
+        public Bounce Bouncer = new Bounce();
         private Dictionary<string, Endpoint[]> SavedBounceLists = new Dictionary<string, Endpoint[]>();
         private HashSet<Traffic> TrafficListnerUsernamePasswordList = new();
         private HashSet<Traffic> MemoryScraperUsernamePasswordList = new();

@@ -1,4 +1,5 @@
 ﻿using Game.Core.Endpoints;
+using Game.Core.UIPrograms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,46 +25,24 @@ namespace Game.Core.FileSystem
             GenerateStandardFolderStructure();
         }
 
-        public List<LogItem> GetConnectionLog()
-        {
-            ConnectionLog l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
-            if (l == null)
-            {
-                GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
-                l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
-            }
-            return l.Log;
-        }
-
-        public void SetConnectionLog(List<LogItem> log)
-        {
-            ConnectionLog l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
-            if (l == null)
-            {
-                GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
-                l = (ConnectionLog)this.GetFileFromPath(@"root\system\logs", "syslog.log");
-            }
-            l.Log = log;
-        }
-
         private void GenerateStandardFolderStructure()
         {
             AccessLevel = AccessLevel.ROOT;
             MakeFolderFromPath(@"root\system").AccessLevel = AccessLevel.ROOT;
-            GetFolderFromPath(@"root\system").AddProgram(new Program("Apature32.dll"));
-            GetFolderFromPath(@"root\system").AddProgram(new Program("Services.dll"));
-            GetFolderFromPath(@"root\system").AddProgram(new Program("HelperLib.dll"));
-            GetFolderFromPath(@"root\system").AddProgram(new Program("HelperLib.dll"));
-
             MakeFolderFromPath(@"root\system\autostart").AccessLevel = AccessLevel.ROOT;
-            MakeFolderFromPath(@"root\system\logs").AccessLevel = AccessLevel.ROOT;
-            GetFolderFromPath(@"root\system\logs").AddProgram(new ConnectionLog());
 
             MakeFolderFromPath(@"root\users").AccessLevel = AccessLevel.ADMIN;
             MakeFolderFromPath(@"root\users\shared").AccessLevel = AccessLevel.USER;
             MakeFolderFromPath(@"root\users\admin").AccessLevel = AccessLevel.ADMIN;
             MakeFolderFromPath(@"root\users\admin\userinfo").AccessLevel = AccessLevel.ADMIN;
+
+            GetFolderFromPath(@"root\system").AddProgram(new Program("Apature32.dll"));
+            GetFolderFromPath(@"root\system").AddProgram(new Program("Services.dll"));
+            GetFolderFromPath(@"root\system").AddProgram(new Program("System32Lib.dll"));
+            GetFolderFromPath(@"root\system").AddProgram(new Program("Helper32Lib.dll"));
+            
             GetFolderFromPath(@"root\users\admin\userinfo").AddProgram(new TextFile("users.info"));
+            GetFolderFromPath(@"root\users\shared").AddProgram(new MBanking());
         }
 
         internal string CopyFileToFonder(string folderPath, Program p, string user)
@@ -93,7 +72,7 @@ namespace Game.Core.FileSystem
 
         private static void AccesLevelException(Folder f)
         {
-            string accesLevelString = UTILS.AccessLevelString(f.AccessLevel);
+            string accesLevelString = f.AccessLevel.ToString();
             throw new Exception("Access Denied.\nPlease relog as " + accesLevelString + " to open this folder.\n");
         }
 
@@ -213,7 +192,7 @@ namespace Game.Core.FileSystem
                 CurrentFolder = tempFolder;
                 return CurrentFolder.ToString();
             }
-            accesLevelString = UTILS.AccessLevelString(tempFolder.AccessLevel);
+            accesLevelString = tempFolder.AccessLevel.ToString();
             throw new Exception("Access Denied.\nPlease relog as " + accesLevelString + " to open this folder.\n");
         }
 

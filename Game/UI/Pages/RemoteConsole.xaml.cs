@@ -30,6 +30,7 @@ namespace Game.UI
             ConsoleContent.AttachCommandParser(CommandParser);
             ConsoleContent.ConsoleOutput.Add("Remote Console [Version 11.0.19042.1110]");
             ConsoleContent.ConsoleOutput.Add("(c) TracON LLC. All Rights Reserved\n");
+            this.HasClose = false;
         }
 
         private void ConsolePageLoaded(object sender, RoutedEventArgs e)
@@ -70,6 +71,7 @@ namespace Game.UI
 
         private void InputBlock_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            e.Handled = false;
             if (e.Key == Key.Up)
             {
                 //Debug.WriteLine(e.Key);
@@ -128,6 +130,7 @@ namespace Game.UI
 
         private void Page_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            e.Handled = false;
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 if (e.Key == Key.C)
@@ -135,6 +138,16 @@ namespace Game.UI
                     CommandParser.StopCurrentProgram();
                 }
             }
+        }
+
+        public override void Close()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Open()
+        {
+            throw new NotImplementedException();
         }
     }
 

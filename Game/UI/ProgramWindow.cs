@@ -1,5 +1,6 @@
 ﻿using Game.UI.Pages;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -7,15 +8,29 @@ using System.Windows.Media;
 
 namespace Game.UI
 {
-    public class ProgramWindow : ContentControl
+    public class ProgramWindow : ContentControl, INotifyPropertyChanged
     {
         public bool HasControlButtons = true;
         public bool HasClose = true;
+        public bool HasMax = true;
+        public bool HasMin = true;
         public bool Maxed = false;
         public double WindowedWidth = 0;
         public double WindowedHeight = 0;
         public double WindowedLeft = 0;
         public double WindowedTop = 0;
+
+        private int isActive = 0;
+
+        public int IsActive
+        {
+            get { return isActive; }
+            set 
+            { 
+                isActive = value;
+                OnPropertyChanged("IsActive");
+            }
+        }
 
         public ContentControl TaskBarButton;
         public ToggleButton TaskBarToggleButton;
@@ -23,6 +38,7 @@ namespace Game.UI
         public Button MaxButton { get; internal set; }
         public Button MinButton { get; internal set; }
         public Button CloseButton { get; internal set; }
+        public Thumb MoveThumb { get; internal set; }
 
         #region DependencyProperties
 
@@ -58,12 +74,8 @@ namespace Game.UI
 
         #endregion DependencyProperties
 
-        public ProgramWindow(DisplayablePage pageToDisplay, bool hasMin = true, bool hasMax = true, bool hasClose = true) : base()
+        public ProgramWindow(DisplayablePage pageToDisplay) : base()
         {
-            this.HasClose = hasClose;
-
-            this.Width = pageToDisplay.MinWidth + 5;
-            this.Height = pageToDisplay.MinHeight + 25;
             this.DataContext = this;
             this.PreviewMouseDown += ProgramWindow_PreviewMouseDown;
             this.IsVisibleChanged += ProgramWindow_IsVisibleChanged;
@@ -78,6 +90,7 @@ namespace Game.UI
             {
                 return;
             }
+            pageToDisplay.Loaded += PageToDisplay_Loaded;
             this.Style = (Style)FindResource("ProgramWindowActiveStyle");
             this.title = new TextBlock();
 
@@ -86,6 +99,10 @@ namespace Game.UI
             this.icon.Source = pageToDisplay.Icon;
             this.icon.Width = 16;
             this.icon.Height = 16;
+
+            this.HasMin = pageToDisplay.HasMin;
+            this.HasMax = pageToDisplay.HasMax;
+            this.HasClose = pageToDisplay.HasClose;
 
             //Register self with main window.
             Global.MainWindow.ContentControlElements.Add(this);
@@ -98,8 +115,44 @@ namespace Game.UI
             SetupTaskBarButton();
         }
 
+        private void MoveThumb_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ToggleMaxOrWindofy();
+        }
+
+        private void ToggleMaxOrWindofy()
+        {
+            if (this.Maxed)
+            {
+                this.Windowfy();
+            }
+            else
+            {
+                this.Maximize();
+            }
+        }
+
+        private void PageToDisplay_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Height = this.ActualHeight;
+            this.Width = this.ActualWidth;
+            this.MinHeight = this.ActualHeight;
+            this.MinWidth = this.ActualWidth;
+
+            this.MoveThumb.MouseDoubleClick += MoveThumb_MouseDoubleClick;
+        }
+
+        private void WindofyIfMaxed()
+        {
+            if (this.Maxed)
+            {
+                this.Windowfy();
+            }
+        }
+
         private void ProgramWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            
         }
 
         private void MainCanvas_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
@@ -181,6 +234,8 @@ namespace Game.UI
             if (this.TaskBarToggleButton.IsChecked == true)
             {
                 this.Visibility = Visibility.Visible;
+                Global.MainWindow.SetOntop(this);
+                this.SetActive();
             }
             else
             {
@@ -190,28 +245,26 @@ namespace Game.UI
 
         private void ProgramWindow_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            SetActiveStyle();
+            if (e != null)
+            {
+                e.Handled = false;
+            }
+            SetActive();
+        }
 
+        public void SetActive()
+        {
             Global.MainWindow.SetOntop(this);
-
+            this.Focus();
+            this.IsActive = 1;
             foreach (ProgramWindow p in Global.MainWindow.ContentControlElements)
             {
                 if (p == this)
                 {
                     continue;
                 }
-                p.SetInactiveStyle();
+                p.IsActive = 0;
             }
-            if (e == null)
-            {
-                return;
-            }
-            e.Handled = false;
-        }
-
-        public void SetActiveStyle()
-        {
-            this.Style = (Style)FindResource("ProgramWindowActiveStyle");
             try
             {
                 if (this.Maxed)
@@ -228,9 +281,9 @@ namespace Game.UI
             catch (Exception) { }
         }
 
-        public void SetInactiveStyle()
+        public void SetInactive()
         {
-            this.Style = (Style)FindResource("ProgramWindowInActiveStyle");
+            this.IsActive = 1;
             try
             {
                 if (this.Maxed)
@@ -249,14 +302,7 @@ namespace Game.UI
 
         internal void OnMaxButtonClick(object sender, RoutedEventArgs e)
         {
-            if (this.Maxed)
-            {
-                this.Windowfy();
-            }
-            else
-            {
-                this.Maximize();
-            }
+            ToggleMaxOrWindofy();
         }
 
         internal void OnMinButtonClick(object sender, RoutedEventArgs e)
@@ -266,6 +312,7 @@ namespace Game.UI
 
         internal void OnCloseButtonClick(object sender, RoutedEventArgs e)
         {
+
             this.Close();
         }
 
@@ -286,6 +333,7 @@ namespace Game.UI
                 Canvas.SetTop(this, 0);
                 this.Maxed = true;
             }
+            this.SetActive();
         }
 
         public void Minimize()
@@ -306,28 +354,51 @@ namespace Game.UI
 
                 this.Maxed = false;
             }
+            this.SetActive();
         }
 
         public void Close()
         {
-            if (!HasClose)
-            {
-                return;
-            }
             Global.MainWindow.MainCanvas.Children.Remove(this);
             Global.MainWindow.TaskBar.Children.Remove(this.TaskBarButton);
             Global.MainWindow.ContentControlElements.Remove(this);
             this.Visibility = Visibility.Collapsed;
             this.IsEnabled = false;
+            if(OnClosed != null)
+            {
+                OnClosed(this, new WindowClosedEventArgs(string.Empty));
+            }
         }
 
         public void Open()
         {
             //To something for programs that need to open
         }
+
+
+        public delegate void WindowClosedEventHandler(object sender, WindowClosedEventArgs e);
+
+        public event WindowClosedEventHandler OnClosed;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
-    public class ProgramWindowNoButtons : ProgramWindow
+    public class WindowClosedEventArgs : EventArgs
+    {
+        public string Status { get; private set; }
+
+        public WindowClosedEventArgs(string status)
+        {
+            Status = status;
+        }
+    }
+
+public class ProgramWindowNoButtons : ProgramWindow
     {
         public ProgramWindowNoButtons(DisplayablePage pageToDisplay) : base(pageToDisplay)
         {

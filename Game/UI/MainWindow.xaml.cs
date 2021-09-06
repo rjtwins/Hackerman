@@ -14,9 +14,10 @@ namespace Game.UI
     public partial class MainWindow : System.Windows.Window
     {
         public List<ProgramWindow> ContentControlElements = new();
+        public List<Button> StarMenuButtons = new();
         private bool SkipedSplash = false;
         private bool PlayingSetup = true;
-
+        private Dictionary<string, Button> StartMenuButtonsDict { get; set; } = new Dictionary<string, Button>();
         public MainWindow()
         {
             this.Loaded += MainWindow_Loaded;
@@ -44,7 +45,7 @@ namespace Game.UI
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Task.Factory.StartNew(() => { PlaySetup(); });
-            new ProgramWindow(new BankPage());
+            new ProgramWindow(Global.SystemTime);
             new ProgramWindow(Global.EndPointMap);
             new ProgramWindow(Global.IRCWindow);
             new ProgramWindow(Global.LocalConsole);
@@ -89,7 +90,7 @@ namespace Game.UI
                     string text2 = Global.GameTime.Day + "-" + Global.GameTime.Month + "-" + Global.GameTime.Year;
                     this.GameTimeDDMMYYextBlock.Text = text2;
                     this.GameTimeHHMMTextBlock.Text = text1;
-                    //this.SystemTimeBoxTime.Text = text1;
+                    Global.SystemTime.UpdateTime(text1);
                 });
             }
             catch (System.Threading.Tasks.TaskCanceledException)
@@ -103,70 +104,31 @@ namespace Game.UI
             this.TaskBar.Children.Remove(taskBarButton);
         }
 
+        public void AddStartMenuButton(string name, Action action)
+        {
+            if (this.StartMenuButtonsDict.ContainsKey(name))
+            {
+                return;
+            }
+            Button btn = new Button();
+            btn.Content = name;
+            btn.Click += (sender, e) => { action(); };
+            this.StarMenuButtons.Insert(0, new Button());
+            StartMenuButtonsDict[name] = btn;
+        }
+
+        public void RemoveStartMenuButton(string buttonName)
+        {
+            if (this.StartMenuButtonsDict.ContainsKey(buttonName))
+            {
+                this.StartMenuButtonsDict.Remove(buttonName);
+            }
+        }
+
         public void AddToTaskBar(ContentControl taskBarButton)
         {
             this.TaskBar.Children.Add(taskBarButton);
         }
-
-        #region ProgramWindow Visibility
-
-        //private void MapControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        //{
-        //    ToggleButton toggelButton = BounceTaskBarButton.Content as ToggleButton;
-        //    if (MapControl.IsVisible)
-        //    {
-        //        toggelButton.IsChecked = true;
-        //        BounceTaskBarButton.Style = FindResource("TaskBarButtonBoxInverted") as Style;
-        //        this.SetOntop(MapControl);
-        //        return;
-        //    }
-        //    toggelButton.IsChecked = false;
-        //    BounceTaskBarButton.Style = FindResource("TaskBarButtonBox") as Style;
-        //}
-
-        //private void RemoteConsole_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        //{
-        //    ToggleButton toggelButton = RemoteConsoleTaskBarButton.Content as ToggleButton;
-        //    if (RemoteConsole.IsVisible)
-        //    {
-        //        toggelButton.IsChecked = true;
-        //        RemoteConsoleTaskBarButton.Style = FindResource("TaskBarButtonBoxInverted") as Style;
-        //        this.SetOntop(MapControl);
-        //        return;
-        //    }
-        //    toggelButton.IsChecked = false;
-        //    RemoteConsoleTaskBarButton.Style = FindResource("TaskBarButtonBox") as Style;
-        //}
-
-        //private void LocalConsole_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        //{
-        //    ToggleButton toggelButton = LocalConsoleTaskBarButton.Content as ToggleButton;
-        //    if (LocalConsole.IsVisible)
-        //    {
-        //        toggelButton.IsChecked = true;
-        //        LocalConsoleTaskBarButton.Style = FindResource("TaskBarButtonBoxInverted") as Style;
-        //        this.SetOntop(MapControl);
-        //        return;
-        //    }
-        //    toggelButton.IsChecked = false;
-        //    LocalConsoleTaskBarButton.Style = FindResource("TaskBarButtonBox") as Style;
-        //}
-
-        //private void IRC_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        //{
-        //    ToggleButton toggelButton = ZeeChatTaskBarButton.Content as ToggleButton;
-        //    if (IRC.IsVisible)
-        //    {
-        //        toggelButton.IsChecked = true;
-        //        ZeeChatTaskBarButton.Style = FindResource("TaskBarButtonBoxInverted") as Style;
-        //        this.SetOntop(MapControl);
-        //        return;
-        //    }
-        //    toggelButton.IsChecked = false;
-        //    ZeeChatTaskBarButton.Style = FindResource("TaskBarButtonBox") as Style;
-        //}
-
-        #endregion ProgramWindow Visibility
 
         public void SetOntop(ContentControl contentControl)
         {
@@ -258,56 +220,27 @@ namespace Game.UI
             if (toggleButton.IsChecked == true)
             {
                 this.StartMenuMenu.Visibility = Visibility.Visible;
-                contentControl.Style = FindResource("TaskBarButtonBoxInverted") as Style;
             }
             else
             {
                 this.StartMenuMenu.Visibility = Visibility.Collapsed;
-                contentControl.Style = FindResource("TaskBarButtonBox") as Style;
             }
+            UpdateTastBarMenuButtonStyle();
         }
 
-        private void GameSpeedButton_Checked(object sender, RoutedEventArgs e)
+        private void UpdateTastBarMenuButtonStyle()
         {
-            RadioButton radioButton = sender as RadioButton;
-            ContentControl parrent = radioButton.Parent as ContentControl;
-            parrent.Style = FindResource("TaskBarButtonBoxInverted") as Style;
-            switch (radioButton.Name)
+            if(StartMenuMenu.Visibility == Visibility.Visible)
             {
-                case "PauseButton":
-                    Global.EventTicker.StopTicker();
-                    break;
-
-                case "Speed1Button":
-                    Global.EventTicker.ChangeSpeed(1);
-                    break;
-
-                case "Speed2Button":
-                    Global.EventTicker.ChangeSpeed(2);
-                    break;
-
-                case "Speed3Button":
-                    Global.EventTicker.ChangeSpeed(3);
-                    break;
-
-                case "Speed4Button":
-                    Global.EventTicker.ChangeSpeed(4);
-                    break;
-
-                default:
-                    break;
+                StartMenu.Style = FindResource("TaskBarButtonBoxInverted") as Style;
+                return;
             }
-        }
-
-        private void GameSpeedButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            RadioButton radioButton = sender as RadioButton;
-            ContentControl parrent = radioButton.Parent as ContentControl;
-            parrent.Style = FindResource("TaskBarButtonBox") as Style;
+            StartMenu.Style = FindResource("TaskBarButtonBox") as Style;
         }
 
         private void Window_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            e.Handled = false;
             //Skip splash if playing
             if (PlayingSetup)
             {
@@ -319,14 +252,15 @@ namespace Game.UI
             {
                 StartMenuMenu.Visibility = Visibility.Collapsed;
                 (StartMenu.Content as ToggleButton).IsChecked = false;
-                MenuButtonClick((StartMenu.Content as ToggleButton), null);
+                UpdateTastBarMenuButtonStyle();
                 return;
             }
-            if (c.Name != "StartMenuMenu")
+
+            if (c.Name != "StartMenuMenu" && c.Name != "StartMenu" && c.Name != "StarMenuToggleButton")
             {
                 StartMenuMenu.Visibility = Visibility.Collapsed;
                 (StartMenu.Content as ToggleButton).IsChecked = false;
-                MenuButtonClick((StartMenu.Content as ToggleButton), null);
+                UpdateTastBarMenuButtonStyle();
             }
         }
 
@@ -336,6 +270,7 @@ namespace Game.UI
             {
                 SkipPlaySetup();
             }
+            e.Handled = false;
         }
     }
 }

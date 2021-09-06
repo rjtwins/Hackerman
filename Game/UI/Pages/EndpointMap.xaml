@@ -13,6 +13,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -52,6 +53,21 @@
                     <Canvas TextElement.FontSize="5" x:Name ="Map"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="498" Height="257">
                     </Canvas>
                 </Viewbox>
+            </Grid>
+        </ContentControl>
+        <ContentControl x:Name="TraceTimerControl" Style="{StaticResource ControllBox}"
+                        Uid="Trace Timer"
+                        Grid.Row="2" MinHeight="35" Margin="0,1,0,0"
+                        Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">
+                    Trace Time Left: 
+                </TextBlock>
+                <TextBlock Grid.Column="1" Text="{Binding TraceTimer}" VerticalAlignment="Center" Margin="4,0,3,0" HorizontalAlignment="Left" Background="White"/>
             </Grid>
         </ContentControl>
     </Grid>

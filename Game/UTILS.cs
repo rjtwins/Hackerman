@@ -87,24 +87,6 @@ namespace Game
             return temp;
         }
 
-        public static string AccessLevelString(AccessLevel a)
-        {
-            switch (a)
-            {
-                case AccessLevel.USER:
-                    return "USER";
-
-                case AccessLevel.ADMIN:
-                    return "ADMIN";
-
-                case AccessLevel.ROOT:
-                    return "ROOT";
-
-                default:
-                    throw new Exception("AccessLevel outside of bounds!");
-            }
-        }
-
         /// <summary>
         /// Recursivly pick a color and check if its not in the exluded list
         /// </summary>
@@ -124,6 +106,19 @@ namespace Game
                 return PickRandomColor(toExclude);
             }
             return randomColor;
+        }
+
+        public static bool CanAddBounce(Endpoint e)
+        {
+            if (Global.BounceNetwork.Contains(e))
+            {
+                return true;
+            }
+            if (!Global.Bounce.BounceList.TrueForAll(x => Global.BounceNetwork.Contains(x)))
+            {
+                return false;
+            }
+            return true;
         }
 
         internal static BankEndpoint PickRandomBankEndpoint()
@@ -322,7 +317,7 @@ namespace Game
                 {
                     while (!StopBooper)
                     {
-                        Player.Play();
+                        Player.PlaySync();
                         Global.EventTicker.SleepSeconds((1 / Frequency));
                     }
                 });

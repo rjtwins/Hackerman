@@ -33,6 +33,9 @@ namespace Game.Core.World
 
         public void StartTrace(int speed)
         {
+            this.TotalTraceTime = 0;
+            this.TraceTimeLeft = 0;
+
             this.Speed = speed;
             this.Stop = false;
             if (this.Tracing)
@@ -57,24 +60,60 @@ namespace Game.Core.World
                 .RegisterWithVoid();
 
             FrequencyBooper = new UTILS.FrequencyBooper(1);
-            StartTraceTimer();
+            
+            if(((int)Global.LocalSystem.TraceTracker) > 0)
+            {
+                StartTraceTimer();
+            }
         }
 
         private void StartTraceTimer()
         {
             FrequencyBooper.Start();
-            Task.Factory.StartNew(() => 
+            Task.Factory.StartNew(() =>
             {
-                while(TotalTraceTime > 0)
+                while (TotalTraceTime > 0 && !this.Stop && this.Tracing)
                 {
-                    TraceTimeLeft -= 1;
-                    TraceBeepFrequency = Math.Max((30 / TraceTimeLeft), 0.05);
-                    FrequencyBooper.Frequency = TraceBeepFrequency;
-                    Global.EventTicker.SleepSeconds(1);
+                    Beat();
                 }
                 FrequencyBooper.Stop();
-
             });
+        }
+
+        private void Beat()
+        {
+            TraceTimeLeft -= 1;
+            CheckEmergencyDisconnect();
+            SetBooperFreqency();
+            Global.EventTicker.SleepSeconds(1);
+        }
+
+        private void CheckEmergencyDisconnect()
+        {
+            if(((int)Global.LocalSystem.TraceTracker) < 4)
+            {
+                return;
+            }
+            if ((TraceTimeLeft - 1) <= 0 ||
+                CurrentEndpointIndex == 1)
+            {
+                Global.App.Dispatcher.Invoke(() => { Global.RemoteConsole.CommandParser.ExitDisconnect(); });
+                Global.App.Dispatcher.Invoke(() => { Global.RemoteConsole.AddOutput("Trace Tracker emergency disconnect."); });
+            }
+        }
+
+        private void UpdateTimerUI()
+        {
+            if(((int)Global.LocalSystem.TraceTracker) > 2)
+            {
+                Global.EndPointMap.UpdateTraceTimer(Convert.ToInt32(this.TraceTimeLeft));
+            }
+        }
+
+        private void SetBooperFreqency()
+        {
+            TraceBeepFrequency = Math.Min(Math.Max((30 / TraceTimeLeft), 0.25), 40);
+            FrequencyBooper.Frequency = TraceBeepFrequency;
         }
 
         public void StopTrace()
@@ -99,6 +138,7 @@ namespace Game.Core.World
                 //TODO Do something
                 //we are at the origin so do something
                 Global.App.Dispatcher.Invoke(() => { Global.RemoteConsole.CommandParser.ExitDisconnect(); });
+                Global.App.Dispatcher.Invoke(() => { Global.RemoteConsole.AddOutput("Connection terminated by remote."); });
                 EventBuilder.BuildEvent("ActiveTraceCaught")
                     .EventInterval(60d)
                     .EventAction(Consequences.Instance.ActiveTraceCaught, new object[] { })
@@ -113,7 +153,16 @@ namespace Game.Core.World
                 return;
             }
             this.CurrentEndpoint = Global.Bounce.BounceList[CurrentEndpointIndex];
-            Global.EndPointMap.PingEndpoint(CurrentEndpoint);
+
+            this.TraceTimeLeft -= TraceTimeInSecondes * CurrentEndpoint.ActiveTraceDificulty;
+            UpdateTimerUI();
+
+
+            if (((int)Global.LocalSystem.TraceTracker) > 1)
+            {
+                Global.EndPointMap.PingEndpoint(CurrentEndpoint);
+            }
+
             if (CurrentEndpoint.IsLocalEndpoint)
             {
                 FrequencyBooper.Stop();

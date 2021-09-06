@@ -1,0 +1,57 @@
+﻿<local:DisplayablePage 
+    x:Class="Game.UI.Pages.SystemTime"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Game.UI.Pages"
+      mc:Ignorable="d"
+      Title="System Time" Background="Silver" Width="215" Height="63" MinWidth="215" MinHeight="63" MaxHeight="63" MaxWidth="215"
+        TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
+
+    <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="63" Width="215" MaxWidth="63" MinHeight="63" MinWidth="215" MaxHeight="215" Margin="2,0,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ContentControl Grid.Column="0" Style="{StaticResource InlayedBorder}" Background="Black" Margin="0,2,0,0">
+            <Border Background="Black">
+                <TextBlock x:Name="SystemTimeBoxTime" 
+                           Text="{Binding Path=TimeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           Foreground="#FF606000" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,0,5,0" FontSize="20" Height="24" Width="81" />
+            </Border>
+        </ContentControl>
+        <Grid Grid.Column="1" TextElement.FontSize="10" Margin="0,0,0,-1">
+            <StackPanel Margin="7,2,5,2">
+                <StackPanel Orientation="Horizontal">
+                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                        <RadioButton x:Name="PauseButton" GroupName="GameSpeedGroup" Width="48" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
+                            =
+                        </RadioButton>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                        <RadioButton x:Name="Speed1Button" GroupName="GameSpeedGroup" Width="49" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">>
+                        </RadioButton>
+                    </ContentControl>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" TextElement.FontSize="7">
+                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                        <RadioButton x:Name="Speed2Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
+                            >>
+                        </RadioButton>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                        <RadioButton x:Name="Speed3Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Unchecked="GameSpeedButton_Unchecked">
+                            >>>
+                        </RadioButton>
+                    </ContentControl>
+                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
+                        <RadioButton x:Name="Speed4Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Unchecked="GameSpeedButton_Unchecked">
+                            >>>>
+                        </RadioButton>
+                    </ContentControl>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</local:DisplayablePage>

@@ -117,21 +117,6 @@ namespace Game.Core.Console
             ConsoleContent.ConsoleOutput.Add(Global.LocalEndpoint.ListFromCurrentFolder());
         }
 
-        //TODO: fix error when running exit command when not connected to a system
-        //private void ExitConsole(string obj)
-        //{
-        //    if(AttachedSystem != null)
-        //    {
-        //        AttachedSystem.Discconect();
-        //        ConsoleContent.ConsoleOutput.Add("Disconnected\n");
-        //    }
-        //    ConsoleContent.ConsolePrefix = "";
-        //    this.GivingUsername = false;
-        //    this.GivingPassword = false;
-        //    this.AttachedSystem = null;
-        //    Global.EndPointMap.UnmakeConnection();
-        //}
-
         private void ClearConsole(string obj)
         {
             ConsoleContent.ConsoleOutput.Clear();
@@ -144,7 +129,12 @@ namespace Game.Core.Console
 
         private void RunProgram(string commmandBody)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(commmandBody))
+            {
+                ConsoleContent.ConsoleOutput.Add("Invalid number of arguments");
+            }
+            string result = Global.LocalEndpoint.RunProgram(commmandBody);
+            ConsoleContent.ConsoleOutput.Add(result);
         }
 
         private void Concatenate(string commandBody)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Model;
+using System;
 
 namespace Game.Core.Endpoints
 {
@@ -11,6 +12,12 @@ namespace Game.Core.Endpoints
         public string UserName;
         public DateTime TimeStamp;
         public string FilePath;
+
+        public BankEndpoint FromBank;
+        public BankEndpoint TooBank;
+        public Person TransferFrom;
+        public Person TransferToo;
+        public int TransferAmount;
     }
 
     public class LogItemBuilder :
@@ -24,6 +31,7 @@ namespace Game.Core.Endpoints
         IFILE_RUN,
         ICONNECTION_ROUTED,
         ICONNECTION_DISCONNECTED,
+        ICREDITTRANSFER,
         IFrom,
         IBetween,
         IUser,
@@ -36,6 +44,13 @@ namespace Game.Core.Endpoints
         private string _UserName;
         private DateTime _TimeStamp;
         private string _FilePath;
+
+
+        private BankEndpoint _TransferFromBank;
+        private BankEndpoint _TransferTooBank;
+        private Person _TransferFrom;
+        private Person _TransferToo;
+        private int _TransferAmount;
 
         public static ILogBuilder Builder()
         {
@@ -85,6 +100,17 @@ namespace Game.Core.Endpoints
             return this;
         }
 
+        public ICREDITTRANSFER CREDITTRANSFER(Person from, BankEndpoint fromBank, Person too, BankEndpoint tooBank, int amount)
+        {
+            this._LogType = LogType.CREDITTRANSFER;
+            this._TransferFrom = from;
+            this._TransferToo = too;
+            this._TransferAmount = amount;
+            this._TransferFromBank = fromBank;
+            this._TransferTooBank = tooBank;
+            return this;
+        }
+
         public IFILE_COPIED FILE_COPIED()
         {
             this._LogType = LogType.FILE_COPIED;
@@ -106,6 +132,7 @@ namespace Game.Core.Endpoints
         public IFILE_RUN FILE_RUN(string path)
         {
             this._LogType = LogType.FILE_RUN;
+            this._FilePath = path;
             return this;
         }
 
@@ -122,10 +149,17 @@ namespace Game.Core.Endpoints
             {
                 AccessLevel = this._AccesLevel,
                 From = this._From,
-                Too = this._From,
+                Too = this._Too,
                 LogType = this._LogType,
                 UserName = this._UserName,
-                TimeStamp = this._TimeStamp
+                TimeStamp = this._TimeStamp,
+                FilePath = this._FilePath,
+
+                TooBank = this._TransferTooBank,
+                FromBank = this._TransferFromBank,
+                TransferAmount = this._TransferAmount,
+                TransferFrom = this._TransferFrom,
+                TransferToo = this._TransferToo
             };
         }
 
@@ -155,6 +189,8 @@ namespace Game.Core.Endpoints
         public ICONNECTION_ROUTED CONNECTION_ROUTED();
 
         public ICONNECTION_DISCONNECTED CONNECTION_DISCONNECTED();
+
+        public ICREDITTRANSFER CREDITTRANSFER(Person from, BankEndpoint fromBank, Person too, BankEndpoint tooBank, int amount);
     }
 
     public interface ICONNECTION_DISCONNECTED
@@ -198,6 +234,11 @@ namespace Game.Core.Endpoints
     }
 
     public interface ICONNECTION_ATTEMPT
+    {
+        public IFrom From(Endpoint from);
+    }
+
+    public interface ICREDITTRANSFER
     {
         public IFrom From(Endpoint from);
     }

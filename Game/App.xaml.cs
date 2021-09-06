@@ -47,13 +47,14 @@ namespace Game
 
             Global.EventTicker = new GameTicker();
             Global.EndpointGenerator = new WorldGenerator();
-            Global.LocalConsole = new UI.LocalConsole();
 
+            Global.LocalConsole = new UI.LocalConsole();
             Global.RemoteConsole = new UI.RemoteConsole();
             Global.EndPointMap = new UI.Pages.EndpointMap();
-            Global.IRCWindow = new UI.IRC();
+            Global.IRCWindow = new UI.Pages.IRC();
+            Global.SystemTime = new UI.Pages.SystemTime();
 
-            Global.Bounce = new Bounce();
+            Global.Bounce = new BouncePathManager();
 
             Global.MainWindow = new UI.MainWindow();
             MainWindow.Show();
@@ -63,7 +64,7 @@ namespace Game
 
             Global.AllEndpoints = Global.EndpointGenerator.GenerateEndpoints();
             TrafficSimulator.Instance.Start();
-
+            
             Global.BankEndpoints[0].Clients.Add(Global.LocalPerson);
 
             Global.MissionManager = new MissionManager();
@@ -82,10 +83,6 @@ namespace Game
             });
 
             UTILS.PlayBoob();
-            UTILS.PlayBoob();
-            UTILS.PlayBoob();
-            UTILS.PlayBoob();
-            UTILS.PlayBoob();
         }
 
         internal void FinshedPlaySetup()
@@ -101,10 +98,6 @@ namespace Game
         public void OnMapReady()
         {
             Global.EndPointMap.DisplayEndpoints();
-        }
-
-        private void MaxButton_Selected(object sender, RoutedEventArgs e)
-        {
         }
     }
 }

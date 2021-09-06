@@ -9,6 +9,7 @@ using Game.UI;
 using Game.UI.Pages;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Game
 {
@@ -25,15 +26,16 @@ namespace Game
 
         public static EndpointMap EndPointMap;
         public static MainWindow MainWindow;
-        public static UI.RemoteConsole RemoteConsole;
+        public static RemoteConsole RemoteConsole;
         public static LocalConsole LocalConsole;
         public static IRC IRCWindow;
+        public static SystemTime SystemTime;
 
         public static MissionManager MissionManager;
 
         public static WorldGenerator EndpointGenerator;
         public static GameTicker EventTicker;
-        public static Bounce Bounce;
+        public static BouncePathManager Bounce;
 
         public static List<Endpoint> AllEndpoints = new();
         public static List<Endpoint> CompanyEndpoints = new();
@@ -44,20 +46,20 @@ namespace Game
         public static Person LocalPerson;
         public static LocalSystem LocalSystem;
         public static LocalEndpoint LocalEndpoint;
-
-        private static Endpoint remoteSystem;
-
+        private static Endpoint _remoteSystem;
         public static Endpoint RemoteSystem
         {
             get
             {
-                return remoteSystem;
+                return _remoteSystem;
             }
             set
             {
-                remoteSystem = value;
+                _remoteSystem = value;
             }
         }
+
+        public static BindingList<Endpoint> BounceNetwork = new();
 
         public static DateTime GameTime;
         public static bool GamePaused;
@@ -68,6 +70,13 @@ namespace Game
         public static bool StopCurrentProgram { get; internal set; }
     }
 
+    public enum EndpointMonitor { NONE, LVL1, LVL2, LVL3, LVL4 }
+
+    public enum EndpointFirewall { NONE, LVL1, LVL2, LVL3, LVL4 }
+
+    public enum EndpointState { ONLINE, SHUTTINGDOWN, STARTING, CRASHED, DESTROYED1, DESTROYED2, DESTROYED3 };
+
+    public enum EndpointHashing { NONE, LVL1, LVL2, LVL3, LVL4 };
     public enum SoftwareLevel
     {
         LVL0,
@@ -110,10 +119,10 @@ namespace Game
 
     public enum AccessLevel
     {
-        NONE = 0,
-        USER = 1,
-        ADMIN = 2,
-        ROOT = 3
+        NONE,
+        USER,
+        ADMIN,
+        ROOT
     }
 
     public enum LogType
@@ -126,6 +135,10 @@ namespace Game
         FILE_DELETED = 6,
         FILE_RUN = 7,
         CONNECTION_ROUTED = 8,
-        CONNECTION_DISCONNECTED = 9
+        CONNECTION_DISCONNECTED = 9,
+        CREDITTRANSFER = 10
     }
+
+    public enum EndpointDifficulty { LVL0, LVL1, LVL2, LVL3, LVL4, LVL5, LVL6, LVL7, LVL8, LVL9, LVL10 }
+
 }

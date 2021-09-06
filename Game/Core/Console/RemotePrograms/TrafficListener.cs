@@ -6,8 +6,6 @@ namespace Game.Core.Console.RemotePrograms
 {
     internal class TrafficListener : Program
     {
-        private Endpoint AttachedToo;
-
         public TrafficListener() : base("TrafficListner", true)
         {
             this.IsMalicious = true;
@@ -16,11 +14,10 @@ namespace Game.Core.Console.RemotePrograms
 
         public override string RunProgram(Endpoint ranOn)
         {
-            this.Running = true;
-            this.AttachedToo = ranOn;
-            this.AttachedToo.OnLogin += Target_OnLogin;
-            Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, "Listener Started:\n"
-                + "ON: IP: " + ranOn.IPAddress + "\tHOST: " + ranOn.Name + "\n");
+            base.RunProgram(ranOn);
+            this.RanOn.OnLogin += Target_OnLogin;
+            Global.IRCWindow.AddMessageFromThread(this.Name, "TFL", "Listener Started:\n"
+                + "ON: IP: " + ranOn.IPAddress + "\t HOST: " + ranOn.Name + "\n");
             return "TrafficListner Initiated";
         }
 
@@ -38,8 +35,8 @@ namespace Game.Core.Console.RemotePrograms
             string result = string.Empty;
             string login = UTILS.GetHashString(e.Username + e.Password);
             result += "Traffic Detected:\n";
-            result += "ON: IP: " + this.AttachedToo.IPAddress + " \tHOST: " + this.AttachedToo.Name + "\n";
-            if (((int)e.EndpointHashing) > ((int)Endpoint.EndpointHashing.NONE))
+            result += "ON: IP: " + this.RanOn.IPAddress + " \tHOST: " + this.RanOn.Name + "\n";
+            if (((int)e.EndpointHashing) > ((int)EndpointHashing.NONE))
             {
                 result += "LOGIN HASH: " + login + "\n";
             }
@@ -52,31 +49,30 @@ namespace Game.Core.Console.RemotePrograms
                 result += "FROM: IP: " + fromIP + "\n";
             }
 
-            Global.LocalSystem.TrafficListnerAddEntry(e.From, this.AttachedToo, e.Username, e.Password, this.Version, e.EndpointHashing, login);
-            Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, result);
+            Global.LocalSystem.TrafficListnerAddEntry(e.From, this.RanOn, e.Username, e.Password, this.Version, e.EndpointHashing, login);
+            Global.IRCWindow.AddMessageFromThread(this.Name, "TFL", result);
         }
 
-        public override void StopProgram()
+        public override void StopProgram(bool ranOnRemote = false)
         {
             if (!this.Running)
             {
                 return;
             }
+            base.StopProgram();
 
             if (!Global.IRCWindow.ChannelExsits(this.Name))
             {
                 Global.IRCWindow.AddChannelFromThread(this.Name);
             }
-            Global.IRCWindow.AddMessageFromThread(this.Name, this.Name, "SHUTDOWN:\n"
-                + "ON: IP: " + this.AttachedToo.IPAddress
-                + "\tHOST: " + this.AttachedToo.Name);
+            Global.IRCWindow.AddMessageFromThread(this.Name, "TFL", "SHUTDOWN:\n"
+                + "ON: IP: " + this.RanOn.IPAddress
+                + "\tHOST: " + this.RanOn.Name);
 
-            this.Running = false;
-
-            if (AttachedToo != null)
+            if (this.RanOn != null)
             {
-                AttachedToo.OnLogin -= Target_OnLogin;
-                this.AttachedToo = null;
+                this.RanOn.OnLogin -= Target_OnLogin;
+                this.RanOn = null;
             }
         }
     }

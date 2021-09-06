@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Game.UI
+namespace Game.UI.Pages
 {
     /// <summary>
     /// Interaction logic for IRC.xaml
@@ -37,6 +37,7 @@ namespace Game.UI
             InitializeComponent();
             Loaded += PageLoaded;
             DataContext = this;
+            this.HasClose = false;
         }
 
         private string DCC(string commandBody)
@@ -396,7 +397,7 @@ namespace Game.UI
 
         private void InputBlock_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            //Do nothing for now
+            e.Handled = false;
         }
 
         public string IRCPrefix
@@ -430,6 +431,16 @@ namespace Game.UI
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override void Close()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Open()
+        {
+            throw new NotImplementedException();
         }
     }
 }

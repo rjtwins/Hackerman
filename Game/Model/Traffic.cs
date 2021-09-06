@@ -27,7 +27,7 @@ namespace Game.Model
             string login = this.LoginHash;
             result += "Traffic:\n";
             result += "ON: IP: " + this.Too.IPAddress + " \tHOST: " + this.Too.Name + "\n";
-            if (((int)this.Hashed) > ((int)Endpoint.EndpointHashing.NONE) && !Cracked)
+            if (((int)this.Hashed) > ((int)EndpointHashing.NONE) && !Cracked)
             {
                 result += "LOGIN HASH: " + login + "\n";
             }

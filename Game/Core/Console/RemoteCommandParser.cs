@@ -9,7 +9,6 @@ namespace Game.Core.Console
     public class RemoteCommandParser : ICommandParser
     {
         private static readonly RemoteCommandParser instance = new RemoteCommandParser();
-
         public static RemoteCommandParser Instance
         {
             get
@@ -39,7 +38,6 @@ namespace Game.Core.Console
             FillCommandDictionary();
         }
 
-        //TODO: Move this somewhere better
         private void FillCommandDictionary()
         {
             CommandDictionary["cat"] = this.Concatenate;
@@ -57,6 +55,31 @@ namespace Game.Core.Console
             CommandDictionary["delete"] = this.Delete;
             CommandDictionary["users"] = this.PrintUsers;
             CommandDictionary["schedule"] = this.PrintSchedule;
+            CommandDictionary["systemlog"] = this.PrintSystemLog;
+            CommandDictionary["active"] = this.PrintActivePrograms;
+            CommandDictionary["transferlog"] = this.PrintBankTransferLog;
+        }
+
+        private void PrintBankTransferLog(string obj)
+        {
+            if(this.AttachedSystem.GetType() == typeof(BankEndpoint))
+            {
+                string result = ((BankEndpoint)this.AttachedSystem).PrintTransferLogs();
+                ConsoleContent.ConsoleOutput.Add(result);
+            }
+            ConsoleContent.ConsoleOutput.Add($"\"{obj}\" is not a valid command or program.");
+        }
+
+        private void PrintActivePrograms(string obj)
+        {
+            string result = AttachedSystem.PrintActivePrograms();
+            ConsoleContent.ConsoleOutput.Add(result);
+        }
+
+        private void PrintSystemLog(string obj)
+        {
+            string result = AttachedSystem.PrintLogs();
+            ConsoleContent.ConsoleOutput.Add(result);
         }
 
         private void PrintSchedule(string obj)
@@ -316,7 +339,10 @@ namespace Game.Core.Console
             //Make the bounce path and log bounces with bounce.
             if (System.Net.IPAddress.TryParse(commandBody, out System.Net.IPAddress IP))
             {
-                Global.Bounce.AddBounce(commandBody);
+                if (!Global.Bounce.AddBounce(commandBody))
+                {
+                    this.ConsoleContent.ConsoleOutput.Add($"Unable to connect to BOUNCE router @ {IP.ToString()} \n");
+                }
             }
             (Endpoint from, Endpoint too, bool Succes) = Global.Bounce.SetupDoBouncePath();
             if (!Succes)

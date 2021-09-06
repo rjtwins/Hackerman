@@ -2,6 +2,7 @@
 using Game.Properties;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static Game.Core.Endpoints.Endpoint;
 
 namespace Game.Core.Endpoints
@@ -51,6 +52,7 @@ namespace Game.Core.Endpoints
         public List<Endpoint> GenerateEndpoints()
         {
             this.EndpointCoordinates = UTILS.getBoolBitmap(Resources.WorldMapDensity);
+
             List<Endpoint> EndpointList = new List<Endpoint>();
             List<Endpoint> AvailableEmployes = new();
 
@@ -76,12 +78,18 @@ namespace Game.Core.Endpoints
             //    GenerateCompanyEndpoint(10, EndpointDifficulty.LVL4, EndpointList, AvailableEmployes);
             //}
 
-            //TODO: setup clients and employees
+
             //Generate 5 bank machines:
             for (int i = 0; i < 5; i++)
             {
+                GeneatePersonalEndpoint(EndpointList, AvailableEmployes);
+                Endpoint[] employes = PickRandomEmploye(10, AvailableEmployes);
+                Endpoint Admin = PickRandomEmploye(1, AvailableEmployes)[0];
+
                 Person Person = UTILS.PickRandomBank();
                 BankEndpoint e = new BankEndpoint(Person, EndpointType.BANK);
+                e.AddEmployes(employes);
+                e.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
                 (e.x, e.y) = GenerateCoordinate();
                 e.isHidden = false;
                 Global.BankEndpoints.Add(e);
@@ -92,6 +100,7 @@ namespace Game.Core.Endpoints
             foreach (Endpoint e in Global.PersonalEndpoints)
             {
                 BankEndpoint b = UTILS.PickRandomBankEndpoint();
+
                 b.Clients.Add(e.Owner);
                 e.Owner.BankBalance = Global.Rand.Next(100, 1000000); //For testing;
             }
@@ -112,7 +121,6 @@ namespace Game.Core.Endpoints
             Global.PersonalEndpoints.Add(e);
             AvailableEmployes.Add(e);
         }
-
         private void GenerateCompanyEndpoint(int nrOfEmployes, EndpointDifficulty dificulty, List<Endpoint> EndpointList, List<Endpoint> AvailableEmployes)
         {
             for (int i = 0; i < nrOfEmployes + 10; i++)
@@ -128,7 +136,7 @@ namespace Game.Core.Endpoints
             switch (dificulty)
             {
                 case EndpointDifficulty.LVL0:
-                    hidden = true;
+                    hidden = false;
                     break;
 
                 case EndpointDifficulty.LVL1:
@@ -146,7 +154,7 @@ namespace Game.Core.Endpoints
                     Monitor = EndpointMonitor.LVL1;
                     Firewall = EndpointFirewall.LVL1;
                     MemoryHashing = EndpointHashing.LVL1;
-                    hidden = false;
+                    hidden = true;
                     break;
 
                 case EndpointDifficulty.LVL4:
@@ -176,6 +184,13 @@ namespace Game.Core.Endpoints
 
             Endpoint[] employes = PickRandomEmploye(nrOfEmployes, AvailableEmployes);
             Endpoint Admin = PickRandomEmploye(1, AvailableEmployes)[0];
+
+            //For testing
+            if (!hidden)
+            {
+                Admin.isHidden = false;
+                employes.ToList().ForEach(x => x.isHidden = false);
+            }
 
             Global.EmployeEndpoints.Add(Admin);
             Global.EmployeEndpoints.AddRange(employes);
@@ -220,7 +235,6 @@ namespace Game.Core.Endpoints
             database.AllowedConnections.Add(inter);
             database.AllowedConnections.Add(external);
         }
-
         private Endpoint[] PickRandomEmploye(int nr, List<Endpoint> availableEmployes)
         {
             Endpoint[] randomEmployes = new Endpoint[nr];
@@ -231,7 +245,6 @@ namespace Game.Core.Endpoints
             }
             return randomEmployes;
         }
-
         private (int, int) GenerateCoordinate()
         {
             int d = 50;
@@ -289,6 +302,4 @@ namespace Game.Core.Endpoints
             return (x, y);
         }
     }
-
-    public enum EndpointDifficulty { LVL0, LVL1, LVL2, LVL3, LVL4, LVL5, LVL6, LVL7, LVL8, LVL9, LVL10 }
 }

@@ -19,6 +19,11 @@ namespace Game.UI
                 (this.Parent as UIElement).Visibility = Visibility.Collapsed;
             }
 
+            if (!programWindow.HasMin)
+            {
+                (this.Parent as UIElement).Visibility = Visibility.Collapsed;
+            }
+
             this.Content = new TextBlock();
             programWindow.MinButton = this;
             this.Click += programWindow.OnMinButtonClick;
@@ -38,6 +43,11 @@ namespace Game.UI
             ProgramWindow programWindow = (ProgramWindow)DataContext;
 
             if (!programWindow.HasControlButtons)
+            {
+                (this.Parent as UIElement).Visibility = Visibility.Collapsed;
+            }
+
+            if (!programWindow.HasMax)
             {
                 (this.Parent as UIElement).Visibility = Visibility.Collapsed;
             }
@@ -69,6 +79,7 @@ namespace Game.UI
             {
                 (this.Parent as UIElement).Visibility = Visibility.Collapsed;
             }
+
             this.Content = new TextBlock();
             programWindow.CloseButton = this;
             this.Click += programWindow.OnCloseButtonClick;

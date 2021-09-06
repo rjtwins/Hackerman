@@ -1,21 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Game.Core.Endpoints
 {
-    public class Bounce
+    public class BouncePathManager
     {
         public List<Endpoint> BounceList { private set; get; } = new List<Endpoint>();
 
-        public void AddBounce(string endpointIP)
+        public bool AddBounce(string endpointIP)
         {
             foreach (var e in Global.AllEndpoints)
             {
-                if (endpointIP == e.IPAddress)
+                if (endpointIP != e.IPAddress)
                 {
-                    AddBounce(e);
-                    return;
+                    continue;
                 }
+                if (!UTILS.CanAddBounce(e))
+                {
+                    return false;
+                }
+                AddBounce(e);
+                return true;
             }
+            return false;
         }
 
         public void AddBounce(Endpoint endpoint)
@@ -36,7 +43,7 @@ namespace Game.Core.Endpoints
             this.BounceList.Remove(endpoint);
         }
 
-        internal void ToggleBounde(Endpoint endpoint)
+        internal void ToggleBounce(Endpoint endpoint)
         {
             if (BounceList.Contains(endpoint))
             {

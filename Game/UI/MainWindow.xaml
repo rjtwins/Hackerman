@@ -21,7 +21,7 @@
 
         <ContentControl x:Name="StartMenuMenu"  Style="{StaticResource TaskBarButtonBox}" Grid.Column="0" Grid.Row="1"
                          MinWidth="150" Panel.ZIndex="1" Margin="0,0,0,-6"
-                        Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="300">
+                        Visibility="Visible" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="300">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="20" />
@@ -42,13 +42,19 @@
                         <RotateTransform Angle="-90"></RotateTransform>
                     </TextBlock.LayoutTransform>
                 </TextBlock>
-                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Bottom">
-                    <Button BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Margin="0,0,0,0">
-                        Save...
-                    </Button>
-                    <Button BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left">
-                        Shut Down...
-                    </Button>
+                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="1,0,0,0">
+                    <StackPanel x:Name="StartMenuButtons">
+                        
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+                        <ContentControl Style="{StaticResource DividerBorderHorizontal}"/>
+                        <Button BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Margin="0,0,0,0">
+                            Save...
+                        </Button>
+                        <Button BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left">
+                            Shut Down...
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </ContentControl>
@@ -61,7 +67,7 @@
                             Margin="0,0,0,0" Height="30">
 
                     <ContentControl x:Name="StartMenu"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3,2,0,2">
-                        <ToggleButton VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="MenuButtonClick" Padding="1,1,1,1" Margin="0,0,0,0">
+                        <ToggleButton x:Name="StarMenuToggleButton" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="MenuButtonClick" Padding="1,1,1,1" Margin="0,0,0,0">
                             <Grid HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto" />
@@ -93,171 +99,6 @@
             </Grid>
         </Border>
 
-        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Teal" Margin="0,0,0,0" Grid.ColumnSpan="2" TextElement.FontSize="20" TextElement.FontWeight="Bold">
-
-            <!--<s:ProgramWindowNoButtons x:Name="SystemTime"
-                             Style="{StaticResource ProgramWindowActiveStyle}"
-                             Margin="5,5,0,0" Canvas.Left="213" Canvas.Top="33"
-                             Height="89" Width="221" MinWidth="221" MinHeight="89" MaxHeight="89" MaxWidth="221">
-                <s:ProgramWindowNoButtons.icon>
-                    <Image Source="/Icons/OtherIcons/time-management.png" Height="21" Width="21" />
-                </s:ProgramWindowNoButtons.icon>
-                <s:ProgramWindowNoButtons.title>
-                    <TextBlock Text="System Time" Foreground="White" />
-                </s:ProgramWindowNoButtons.title>
-                <s:ProgramWindowNoButtons.mainContent>
-                    <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="61">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ContentControl Grid.Column="0" Style="{StaticResource InlayedBorder}" Background="Black" Margin="0,2,0,0">
-                            <Border Background="Black">
-                                <TextBlock x:Name="SystemTimeBoxTime" Text="HH MM SS" Foreground="#FF606000" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,0,5,0" FontSize="20" Height="24" Width="81" />
-                            </Border>
-                        </ContentControl>
-                        <Grid Grid.Column="1" TextElement.FontSize="10" Margin="0,0,0,-1">
-                            <StackPanel Margin="7,2,5,2">
-                                <StackPanel Orientation="Horizontal">
-                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                        <RadioButton x:Name="PauseButton" GroupName="GameSpeedGroup" Width="48" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
-                                            =
-                                        </RadioButton>
-                                    </ContentControl>
-                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                        <RadioButton x:Name="Speed1Button" GroupName="GameSpeedGroup" Width="49" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">>
-                                        </RadioButton>
-                                    </ContentControl>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" TextElement.FontSize="7">
-                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                        <RadioButton x:Name="Speed2Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Height="25" Unchecked="GameSpeedButton_Unchecked">
-                                            >>
-                                        </RadioButton>
-                                    </ContentControl>
-                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                        <RadioButton x:Name="Speed3Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Unchecked="GameSpeedButton_Unchecked">
-                                            >>>
-                                        </RadioButton>
-                                    </ContentControl>
-                                    <ContentControl Style="{StaticResource TaskBarButtonBox}">
-                                        <RadioButton x:Name="Speed4Button" GroupName="GameSpeedGroup" Width="31" Margin="-1,-1,-1,-1" Style="{StaticResource {x:Type ToggleButton}}" Checked="GameSpeedButton_Checked" Unchecked="GameSpeedButton_Unchecked">
-                                            >>>>
-                                        </RadioButton>
-                                    </ContentControl>
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
-                    </Grid>
-                </s:ProgramWindowNoButtons.mainContent>
-            </s:ProgramWindowNoButtons>
-
-            <s:ProgramWindow x:Name="IPDailer"
-                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Hidden" Canvas.Left="200" Canvas.Top="160" Width="500" MinWidth="300" MinHeight="200" Height="300"
-                             IsVisibleChanged="MapControl_IsVisibleChanged">
-                <s:ProgramWindow.icon>
-                    <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />
-                </s:ProgramWindow.icon>
-                <s:ProgramWindow.title>
-                    <TextBlock Text="IP Dailer" Foreground="White" />
-                </s:ProgramWindow.title>
-                <s:ProgramWindow.mainContent>
-                    <Frame x:Name="IPDailerFrame" />
-                </s:ProgramWindow.mainContent>
-            </s:ProgramWindow>
-
-            <s:ProgramWindow x:Name="BankInterface"
-                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Visible" Canvas.Left="200" Canvas.Top="160"
-                             IsVisibleChanged="MapControl_IsVisibleChanged">
-                <s:ProgramWindow.icon>
-                    <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />
-                </s:ProgramWindow.icon>
-                <s:ProgramWindow.title>
-                    <TextBlock Text="M-Banking" Foreground="White" />
-                </s:ProgramWindow.title>
-                <s:ProgramWindow.mainContent>
-                    <Frame x:Name="BankFrame" />
-                </s:ProgramWindow.mainContent>
-            </s:ProgramWindow>
-
-            <s:ProgramWindow x:Name="SystemOverview"
-                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Hidden" Canvas.Left="200" Canvas.Top="160" Width="500" MinWidth="300" MinHeight="200" Height="300"
-                             IsVisibleChanged="MapControl_IsVisibleChanged">
-                <s:ProgramWindow.icon>
-                    <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />
-                </s:ProgramWindow.icon>
-                <s:ProgramWindow.title>
-                    <TextBlock Text="System" Foreground="White" />
-                </s:ProgramWindow.title>
-                <s:ProgramWindow.mainContent>
-                    <Frame x:Name="SystemOverviewFrame" />
-                </s:ProgramWindow.mainContent>
-            </s:ProgramWindow>
-
-            <s:ProgramWindow x:Name="MapControl"
-                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Visible" Canvas.Left="200" Canvas.Top="160" Width="500" MinWidth="300" MinHeight="200" Height="300"
-                             IsVisibleChanged="MapControl_IsVisibleChanged">
-                <s:ProgramWindow.icon>
-                    <Image Source="/Icons/OtherIcons/001-network.png" Height="21" Width="21" />
-                </s:ProgramWindow.icon>
-                <s:ProgramWindow.title>
-                    <TextBlock Text="Bounce Visual Assistant" Foreground="White" />
-                </s:ProgramWindow.title>
-                <s:ProgramWindow.mainContent>
-                    <Frame x:Name="MapControlFrame" />
-                </s:ProgramWindow.mainContent>
-            </s:ProgramWindow>
-
-            <s:ProgramWindow x:Name="RemoteConsole"
-                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Collapsed" Canvas.Left="200" Canvas.Top="160" Width="300" MinWidth="300" MinHeight="200" Height="200"
-                             IsVisibleChanged="RemoteConsole_IsVisibleChanged">
-                <s:ProgramWindow.icon>
-                    <Image Source="/Icons/OtherIcons/015-configuration.png" Height="21" Width="21" />
-                </s:ProgramWindow.icon>
-                <s:ProgramWindow.title>
-                    <TextBlock Text="TracON Remote Shell" Foreground="White" />
-                </s:ProgramWindow.title>
-                <s:ProgramWindow.mainContent>
-                    <ContentControl Style="{StaticResource InlayedBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    Margin="0,3,0,0">
-                        <Frame x:Name="RemoteConsoleFrame" />
-                    </ContentControl>
-                </s:ProgramWindow.mainContent>
-            </s:ProgramWindow>
-
-            <s:ProgramWindow x:Name="LocalConsole"
-                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Collapsed" Canvas.Left="200" Canvas.Top="160" Width="300" MinWidth="300" MinHeight="200" Height="200"
-                             IsVisibleChanged="LocalConsole_IsVisibleChanged">
-                <s:ProgramWindow.icon>
-                    <Image Source="/Icons/OtherIcons/014-programing-1.png" Height="21" Width="21" />
-                </s:ProgramWindow.icon>
-                <s:ProgramWindow.title>
-                    <TextBlock Text="Apature Command Prompt" Foreground="White" />
-                </s:ProgramWindow.title>
-                <s:ProgramWindow.mainContent>
-                    <ContentControl Style="{StaticResource InlayedBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    Margin="0,3,0,0">
-                        <Frame x:Name="LocalConsoleFrame" />
-                    </ContentControl>
-                </s:ProgramWindow.mainContent>
-            </s:ProgramWindow>
-
-            <s:ProgramWindow x:Name="IRC"
-                             Style="{StaticResource ProgramWindowActiveStyle}" Visibility="Collapsed" Canvas.Left="200" Canvas.Top="160" Width="300" MinWidth="300" MinHeight="200" Height="200"
-                             IsVisibleChanged="IRC_IsVisibleChanged">
-                <s:ProgramWindow.icon>
-                    <Image Source="/Icons/OtherIcons/005-chat-1.png" Height="21" Width="21" />
-                </s:ProgramWindow.icon>
-                <s:ProgramWindow.title>
-                    <TextBlock Text="Zee Chat IRC" Foreground="White" />
-                </s:ProgramWindow.title>
-                <s:ProgramWindow.mainContent>
-                    <ContentControl Style="{StaticResource InlayedBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    Margin="0,3,0,0">
-                        <Frame x:Name="IRCFrame" />
-                    </ContentControl>
-                </s:ProgramWindow.mainContent>
-            </s:ProgramWindow>-->
-        </Canvas>
+        <Canvas Grid.Row="1" x:Name="MainCanvas" Background="Teal" Margin="0,0,0,0" Grid.ColumnSpan="2" TextElement.FontSize="20" TextElement.FontWeight="Bold"/>
     </Grid>
 </Window>

@@ -25,6 +25,18 @@ namespace Game.Core.Console.LocalPrograms
         public string DecodeTraffic(string filePath)
         {
             TrafficFile t = null;
+            t = GetFileFromFilePath(filePath);
+            if (t == null)
+            {
+                return "File not found.";
+            }
+            return DecodeTraffic(t);
+        }
+
+        //TODO replace all split file path stuff with this
+        private static TrafficFile GetFileFromFilePath(string filePath)
+        {
+            TrafficFile t;
             string[] splitFilePath = filePath.Split('\\');
             if (splitFilePath.Length == 1)
             {
@@ -36,11 +48,7 @@ namespace Game.Core.Console.LocalPrograms
                 string fileName = splitFilePath[splitFilePath.Length - 1];
                 t = (TrafficFile)Global.LocalEndpoint.GetFile(path, fileName);
             }
-            if (t == null)
-            {
-                return "File not found.";
-            }
-            return DecodeTraffic(t);
+            return t;
         }
 
         /// <summary>
