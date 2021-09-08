@@ -38,8 +38,8 @@ namespace Game.Core.Endpoints
         private bool _softConnection;
         private FileSystem.FileSystem _fileSystem;
         private Endpoint _connectedFrom;
-        private List<Endpoint> _loggedInEndpoints = new();
-        private List<string> _loggedInUsernames = new();
+        private HashSet<Endpoint> _loggedInEndpoints = new();
+        private HashSet<string> _loggedInUsernames = new();
         #endregion
 
         #region Properties
@@ -159,12 +159,12 @@ namespace Game.Core.Endpoints
             get { return _connectedFrom; }
             set { _connectedFrom = value; }
         }
-        public List<Endpoint> LoggedInEndpoints
+        public HashSet<Endpoint> LoggedInEndpoints
         {
             get { return _loggedInEndpoints; }
             set { _loggedInEndpoints = value; }
         }
-        public List<string> LoggedInUsernames
+        public HashSet<string> LoggedInUsernames
         {
             get { return _loggedInUsernames; }
             set { _loggedInUsernames = value; }
@@ -187,6 +187,13 @@ namespace Game.Core.Endpoints
         /// </summary>
         public event EndpointLoginEventHandler OnLogin;
 
+        public delegate void EndpointFailedLoginEventHandler(object sender, EndpointLoginEventArgs e);
+
+        /// <summary>
+        /// Fired when this endpoint is logged into by another endpoint
+        /// </summary>
+        public event EndpointFailedLoginEventHandler OnFailedLogin;
+
         public delegate void EndpointLoggedInEventHandler(object sender, EndpointLoggedInEventArgs e);
 
         /// <summary>
@@ -204,7 +211,7 @@ namespace Game.Core.Endpoints
             {
                 return;
             }
-            Global.ActiveTraceTracker.StartTrace(this.TraceSpeed);
+            
         }
 
         //TODO: make it so if you spoof the network it will not block you.
@@ -564,6 +571,10 @@ namespace Game.Core.Endpoints
             else
             {
                 LogConnectionFailed(username, from);
+                if(this.OnFailedLogin != null)
+                {
+                    OnFailedLogin(this, new EndpointLoginEventArgs(from, username, password, this.MemoryHashing));
+                }
                 if (!fromProgram)
                     throw new Exception("Username password combination not found.");
                 return string.Empty;
@@ -589,6 +600,10 @@ namespace Game.Core.Endpoints
         /// <param name="from"></param>
         internal void MockRemoteLogInToo(string username, string password, Endpoint from)
         {
+            if(this.LoggedInEndpoints.Contains(from) || this.LoggedInUsernames.Contains(username))
+            {
+                return;
+            }
             AccessLevel accessLevel = UsernamePasswordAccessDict[username + password];
             LogConnectionAttempt(username, from);
             LogConnectionSucces(username, from, accessLevel);
@@ -609,7 +624,7 @@ namespace Game.Core.Endpoints
                 //Sleep for upto 4 ingame hours before logout
                 Global.EventTicker.SleepSeconds(Global.Rand.Next(14400));
                 this.LoggedInEndpoints.Remove(taskEndpoint);
-                this.LoggedInUsernames.Remove(username);
+                this.LoggedInUsernames.Remove(taskUsername);
                 this.SystemLog.Add(LogItemBuilder.Builder()
                 .CONNECTION_DISCONNECTED()
                 .From(taskEndpoint)
@@ -626,6 +641,10 @@ namespace Game.Core.Endpoints
         /// <param name="password"></param>
         internal void MockLocalLogInToo(string username, string password)
         {
+            if (this.LoggedInUsernames.Contains(username))
+            {
+                return;
+            }
             AccessLevel accessLevel = UsernamePasswordAccessDict[username + password];
             LogConnectionSucces(username, null, accessLevel);
             this.LoginHistory.Add((username, password));

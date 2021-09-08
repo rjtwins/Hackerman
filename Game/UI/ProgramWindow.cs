@@ -217,6 +217,7 @@ namespace Game.UI
 
             TextBlock textBlock = new TextBlock();
             textBlock.Text = this.title.Text;
+            textBlock.Margin = new Thickness(0, 0, 5, 0);
 
             stackPanel.Children.Add(image);
             stackPanel.Children.Add(textBlock);

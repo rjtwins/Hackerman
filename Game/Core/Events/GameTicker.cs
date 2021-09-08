@@ -56,13 +56,15 @@ namespace Core.Events
             {
                 throw new Exception("Event cannot be registered as its start time is before the current time.");
             }
-            while (this.EventQueue.ContainsKey(e.StartTime))
+            lock (this.EventQueue)
             {
-                e.SetStartTime(e.StartTime.AddSeconds(1));
+                while (this.EventQueue.ContainsKey(e.StartTime))
+                {
+                    e.SetStartTime(e.StartTime.AddSeconds(1));
+                }
+                this.EventQueue.Add(e.StartTime, e.Id);
             }
-            this.EventQueue.Add(e.StartTime, e.Id);
             this.IDEventDict[e.Id] = e;
-            //Debug.WriteLine("New Event Registered, Start time: " + e.StartTime + "Current Time: " + Global.GameTime);
         }
 
         public void StopTicker()
@@ -110,11 +112,6 @@ namespace Core.Events
                 {
                     Guid id = localGuidQueue[i];
                     DateTime startTime = localEventQueue[i];
-                    if (!IDEventDict.TryGetValue(id, out e))
-                    {
-                        Debug.WriteLine("Event: event in queue but not in event id dict!");
-                        //throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
-                    }
                     if (startTime > Global.GameTime)
                     {
                         break;

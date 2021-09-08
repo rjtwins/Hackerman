@@ -14,16 +14,17 @@ namespace Game.Core.Console.RemotePrograms
         bool WebWorm { get; set; }
         bool TwoWayConnection { get; set; }
         private Type Payload { get; set; }
+        private SoftwareLevel PayloadLevel { get; set; }
         
-        public Worm(string name = "worm.exe", SoftwareLevel Level = SoftwareLevel.LVL0, Type payload = null, bool webWorm = false, bool twoWayInjection = false) : base(name, true)
+        public Worm(string name = "worm.exe", SoftwareLevel Level = SoftwareLevel.LVL0, Type payload = null, SoftwareLevel payloadLevel = SoftwareLevel.LVL0, bool webWorm = false, bool twoWayInjection = false) : base(name, true)
         {
             this.SoftwareLevel = Level;
             this.Payload = payload;
             this.IsMalicious = true;
             this.WebWorm = webWorm;
             this.TwoWayConnection = twoWayInjection;
+            this.PayloadLevel = payloadLevel;
         }
-
         public override string RunProgram(Endpoint ranOn)
         {
             if (AnotherInstanceActive(ranOn))
@@ -48,14 +49,7 @@ namespace Game.Core.Console.RemotePrograms
 
             return $"WORMENGINE {this.Name} starting...hooked. \n {result}.";
         }
-        private void RanOn_OnLoggedIn(object sender, EndpointLoggedInEventArgs e)
-        {
-            RanOn_OnLogin(e.Too);
-        }
-        private void RanOn_OnVisit(object sender, WebEndpointVisitEventArgs e)
-        {
-            RanOn_OnLogin(e.From);
-        }
+
         private bool AnotherInstanceActive(Endpoint ranOn)
         {
             if (ranOn.ActivePrograms.Contains(this))
@@ -81,7 +75,7 @@ namespace Game.Core.Console.RemotePrograms
                 return "Payload NONE injected";
             }
 
-            Program payloadInstance = (Program)Activator.CreateInstance(Payload);
+            Program payloadInstance = (Program)Activator.CreateInstance(Payload, new object[] { PayloadLevel }) ;
             
             try
             {
@@ -104,6 +98,15 @@ namespace Game.Core.Console.RemotePrograms
             }
             target.UploadFileToo($"root\\users\\{username}", payloadInstance, true, true);
             target.RunProgram($"root\\users\\{username}\\{payloadInstance.Name}");
+        }
+
+        private void RanOn_OnLoggedIn(object sender, EndpointLoggedInEventArgs e)
+        {
+            RanOn_OnLogin(e.Too);
+        }
+        private void RanOn_OnVisit(object sender, WebEndpointVisitEventArgs e)
+        {
+            RanOn_OnLogin(e.From);
         }
         private void RanOn_OnLogin(object sender, EndpointLoginEventArgs e = null)
         {
@@ -188,7 +191,7 @@ namespace Game.Core.Console.RemotePrograms
         }
         private Worm CopyWormAndPayload()
         {
-            Worm worm = new Worm(this.Name, this.SoftwareLevel, this.Payload, this.WebWorm, this.TwoWayConnection);
+            Worm worm = new Worm(this.Name, this.SoftwareLevel, this.Payload, this.PayloadLevel, this.WebWorm, this.TwoWayConnection);
             worm.Id = this.Id;
             return worm;
         }

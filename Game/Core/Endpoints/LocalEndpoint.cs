@@ -22,7 +22,8 @@ namespace Game.Core.Endpoints
             this.FileSystem.AddProgram(new TrafficListener());
             this.FileSystem.AddProgram(new MemoryScraper());
             this.FileSystem.AddProgram(new MBanking());
-            this.FileSystem.AddProgram(new Worm("worm.exe", SoftwareLevel.LVL4, typeof(Router), true, true));
+            this.FileSystem.AddProgram(new Worm("worm4_router4.exe", SoftwareLevel.LVL4, typeof(Router), SoftwareLevel.LVL4, true, true));
+            this.FileSystem.AddProgram(new Worm("worm4_trafficListner4.exe", SoftwareLevel.LVL4, typeof(TrafficListener), SoftwareLevel.LVL4, true, true));
 
         }
 

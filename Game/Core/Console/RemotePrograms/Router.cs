@@ -11,9 +11,10 @@ namespace Game.Core.Console.RemotePrograms
 {
     public class Router : Program
     {
-        public Router() : base("BOUNCE_RPI.exe", true)
+        public Router(SoftwareLevel softwareLevel = SoftwareLevel.LVL0) : base("BOUNCE_RPI.exe", true)
         {
             this.IsMalicious = true;
+            this.SoftwareLevel = softwareLevel;
         }
 
         public override string RunProgram(Endpoint ranOn)

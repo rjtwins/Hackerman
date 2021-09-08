@@ -99,6 +99,11 @@ namespace Game.UI.Pages
             this.FilteredOutEndpoints.Clear();
             foreach (Endpoint e in Global.AllEndpoints)
             {
+                if (e.IsLocalEndpoint)
+                {
+                    e.isHidden = false;
+                    continue;
+                }
                 if (e.IPAddress.ToLower().Contains(filterString.ToLower()) || (e.IPAddress.ToLower() == filterString.ToLower()))
                 {
                     continue;

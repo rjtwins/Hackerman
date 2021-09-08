@@ -6,10 +6,11 @@ namespace Game.Core.Console.RemotePrograms
 {
     internal class TrafficListener : Program
     {
-        public TrafficListener() : base("TrafficListner", true)
+        public TrafficListener(SoftwareLevel softwareLevel = SoftwareLevel.LVL0) : base("TrafficListner", true)
         {
             this.IsMalicious = true;
-            this.Name += "v" + this.Version.ToString();
+            this.SoftwareLevel = softwareLevel;
+            this.Name += this.SoftwareLevel.ToString();
         }
 
         public override string RunProgram(Endpoint ranOn)
@@ -23,6 +24,15 @@ namespace Game.Core.Console.RemotePrograms
 
         private void Target_OnLogin(object sender, EndpointLoginEventArgs e)
         {
+            if (!this.Running)
+            {
+                return;
+            }
+            if(this.RanOn == null)
+            {
+                StopProgram();
+                return;
+            }
             if (!Global.IRCWindow.ChannelExsits(this.Name))
             {
                 Global.IRCWindow.AddChannelFromThread(this.Name);
@@ -44,12 +54,12 @@ namespace Game.Core.Console.RemotePrograms
             {
                 result += "USER: " + e.Username + "\nPWRD: " + e.Password;
             }
-            if (this.Version > 1)
+            if (((int)this.SoftwareLevel) > 0)
             {
                 result += "FROM: IP: " + fromIP + "\n";
             }
 
-            Global.LocalSystem.TrafficListnerAddEntry(e.From, this.RanOn, e.Username, e.Password, this.Version, e.EndpointHashing, login);
+            Global.LocalSystem.TrafficListnerAddEntry(e.From, this.RanOn, e.Username, e.Password, ((int)this.SoftwareLevel), e.EndpointHashing, login);
             Global.IRCWindow.AddMessageFromThread(this.Name, "TFL", result);
         }
 
