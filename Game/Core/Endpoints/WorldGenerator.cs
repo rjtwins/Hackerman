@@ -106,7 +106,7 @@ namespace Game.Core.Endpoints
             }
 
             EndpointList.Add(GenerateStartEndpoint());
-            //EndpointList.Add(GenerateTestEndpoint(AvailableEmployes));
+
             return EndpointList;
         }
         private void GeneatePersonalEndpoint(List<Endpoint> EndpointList, List<Endpoint> AvailableEmployes)
@@ -128,8 +128,8 @@ namespace Game.Core.Endpoints
                 GeneatePersonalEndpoint(EndpointList, AvailableEmployes);
             }
 
-            EndpointMonitor Monitor = EndpointMonitor.NONE;
-            EndpointFirewall Firewall = EndpointFirewall.NONE;
+            SoftwareLevel Monitor = SoftwareLevel.LVL0;
+            SoftwareLevel Firewall = SoftwareLevel.LVL0;
             EndpointHashing MemoryHashing = EndpointHashing.NONE;
             bool hidden = false;
 
@@ -140,19 +140,19 @@ namespace Game.Core.Endpoints
                     break;
 
                 case EndpointDifficulty.LVL1:
-                    Monitor = EndpointMonitor.LVL1;
+                    Monitor = SoftwareLevel.LVL1;
                     hidden = true;
                     break;
 
                 case EndpointDifficulty.LVL2:
-                    Monitor = EndpointMonitor.LVL1;
-                    Firewall = EndpointFirewall.LVL1;
+                    Monitor = SoftwareLevel.LVL1;
+                    Firewall = SoftwareLevel.LVL1;
                     hidden = true;
                     break;
 
                 case EndpointDifficulty.LVL3:
-                    Monitor = EndpointMonitor.LVL1;
-                    Firewall = EndpointFirewall.LVL1;
+                    Monitor = SoftwareLevel.LVL1;
+                    Firewall = SoftwareLevel.LVL1;
                     MemoryHashing = EndpointHashing.LVL1;
                     hidden = true;
                     break;
@@ -218,6 +218,18 @@ namespace Game.Core.Endpoints
             EndpointList.Add(inter);
             Global.CompanyEndpoints.Add(inter);
 
+            WebServerEndpoint web = new WebServerEndpoint(Person, EndpointType.WEB);
+            (web.x, web.y) = GenerateCoordinate();
+            web.isHidden = hidden;
+            web.MemoryHashing = MemoryHashing;
+            web.Firewall = Firewall;
+            web.Monitor = Monitor;
+            web.AddEmployes(employes);
+            web.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
+            EndpointList.Add(web);
+            Global.CompanyEndpoints.Add(web);
+            Global.WebServerEndpoints.Add(web);
+
             Endpoint database = new Endpoint(Person, EndpointType.DATABASE);
             (database.x, database.y) = GenerateCoordinate();
             database.isHidden = hidden;
@@ -229,11 +241,11 @@ namespace Game.Core.Endpoints
             EndpointList.Add(database);
             Global.CompanyEndpoints.Add(database);
 
-            inter.AllowedConnections.Add(database);
             inter.AllowedConnections.Add(external);
+            inter.AllowedConnections.Add(database);
 
-            database.AllowedConnections.Add(inter);
             database.AllowedConnections.Add(external);
+            database.AllowedConnections.Add(inter);
         }
         private Endpoint[] PickRandomEmploye(int nr, List<Endpoint> availableEmployes)
         {

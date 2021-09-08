@@ -99,32 +99,34 @@ namespace Core.Events
             List<Event> EventsToHandle = new List<Event>();
             lock (this.EventQueue)
             {
+                DateTime[] localEventQueue = new DateTime[this.EventQueue.Count];
+                Guid[] localGuidQueue = new Guid[this.EventQueue.Count];
+
+                this.EventQueue.Keys.CopyTo(localEventQueue, 0);
+                this.EventQueue.Values.CopyTo(localGuidQueue, 0);
+
                 Event e;
-                foreach (KeyValuePair<DateTime, Guid> pair in EventQueue)
+                for (int i = 0; i < localEventQueue.Length; i++)
                 {
-                    if (!IDEventDict.TryGetValue(pair.Value, out e))
+                    Guid id = localGuidQueue[i];
+                    DateTime startTime = localEventQueue[i];
+                    if (!IDEventDict.TryGetValue(id, out e))
                     {
                         Debug.WriteLine("Event: event in queue but not in event id dict!");
                         //throw new Exception("Event: " + e.Name + ":" + e.Id + " is in the event queue but not in event id dict!");
                     }
-                    if (e.StartTime > Global.GameTime)
+                    if (startTime > Global.GameTime)
                     {
                         break;
                     }
-                    EventsToHandle.Add(e);
-                }
-                foreach (Event eventToHandle in EventsToHandle)
-                {
-                    EventQueue.Remove(eventToHandle.StartTime);
+                    EventsToHandle.Add(this.IDEventDict[id]);
+                    this.EventQueue.Remove(startTime);
                 }
             }
 
-            lock (EventsToHandle)
+            foreach (Event eventToHandle in EventsToHandle)
             {
-                foreach (Event eventToHandle in EventsToHandle)
-                {
-                    TryStartEvent(eventToHandle);
-                }
+                TryStartEvent(eventToHandle);
             }
         }
 
@@ -134,8 +136,11 @@ namespace Core.Events
         /// <param name="secondes"></param>
         public void SleepSeconds(double secondes)
         {
-            double secondsAddedPerSeconds = this.TimeIntervalInSecondes * 10;
-            System.Threading.Thread.Sleep(Convert.ToInt32((secondes / secondsAddedPerSeconds) * 1000d));
+            DateTime timeToWaitTo = Global.GameTime.AddSeconds(secondes);
+            while(Global.GameTime < timeToWaitTo)
+            {
+                System.Threading.Thread.Sleep(100);
+            }
         }
 
         private void TryStartEvent(Event eventToHandle)

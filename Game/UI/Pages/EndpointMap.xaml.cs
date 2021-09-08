@@ -1,8 +1,10 @@
 ﻿using Game.Core.Endpoints;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,6 +12,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
 using Point = System.Windows.Point;
+using Game.Model;
 
 namespace Game.UI.Pages
 {
@@ -20,6 +23,8 @@ namespace Game.UI.Pages
     {
         private Dictionary<Guid, Endpoint> DrawnEndpointsDict = new();
         private Dictionary<Guid, Button> ButtonDict = new();
+        private HashSet<Endpoint> FilteredOutEndpoints = new();
+        private bool HideText { get; set; } = false;
 
         //private Dictionary<Guid, StackPanel> StackPanelDict = new();
         private Dictionary<Guid, TextBlock> TextBlockDict = new();
@@ -40,7 +45,6 @@ namespace Game.UI.Pages
                 OnPropertyChanged("TraceTimer");
             }
         }
-
         public EndpointMap()
         {
             this.DataContext = this;
@@ -51,71 +55,104 @@ namespace Game.UI.Pages
             Polyline.StrokeDashArray = new DoubleCollection(new double[] { 2, 3, 2 });
             this.HasClose = false;
         }
-
         private void EndpointMap_Loaded(object sender, RoutedEventArgs e)
         {
             this.Map_Loaded(sender, e);
             //EnableTraceTimer();
-            Global.BounceNetwork.ListChanged += BounceNetwork_ListChanged;
+            Global.BounceNetwork.OnAddOrRemove += BounceNetwork_OnAddOrRemove;
         }
-
-        private void BounceNetwork_ListChanged(object sender, ListChangedEventArgs e)
+        private void BounceNetwork_OnAddOrRemove(object sender, Model.NotifyingListAddOrRemoveEventArgs<Endpoint> e)
         {
+            switch (e.Action)
+            {
+                case NotifyingListAddOrRemove.ADD:
+                    ColorEndpoint(e.Item, Brushes.Purple);
+                    e.Item.isHidden = false;
+                    RedrawEndpoints();
+                    break;
+                case NotifyingListAddOrRemove.REMOVE:
+                    ColorEndpoint(e.Item, Brushes.Yellow);
+                    RedrawEndpoints();
+                    break;
+                default:
+                    break;
+            }
+
+        }
+        private void ColorEndpoint(Endpoint endpoint, Brush brush)
+        {
+            if (!ButtonDict.TryGetValue(endpoint.Id, out Button endpointButton))
+            {
+                return;
+            }
             Global.MainWindow.Dispatcher.Invoke(() =>
             {
-                foreach (Endpoint endpoint in Global.BounceNetwork)
+                lock (endpointButton)
                 {
-                    if (!ButtonDict.TryGetValue(endpoint.Id, out Button endpointButton))
-                    {
-                        return;
-                    }
-                    endpointButton.Background = Brushes.Purple;
+                    endpointButton.Background = brush;
                 }
             });
         }
 
-        public void FilterOnEndpoint(string Ip)
+        public void FilterOnEndpoint(string filterString)
         {
-            foreach (Endpoint e in this.DrawnEndpointsDict.Values)
+            this.FilteredOutEndpoints.Clear();
+            foreach (Endpoint e in Global.AllEndpoints)
             {
-                if (!e.IPAddress.Contains(Ip) && !(e.IPAddress == Ip))
+                if (e.IPAddress.ToLower().Contains(filterString.ToLower()) || (e.IPAddress.ToLower() == filterString.ToLower()))
                 {
-                    ButtonDict[e.Id].Background = Brushes.Yellow;
                     continue;
                 }
-                ButtonDict[e.Id].Background = Brushes.Violet;
-            }
-        }
-
-        public void FilterOnEndpoint(Guid EndpointID)
-        {
-            foreach (Guid id in TextBlockDict.Keys)
-            {
-                if (id != EndpointID)
+                if(e.Name.ToLower().Contains(filterString.ToLower()) || (e.Name.ToLower() == filterString.ToLower()))
                 {
-                    ButtonDict[id].Background = Brushes.Yellow;
                     continue;
                 }
-                ButtonDict[id].Background = Brushes.Violet;
+                this.FilteredOutEndpoints.Add(e);
             }
-        }
-
-        public void FilterOnEndpoint(Endpoint e)
-        {
-            foreach (Guid id in TextBlockDict.Keys)
-            {
-                if (id != e.Id)
-                {
-                    ButtonDict[id].Background = Brushes.Yellow;
-                    continue;
-                }
-                ButtonDict[id].Background = Brushes.Violet;
-            }
+            this.RedrawEndpoints();
         }
 
         internal void UpdateTraceTimer(int TimeLeft)
         {
             this.TraceTimer = TimeLeft;
+        }
+
+        public void RedrawEndpoints()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                foreach (Endpoint e in Global.AllEndpoints)
+                {
+                    if (FilteredOutEndpoints.Contains(e))
+                    {
+                        ButtonDict[e.Id].Visibility = Visibility.Hidden;
+                        TextBlockDict[e.Id].Visibility = Visibility.Hidden;
+                        continue;
+                    }
+                    if (e.isHidden)
+                    {
+                        ButtonDict[e.Id].Visibility = Visibility.Hidden;
+                        TextBlockDict[e.Id].Visibility = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        ButtonDict[e.Id].Visibility = Visibility.Visible;
+                        TextBlockDict[e.Id].Visibility = this.HideText ? Visibility.Hidden : Visibility.Visible;
+                    }
+                    if (Global.BounceNetwork.Contains(e))
+                    {
+                        ButtonDict[e.Id].Background = Brushes.Purple;
+                    }
+                    else if (e.IsLocalEndpoint)
+                    {
+                        ButtonDict[e.Id].Background = Brushes.Red;
+                    }
+                    else
+                    {
+                        ButtonDict[e.Id].Background = Brushes.Yellow;
+                    }
+                }
+            });            
         }
 
         public void DisplayEndpoints()
@@ -254,12 +291,9 @@ namespace Game.UI.Pages
         {
             this.Polyline.StrokeDashArray = new DoubleCollection();
             DisableEndpointButtons();
-            Button last = this.ButtonDict[
-                Global.Bounce.BounceList[
-                    Global.Bounce.BounceList.Count - 1]
-                    .Id];
-            last.BorderThickness = new Thickness(2d);
-            last.BorderBrush = Brushes.Red;
+            Button last = this.ButtonDict[Global.Bounce.BounceList[Global.Bounce.BounceList.Count - 1].Id];
+            //last.BorderThickness = new Thickness(2d);
+            last.Background = Brushes.Orange;
         }
 
         private void DisableEndpointButtons()
@@ -274,67 +308,28 @@ namespace Game.UI.Pages
 
         public void UnmakeConnection()
         {
-            if (Global.Bounce.BounceList.Count == 0)
-            {
-            }
-            Button last = this.ButtonDict
-                [
-                    Global.Bounce.BounceList
-                    [
-                        Global.Bounce.BounceList.Count - 1
-                    ].Id
-                ];
-            last.BorderThickness = new Thickness(0);
-            last.BorderBrush = Brushes.Transparent;
-
             this.Polyline.StrokeDashArray = new DoubleCollection(new double[] { 2, 3, 2 });
             EnableEndpointButtons();
             DrawBouncePath();
-
-            foreach (KeyValuePair<Guid, Button> pair in this.ButtonDict)
-            {
-                if(DrawnEndpointsDict.TryGetValue(pair.Key, out Endpoint e))
-                {
-                    if (Global.BounceNetwork.Contains(e))
-                    {
-                        continue;
-                    }
-                }
-                pair.Value.Background = Brushes.Yellow;
-            }
+            RedrawEndpoints();
         }
 
         private void RadioButtonShow_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (Guid id in this.TextBlockDict.Keys)
-            {
-                if (DrawnEndpointsDict[id].isHidden)
-                {
-                    continue;
-                }
-                TextBlockDict[id].Visibility = Visibility.Visible;
-            }
+            this.HideText = false;
+            this.RedrawEndpoints();
         }
 
         private void RadioButtonHide_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (TextBlock txb in this.TextBlockDict.Values)
-            {
-                txb.Visibility = Visibility.Hidden;
-            }
+            this.HideText = true;
+            this.RedrawEndpoints();
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox textBox = sender as TextBox;
             this.FilterOnEndpoint(textBox.Text);
-            if (textBox.Text == string.Empty)
-            {
-                foreach (Button btn in this.ButtonDict.Values)
-                {
-                    btn.Background = Brushes.Yellow;
-                }
-            }
         }
 
         public void EnableTraceTimer()

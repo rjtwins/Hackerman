@@ -50,40 +50,61 @@ namespace Game
             return ar;
         }
 
-        internal static (bool GuestUser, Endpoint) PickRandomEndpointWithAccess(Endpoint e)
+        internal static (string username, string password, Endpoint from) PickRandomPossibleLogin(Endpoint e)
         {
-            if (e.AllowedConnections.Count == 0)
+            Person randomUser = null;
+            do
             {
-                Person randomUser = e.GetRandomUser();
-                if (randomUser.Name == "guest")
-                {
-                    return (true, PickRandomPersonWithEndpoint().PersonalComputer);
-                }
-                return (false, randomUser.PersonalComputer);
+                randomUser = e.GetRandomUser();
+            } while (randomUser.Name == "guest");
+
+            if (e.EndpointType == EndpointType.INTERNAL || e.EndpointType == EndpointType.DATABASE)
+            {
+                return (randomUser.Name, randomUser.WorkPassword, e.AllowedConnections[0]);
             }
-            return (false, e.AllowedConnections[Rand.Next(e.AllowedConnections.Count)]);
+
+            return (randomUser.Name, randomUser.WorkPassword, randomUser.PersonalComputer);
         }
 
+        internal static (string username, string password) PickRandomPossibleLocalLogin(Endpoint e)
+        {
+            Person randomUser = null;
+            do
+            {
+                randomUser = e.GetRandomUser();
+            } while (randomUser.Name == "guest");
+
+            if(e.EndpointType == EndpointType.PERSONAL)
+            {
+                return (randomUser.Name, randomUser.PersonalPassword);
+            }
+            return (randomUser.Name, randomUser.WorkPassword);
+        }
+
+        /// <summary>
+        /// Picks a random company or bank endpoitn (banks are companies too you know)
+        /// </summary>
+        /// <returns>Endpoint randomEndpoint</returns>
         internal static Endpoint PickRandomCompanyEdnpoint()
         {
-            int randomIndex = Rand.Next(Global.CompanyEndpoints.Count);
-            var temp = Global.CompanyEndpoints[randomIndex];
+            var companyAndBankEndpoints = Global.CompanyEndpoints.Concat(Global.BankEndpoints).ToArray();
+            int randomIndex = Rand.Next(companyAndBankEndpoints.Length);
+            var temp = companyAndBankEndpoints[randomIndex];
 
             if (temp.Id == Global.LocalEndpoint.Id)
             {
-                return PickRandomEndpoint();
+                return PickRandomCompanyEdnpoint();
             }
 
             if (Global.RemoteSystem == temp)
             {
-                return PickRandomEndpoint();
+                return PickRandomCompanyEdnpoint();
             }
 
             if (temp.HasConnection())
             {
-                return PickRandomEndpoint();
+                return PickRandomCompanyEdnpoint();
             }
-
             return temp;
         }
 
@@ -133,7 +154,12 @@ namespace Game
 
         internal static string PickRandomPassword()
         {
-            return PasswordList[UTILS.Rand.Next(PasswordList.Count)];
+            string password = string.Empty;
+            do
+            {
+                password = PasswordList[UTILS.Rand.Next(PasswordList.Count)];
+            } while (string.IsNullOrEmpty(password));
+            return password;
         }
 
         internal static Person PickRandomPerson()
@@ -153,6 +179,11 @@ namespace Game
         internal static Person PickRandomPersonWithEndpoint()
         {
             return Global.PersonalEndpoints[Rand.Next(Global.PersonalEndpoints.Count)].Owner;
+        }
+
+        internal static WebServerEndpoint PickRandomWebServerEndpoint()
+        {
+            return Global.WebServerEndpoints[Rand.Next(Global.WebServerEndpoints.Count)];
         }
 
         public static string GenerateRandomString(int n)

@@ -9,6 +9,7 @@ using Game.UI;
 using Game.UI.Pages;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Game
@@ -41,6 +42,7 @@ namespace Game
         public static List<Endpoint> CompanyEndpoints = new();
         public static List<Endpoint> EmployeEndpoints = new();
         public static List<Endpoint> PersonalEndpoints = new();
+        public static List<WebServerEndpoint> WebServerEndpoints = new();
         public static List<BankEndpoint> BankEndpoints { get; set; } = new();
 
         public static Person LocalPerson;
@@ -59,7 +61,6 @@ namespace Game
             }
         }
 
-        public static BindingList<Endpoint> BounceNetwork = new();
 
         public static DateTime GameTime;
         public static bool GamePaused;
@@ -68,11 +69,8 @@ namespace Game
         public static PassiveTraceTracker PassiveTraceTracker;
 
         public static bool StopCurrentProgram { get; internal set; }
+        public static NotifyingList<Endpoint> BounceNetwork { get; set; } = new();
     }
-
-    public enum EndpointMonitor { NONE, LVL1, LVL2, LVL3, LVL4 }
-
-    public enum EndpointFirewall { NONE, LVL1, LVL2, LVL3, LVL4 }
 
     public enum EndpointState { ONLINE, SHUTTINGDOWN, STARTING, CRASHED, DESTROYED1, DESTROYED2, DESTROYED3 };
 
@@ -92,6 +90,7 @@ namespace Game
         PERSONAL,
         EXTERNALACCES,
         INTERNAL,
+        WEB,
         BANK,
         MEDIA,
         DATABASE,

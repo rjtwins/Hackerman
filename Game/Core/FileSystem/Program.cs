@@ -13,7 +13,7 @@ namespace Game.Core.FileSystem
         public Guid Id { protected set; get; }
         public bool IsMalicious = false;
         protected bool Running = false;
-        protected int Version = 1;
+        protected SoftwareLevel SoftwareLevel = SoftwareLevel.LVL0;
         public ProgramWindow ProgramWindow { get; protected set; }
         private bool NeedsConnection { get; set; }
 

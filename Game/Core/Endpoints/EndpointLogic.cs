@@ -38,6 +38,8 @@ namespace Game.Core.Endpoints
         private bool _softConnection;
         private FileSystem.FileSystem _fileSystem;
         private Endpoint _connectedFrom;
+        private List<Endpoint> _loggedInEndpoints = new();
+        private List<string> _loggedInUsernames = new();
         #endregion
 
         #region Properties
@@ -157,7 +159,16 @@ namespace Game.Core.Endpoints
             get { return _connectedFrom; }
             set { _connectedFrom = value; }
         }
-
+        public List<Endpoint> LoggedInEndpoints
+        {
+            get { return _loggedInEndpoints; }
+            set { _loggedInEndpoints = value; }
+        }
+        public List<string> LoggedInUsernames
+        {
+            get { return _loggedInUsernames; }
+            set { _loggedInUsernames = value; }
+        }
         #endregion
 
         #region Event handlers
@@ -171,7 +182,17 @@ namespace Game.Core.Endpoints
 
         public delegate void EndpointLoginEventHandler(object sender, EndpointLoginEventArgs e);
 
+        /// <summary>
+        /// Fired when this endpoint is logged into by another endpoint
+        /// </summary>
         public event EndpointLoginEventHandler OnLogin;
+
+        public delegate void EndpointLoggedInEventHandler(object sender, EndpointLoggedInEventArgs e);
+
+        /// <summary>
+        /// Fired when this enpoint logges into another endpoint
+        /// </summary>
+        public event EndpointLoggedInEventHandler OnLoggedIn;
         #endregion
 
         /// <summary>
@@ -179,7 +200,7 @@ namespace Game.Core.Endpoints
         /// </summary>
         public void UnderDictHack()
         {
-            if (((int)this.Monitor) <= ((int)EndpointMonitor.NONE))
+            if (((int)this.Monitor) <= ((int)SoftwareLevel.LVL0))
             {
                 return;
             }
@@ -203,7 +224,7 @@ namespace Game.Core.Endpoints
 
         public bool HasFirewall()
         {
-            if (((int)this.Firewall) > ((int)EndpointFirewall.NONE))
+            if (((int)this.Firewall) > ((int)SoftwareLevel.LVL0))
             {
                 return true;
             }
@@ -238,6 +259,10 @@ namespace Game.Core.Endpoints
 
                 case EndpointType.INTERNAL:
                     this.Name = this.Owner.Name + " Internal Services";
+                    break;
+
+                case EndpointType.WEB:
+                    this.Name = this.Owner.Name + " Web Server";
                     break;
 
                 case EndpointType.BANK:
@@ -368,61 +393,6 @@ namespace Game.Core.Endpoints
             LogConnectionRouted(from, too);
         }
 
-        internal void AdminSystemCheck()
-        {
-            this.UsernamePasswordDict.ToList().ForEach(x => LoginIfAdmin(x));
-
-            if (this.IsLocalEndpoint)
-            {
-                return;
-            }
-
-            #region logs
-
-            //Trim Logs to 20 entries.
-            List<LogItem> sysLog = this.SystemLog;
-            while (sysLog.Count > 20)
-            {
-                sysLog.RemoveAt(sysLog.Count - 1);
-            }
-            this.SystemLog = sysLog;
-
-            List<LogItem> conLog = this.SystemLog;
-            while (conLog.Count > 20)
-            {
-                conLog.RemoveAt(conLog.Count - 1);
-            }
-            this.SystemLog = conLog;
-
-            #endregion logs
-
-            #region virus scan
-
-            foreach (Folder f in this.FileSystem.AllFolders)
-            {
-                foreach (Program p in f.Programs.Values)
-                {
-                    if (p.IsMalicious)
-                    {
-                        p.StopProgram();
-                        f.RemoveProgram(p);
-                    }
-                }
-            }
-
-            #endregion virus scan
-
-            this.EndpointEvents.ScheduleNextAdminCheck();
-
-            void LoginIfAdmin(KeyValuePair<Person, string> x)
-            {
-                if (UsernamePasswordAccessDict[x.Key.Name + x.Value] == AccessLevel.ADMIN)
-                {
-                    this.MockLocalLogInToo(x.Key.Name, x.Value);
-                }
-            }
-        }
-
         internal void Discconect()
         {
             this.SoftConnection = false;
@@ -488,9 +458,9 @@ namespace Game.Core.Endpoints
             return CurrentPath();
         }
 
-        internal string UploadFileToo(string path, Program p, bool log = true)
+        internal string UploadFileToo(string path, Program p, bool log = true, bool o = false)
         {
-            string result = this.FileSystem.CopyFileToFonder(path, p, CurrentUsername);
+            string result = this.FileSystem.CopyFileToFonder(path, p, CurrentUsername, o);
             if (result == "Done" && log && !this.IsLocalEndpoint)
             {
                 this.SystemLog.Add(LogItemBuilder
@@ -567,6 +537,13 @@ namespace Game.Core.Endpoints
             }
 
             LogConnectionAttempt(username, from);
+
+            if(this.LoggedInUsernames.Contains(username) ||
+                this.LoggedInEndpoints.Contains(from))
+            {
+                throw new Exception($"User {username} is already logged in.");
+            }
+
             if (UsernamePasswordAccessDict.TryGetValue(username + password, out AccessLevel temp))
             {
                 this.AccessLevel = temp;
@@ -593,6 +570,15 @@ namespace Game.Core.Endpoints
             }
         }
 
+        internal void LoggedInTo(string username, string password, Endpoint too)
+        {
+            if(OnLoggedIn != null)
+            {
+                EndpointLoggedInEventArgs e = new EndpointLoggedInEventArgs(too, username, password, too.MemoryHashing);
+                OnLoggedIn(this, e);
+            }
+        }
+
         #region Mock Login
 
         /// <summary>
@@ -603,14 +589,35 @@ namespace Game.Core.Endpoints
         /// <param name="from"></param>
         internal void MockRemoteLogInToo(string username, string password, Endpoint from)
         {
+            AccessLevel accessLevel = UsernamePasswordAccessDict[username + password];
             LogConnectionAttempt(username, from);
-            LogConnectionSucces(username, from, this.AccessLevel);
+            LogConnectionSucces(username, from, accessLevel);
             this.LoginHistory.Add((username, password));
+            this.LoggedInEndpoints.Add(from);
+            this.LoggedInUsernames.Add(username);
+
             if (OnLogin != null)
             {
                 EndpointLoginEventArgs args = new EndpointLoginEventArgs(from, username, password, this.MemoryHashing);
                 OnLogin(this, args);
             }
+            Task.Factory.StartNew(() =>
+            {
+                string taskUsername = username;
+                Endpoint taskEndpoint = from;
+                AccessLevel taskAccesLevel = accessLevel;
+                //Sleep for upto 4 ingame hours before logout
+                Global.EventTicker.SleepSeconds(Global.Rand.Next(14400));
+                this.LoggedInEndpoints.Remove(taskEndpoint);
+                this.LoggedInUsernames.Remove(username);
+                this.SystemLog.Add(LogItemBuilder.Builder()
+                .CONNECTION_DISCONNECTED()
+                .From(taskEndpoint)
+                .User(taskUsername)
+                .AccesLevel(accessLevel)
+                .TimeStamp(Global.GameTime)
+                );
+            });
         }
 
         /// <summary>
@@ -619,12 +626,31 @@ namespace Game.Core.Endpoints
         /// <param name="password"></param>
         internal void MockLocalLogInToo(string username, string password)
         {
-            LogConnectionSucces(username, null, this.AccessLevel);
+            AccessLevel accessLevel = UsernamePasswordAccessDict[username + password];
+            LogConnectionSucces(username, null, accessLevel);
+            this.LoginHistory.Add((username, password));
+            this.LoggedInUsernames.Add(username);
+
             if (OnLogin != null)
             {
                 EndpointLoginEventArgs args = new EndpointLoginEventArgs(null, username, password, this.MemoryHashing);
                 OnLogin(this, args);
             }
+            Task.Factory.StartNew(() =>
+            {
+                string taskUsername = username;
+                AccessLevel taskAccesLevel = accessLevel;
+                //Sleep for upto 4 ingame hours before logout
+                Global.EventTicker.SleepSeconds(Global.Rand.Next(14400));
+                this.LoggedInUsernames.Remove(username);
+                this.SystemLog.Add(LogItemBuilder.Builder()
+                .CONNECTION_DISCONNECTED()
+                .From(null)
+                .User(taskUsername)
+                .AccesLevel(accessLevel)
+                .TimeStamp(Global.GameTime)
+                );
+            });
         }
 
         #endregion
@@ -703,7 +729,7 @@ namespace Game.Core.Endpoints
         #endregion Connection logs
 
         #region Shutdown/Startup
-        internal void AutoRestart()
+        internal virtual void AutoRestart()
         {
             if (this.IsLocalEndpoint)
             {
@@ -713,7 +739,7 @@ namespace Game.Core.Endpoints
             this.EndpointEvents.ScheduleNextRestart();
         }
 
-        public void Restart()
+        protected virtual void Restart()
         {
             shutdown();
             Task.Factory.StartNew(() =>
@@ -723,7 +749,7 @@ namespace Game.Core.Endpoints
             });
         }
 
-        private void startup()
+        protected virtual void startup()
         {
             this.FileSystem.CurrentFolder = this.FileSystem;
             State = EndpointState.STARTING;
@@ -735,12 +761,12 @@ namespace Game.Core.Endpoints
             State = EndpointState.ONLINE;
         }
 
-        private void RunStartupPrograms()
+        protected virtual void RunStartupPrograms()
         {
             this.FileSystem.RunStartupPrograms();
         }
 
-        private void shutdown()
+        protected virtual void shutdown()
         {
             State = EndpointState.SHUTTINGDOWN;
             this.SoftConnection = false;
@@ -760,6 +786,50 @@ namespace Game.Core.Endpoints
             }
         }
         #endregion
+
+        internal virtual void AdminSystemCheck()
+        {
+            this.UsernamePasswordDict.ToList().ForEach(x => LoginIfAdmin(x));
+
+            if (this.IsLocalEndpoint)
+            {
+                return;
+            }
+
+            #region logs
+            //Trim Logs to 20 entries.
+            while (this.SystemLog.Count > 20)
+            {
+                this.SystemLog.RemoveAt(this.SystemLog.Count - 1);
+            }
+            #endregion logs
+
+            #region virus scan
+
+            foreach (Folder f in this.FileSystem.AllFolders)
+            {
+                foreach (Program p in f.Programs.Values)
+                {
+                    if (p.IsMalicious)
+                    {
+                        p.StopProgram();
+                        f.RemoveProgram(p);
+                    }
+                }
+            }
+
+            #endregion virus scan
+
+            this.EndpointEvents.ScheduleNextAdminCheck();
+
+            void LoginIfAdmin(KeyValuePair<Person, string> x)
+            {
+                if (UsernamePasswordAccessDict[x.Key.Name + x.Value] == AccessLevel.ADMIN)
+                {
+                    this.MockLocalLogInToo(x.Key.Name, x.Value);
+                }
+            }
+        }
 
         public string PrintLogs()
         {
@@ -857,6 +927,22 @@ namespace Game.Core.Endpoints
         public EndpointLoginEventArgs(Endpoint from, string username, string password, EndpointHashing endpointHashing)
         {
             From = from;
+            Username = username;
+            Password = password;
+            EndpointHashing = endpointHashing;
+        }
+    }
+
+    public class EndpointLoggedInEventArgs : EventArgs
+    {
+        public Endpoint Too;
+        public string Username;
+        public string Password;
+        public EndpointHashing EndpointHashing;
+
+        public EndpointLoggedInEventArgs(Endpoint too, string username, string password, EndpointHashing endpointHashing)
+        {
+            Too = too;
             Username = username;
             Password = password;
             EndpointHashing = endpointHashing;

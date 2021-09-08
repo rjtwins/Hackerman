@@ -39,7 +39,8 @@ namespace Game.Model
             person.Surname = values[2];
             person.Email = values[3];
             person.Username = values[4];
-            //person.Password = values[5];
+            //person.WorkPassword = values[5];
+            //person.PersonalPassword = values[5];
             person.Birthday = values[6];
             person.Age = values[7];
             person.CCType = values[8];

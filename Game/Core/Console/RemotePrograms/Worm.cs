@@ -11,106 +11,147 @@ namespace Game.Core.Console.RemotePrograms
 {
     public class Worm : Program
     {
-        SoftwareLevel WormLevel = SoftwareLevel.LVL0;
+        bool WebWorm { get; set; }
+        bool TwoWayConnection { get; set; }
         private Type Payload { get; set; }
-        private bool PayloadDelivered { get; set; } = false;
         
-
-        public Worm(string name, SoftwareLevel Level = SoftwareLevel.LVL0, Type payload = null) : base(name, true)
+        public Worm(string name = "worm.exe", SoftwareLevel Level = SoftwareLevel.LVL0, Type payload = null, bool webWorm = false, bool twoWayInjection = false) : base(name, true)
         {
-            this.WormLevel = Level;
+            this.SoftwareLevel = Level;
             this.Payload = payload;
             this.IsMalicious = true;
+            this.WebWorm = webWorm;
+            this.TwoWayConnection = twoWayInjection;
         }
+
         public override string RunProgram(Endpoint ranOn)
         {
-            if (ranOn.ActivePrograms.Contains(this))
-            {
-                return $"{this.Name} close other instances before executing this program.";
-            }
-            if(!ranOn.ActivePrograms.TrueForAll(x => x.Id != this.Id))
+            if (AnotherInstanceActive(ranOn))
             {
                 return $"{this.Name} close other instances before executing this program.";
             }
             base.RunProgram(ranOn);
             this.RanOn.OnLogin += RanOn_OnLogin;
-            string payloadName = "NONE";
-            if(this.Payload != null)
+
+            string result = InjectPayload(ranOn, ranOn.CurrentUsername);
+
+            //Infect the website so anybody who connects gets the worm.
+            if (this.WebWorm && ranOn.GetType() == typeof(WebServerEndpoint))
             {
-                Program payloadInstance = (Program)Activator.CreateInstance(Payload);
-                payloadName = payloadInstance.Name;
-                InjectPayload(ranOn, payloadInstance);
+                ((WebServerEndpoint)ranOn).OnVisit += RanOn_OnVisit;
             }
-            return $"WORMENGINE {this.Name} starting...hooked. \n Payload {payloadName} injected.";
+
+            if (TwoWayConnection)
+            {
+                ranOn.OnLoggedIn += RanOn_OnLoggedIn;
+            }
+
+            return $"WORMENGINE {this.Name} starting...hooked. \n {result}.";
         }
-
-        private void InjectPayload(Endpoint target, Program payloadInstance)
+        private void RanOn_OnLoggedIn(object sender, EndpointLoggedInEventArgs e)
         {
-            if (this.PayloadDelivered)
+            RanOn_OnLogin(e.Too);
+        }
+        private void RanOn_OnVisit(object sender, WebEndpointVisitEventArgs e)
+        {
+            RanOn_OnLogin(e.From);
+        }
+        private bool AnotherInstanceActive(Endpoint ranOn)
+        {
+            if (ranOn.ActivePrograms.Contains(this))
             {
-                return;
+                return true;
             }
-            this.PayloadDelivered = true;
+            if (!ranOn.ActivePrograms.TrueForAll(x => x.Id != this.Id))
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="payloadInstance"></param>
+        /// <returns>string result</returns>
+        private string InjectPayload(Endpoint target, string username = "shared")
+        {
+            if(this.Payload == null)
+            {
+                return "Payload NONE injected";
+            }
 
+            Program payloadInstance = (Program)Activator.CreateInstance(Payload);
+            
             try
             {
-                CopyRunPayload(target, payloadInstance);
+                CopyRunPayload(target, payloadInstance, username);
+                return $"Payload {payloadInstance.Name} injected";
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Debug.WriteLine($"Exception in worm.InjectPayload {ex.Message} stack trace {ex.StackTrace}.");
+                return $"Payload {payloadInstance.Name} could not be injected.";
             }
         }
-
-        private void CopyRunPayload(Endpoint target, Program payloadInstance)
+        private void CopyRunPayload(Endpoint target, Program payloadInstance, string username = "shared")
         {
-            if (((int)this.WormLevel) > ((int)SoftwareLevel.LVL2))
+            if (((int)this.SoftwareLevel) > ((int)SoftwareLevel.LVL2))
             {
-                target.UploadFileToo($"root\\system\\autostart", payloadInstance, true);
+                target.UploadFileToo($"root\\system\\autostart", payloadInstance, true, true);
                 target.RunProgram($"root\\system\\autostart\\{payloadInstance.Name}");
                 return;
             }
-            target.UploadFileToo($"root\\users\\shared", payloadInstance, true);
-            target.RunProgram($"root\\users\\shared\\{payloadInstance.Name}");
+            target.UploadFileToo($"root\\users\\{username}", payloadInstance, true, true);
+            target.RunProgram($"root\\users\\{username}\\{payloadInstance.Name}");
         }
-
-        private void RanOn_OnLogin(object sender, EndpointLoginEventArgs e)
+        private void RanOn_OnLogin(object sender, EndpointLoginEventArgs e = null)
         {
-            Endpoint from = e.From;
+            string username = "shared";
+            Endpoint from = null;
+
+            if (e != null)
+            {
+                username = e.Username;
+                from = e.From;
+            }
+            else
+            {
+                from = sender as Endpoint;
+            }
+            
             if(from == null)
             {
                 return;
             }
 
             double roll = Global.Rand.NextDouble();
-            Program payloadInstance = (Program)Activator.CreateInstance(this.Payload);
-            switch (this.WormLevel)
+            switch (this.SoftwareLevel)
             {
                 case SoftwareLevel.LVL0 when roll < 0.25:
-                    InfectUsersFiles(from, e.Username);
-                    InjectPayload(from, payloadInstance);
+                    InfectUsersFiles(from, username);
+                    InjectPayload(from, username);
                     break;
                 case SoftwareLevel.LVL1 when roll < 0.50:
-                    InfectUsersFiles(from, e.Username);
-                    InjectPayload(from, payloadInstance);
+                    InfectUsersFiles(from, username);
+                    InjectPayload(from, username);
                     break;
                 case SoftwareLevel.LVL2 when roll < 0.75:
-                    InfectUsersFiles(from, e.Username);
-                    InjectPayload(from, payloadInstance);
+                    InfectUsersFiles(from, username);
+                    InjectPayload(from, username);
                     break;
                 case SoftwareLevel.LVL3:
-                    InfectUsersFiles(from, e.Username);
-                    InjectPayload(from, payloadInstance);
+                    InfectUsersFiles(from, username);
+                    InjectPayload(from, username);
                     break;
                 case SoftwareLevel.LVL4:
                     InfectAutostart(from);
-                    InjectPayload(from, payloadInstance);
+                    InjectPayload(from, username);
                     break;
                 default:
                     break;
             }
         }
-
         private void InfectUsersFiles(Endpoint target, string username)
         {
             try
@@ -122,7 +163,6 @@ namespace Game.Core.Console.RemotePrograms
 
             }
         }
-
         private void InfectAutostart(Endpoint target)
         {
             try
@@ -134,29 +174,42 @@ namespace Game.Core.Console.RemotePrograms
 
             }
         }
-        private void CopyInjectWormToUsersFiles(Endpoint target, string username)
+        private void CopyInjectWormToUsersFiles(Endpoint target, string username = "shared")
         {
             Worm worm = CopyWormAndPayload();
-            target.UploadFileToo($"root\\users\\{username}", worm, true);
+            target.UploadFileToo($"root\\users\\{username}", worm, true, true);
             target.RunProgram($"root\\users\\{username}\\{worm.Name}");
         }
-
         private void CopyInjectWormToAutostart(Endpoint target)
         {
             Worm worm = CopyWormAndPayload();
-            target.UploadFileToo($"root\\system\\autostart", worm, true);
+            target.UploadFileToo($"root\\system\\autostart", worm, true, true);
             target.RunProgram($"root\\system\\autostart\\{this.Name}");
         }
-
         private Worm CopyWormAndPayload()
         {
-            Worm worm = new Worm(this.Name, this.WormLevel, this.Payload);
+            Worm worm = new Worm(this.Name, this.SoftwareLevel, this.Payload, this.WebWorm, this.TwoWayConnection);
             worm.Id = this.Id;
             return worm;
         }
-
         public override void StopProgram(bool remoteLost = false)
         {
+            if(this.RanOn == null)
+            {
+                base.StopProgram(remoteLost);
+                return;
+            }
+
+            //Unsubscribe from events
+            if (TwoWayConnection)
+            {
+                this.RanOn.OnLoggedIn -= this.RanOn_OnLoggedIn;
+            }
+            if (this.WebWorm && this.RanOn.GetType() == typeof(WebServerEndpoint))
+            {
+                ((WebServerEndpoint)this.RanOn).OnVisit -= this.RanOn_OnVisit;
+            }
+            this.RanOn.OnLogin -= this.RanOn_OnLogin;
             base.StopProgram(remoteLost);
         }
     }

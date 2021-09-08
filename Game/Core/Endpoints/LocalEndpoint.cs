@@ -22,7 +22,7 @@ namespace Game.Core.Endpoints
             this.FileSystem.AddProgram(new TrafficListener());
             this.FileSystem.AddProgram(new MemoryScraper());
             this.FileSystem.AddProgram(new MBanking());
-            this.FileSystem.AddProgram(new Worm("worm.exe", SoftwareLevel.LVL4, typeof(Router)));
+            this.FileSystem.AddProgram(new Worm("worm.exe", SoftwareLevel.LVL4, typeof(Router), true, true));
 
         }
 

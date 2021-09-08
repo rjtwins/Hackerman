@@ -26,10 +26,9 @@ namespace Game
             //declaring globals
             Global.App = this;
 
-            Global.LocalSystem = new LocalSystem();
-
             UTILS.LoadExternalLists();
             MissionDictionaries.ParseFromFiles();
+            Global.LocalSystem = new LocalSystem();
 
             Global.GameState = new GameState();
             Global.GameState.SetUserName("RJ");
@@ -65,6 +64,7 @@ namespace Game
             Global.AllEndpoints = Global.EndpointGenerator.GenerateEndpoints();
             TrafficSimulator.Instance.Start();
             
+            //For testing
             Global.BankEndpoints[0].Clients.Add(Global.LocalPerson);
 
             Global.MissionManager = new MissionManager();

@@ -1,6 +1,9 @@
 ﻿using Game.Core.Endpoints;
 using Game.Core.Events;
+using System;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Diagnostics;
 
 namespace Game.Core.World
 {
@@ -49,13 +52,11 @@ namespace Game.Core.World
                 System.Threading.Thread.Sleep(100);
             }
 
-            for (int i = 0; i < 5; i++)
-            {
-                SimulateTraffic();
-            }
+            //Number of traffics to simulate each run
+            SimulateTraffic();
 
             EventBuilder.BuildEvent("TrafficSimulatorRun")
-                .EventInterval(600)
+                .EventInterval(200)
                 .EventVoid(this.Simulating)
                 .RegisterWithVoid();
         }
@@ -64,75 +65,118 @@ namespace Game.Core.World
         {
             double roll = Global.Rand.NextDouble();
 
-            if (roll < 0.33)
+            if (roll < 0.20)
             {
-                SimulateRemoteCompanyLogin();
+                //A employe logs in from remote.
+                SimulateRemoteCompanyEmployeLogin();
             }
-            else if (roll > 0.33 && roll < 0.66)
+            else if (roll > 0.20 && roll < 0.40)
             {
+                //A employe logs in on site.
                 SimulateLocalCompanyLogin();
             }
-            else if (roll > 0.66)
+            else if (roll > 0.40 && roll < 0.60)
             {
-                SimulatePersonalLogin();
+                //A random perosonal endpoint logs in as guest on a compnay external acces server.
+                SimulateExternalCompnayLogin();
+            }
+            else if (roll > 0.60 && roll < 0.80)
+            {
+                //Sombody logs in on their own machine.
+                SimulatePersonalLocalLogin();
+            }
+            else
+            {
+                //Simulate people sending money to other people
+                SimulateBankClientTraffic();
+            }
+
+            //People going to web servers.
+            SimulateWebTraffic();
+            
+        }
+
+        private void SimulateWebTraffic()
+        {
+            Endpoint A = UTILS.PickRandomPersonWithEndpoint().PersonalComputer;
+            WebServerEndpoint B = UTILS.PickRandomWebServerEndpoint();
+            B.VisitedBy(A);
+        }
+
+        private void SimulateExternalCompnayLogin()
+        {
+            Endpoint A = UTILS.PickRandomPersonWithEndpoint().PersonalComputer;
+            Endpoint B = UTILS.PickRandomCompanyEdnpoint();
+            B.MockRemoteLogInToo("guest", B.GetPassword("guest"), A);
+            B.LoggedInTo("guest", B.GetPassword("guest"), B);
+        }
+
+        private void SimulateBankClientTraffic()
+        {
+            BankEndpoint A = UTILS.PickRandomBankEndpoint();
+            Model.Person randomClietA = A.Clients.ToArray()[Global.Rand.Next(A.Clients.Count)];
+            int randomAmount = Global.Rand.Next(randomClietA.BankBalance);
+
+            BankEndpoint B = UTILS.PickRandomBankEndpoint();
+            var bClients = B.Clients.ToArray();
+            Model.Person randomClietB = null;
+            do
+            {
+                randomClietB = bClients[Global.Rand.Next(bClients.Length)];
+            } while (randomClietB == Global.LocalEndpoint.Owner);
+            
+            //We don't really care if it works(tough it will)
+            if(!A.TransferMoney(randomClietA.Name, randomClietB.Name, B, randomAmount, out string result))
+            {
+                return;
             }
         }
 
-        private void SimulateRemoteCompanyLogin()
+        private void SimulateRemoteCompanyEmployeLogin()
         {
             //TODO filter pick on endpoint type.
             Endpoint A = UTILS.PickRandomCompanyEdnpoint();
-            (bool isGuestUser, Endpoint B) = UTILS.PickRandomEndpointWithAccess(A);
+            (string username, string password, Endpoint from) = UTILS.PickRandomPossibleLogin(A);
 
-            string password = "guest";
-            string userName = "guest";
-            if (!isGuestUser)
+            if (username != null && !string.IsNullOrEmpty(password))
             {
-                password = B.Owner.WorkPassword;
-                userName = B.Owner.Name;
+                A.MockRemoteLogInToo(username, password, from);
+                from.LoggedInTo(username, password, A);
             }
-
-            if (userName != null && password != string.Empty)
+            else
             {
-                A.MockRemoteLogInToo(userName, password, B);
+                Debug.WriteLine($"SimulateRemoteCompanyEmployeLogin Username {username} and password {password} has either a null username or null password.");
             }
         }
 
         private void SimulateLocalCompanyLogin()
         {
             Endpoint A = UTILS.PickRandomCompanyEdnpoint();
-            (bool isGuestUser, Endpoint B) = UTILS.PickRandomEndpointWithAccess(A);
+            (string username, string password) = UTILS.PickRandomPossibleLocalLogin(A);
 
-            string password = "guest";
-            string userName = "guest";
-            if (!isGuestUser)
+            
+            if (username != null && !string.IsNullOrEmpty(password))
             {
-                password = B.Owner.WorkPassword;
-                userName = B.Owner.Name;
+                A.MockLocalLogInToo(username, password);
             }
-
-            if (userName != null && password != string.Empty)
+            else
             {
-                A.MockLocalLogInToo(userName, password);
+                Debug.WriteLine($"SimulateLocalCompanyLogin Username {username} and password {password} has either a null username or null password.");
             }
         }
 
-        private void SimulatePersonalLogin()
+        private void SimulatePersonalLocalLogin()
         {
             Endpoint A = UTILS.PickRandomEmployeEndpoint();
-            (bool isGuestUser, Endpoint B) = UTILS.PickRandomEndpointWithAccess(A);
+            (string username, string password) = UTILS.PickRandomPossibleLocalLogin(A);
 
-            string password = "guest";
-            string userName = "guest";
-            if (!isGuestUser)
+            if (username != null && !string.IsNullOrEmpty(password))
             {
-                password = B.Owner.WorkPassword;
-                userName = B.Owner.Name;
+                A.MockLocalLogInToo(username, password);
             }
-
-            if (userName != null && password != string.Empty)
+            else
             {
-                A.MockLocalLogInToo(userName, password);
+                Debug.WriteLine($"SimulatePersonalLocalLogin Username {username} and password {password} has either a null username or null password.");
             }
         }
     }

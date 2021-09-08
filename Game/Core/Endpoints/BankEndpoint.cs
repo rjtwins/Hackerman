@@ -10,11 +10,9 @@ namespace Game.Core.Endpoints
 
         private enum TransferType { RECEIVED, SEND};
         private List<(TransferType, LogItem)> CreditTransferLogs { get; set; } = new();
-
         public BankEndpoint(Person person, EndpointType endpointType) : base(person, endpointType)
         {
         }
-
         public bool TransferMoney(string from, string too, BankEndpoint tooBank, int amount, out string result)
         {
             result = string.Empty;
@@ -73,12 +71,10 @@ namespace Game.Core.Endpoints
             tooBank.LogReceivedTransfer(transferLog);
             return true;
         }
-
         private void LogReceivedTransfer(LogItem transferLog)
         {
             this.CreditTransferLogs.Add((TransferType.RECEIVED, transferLog));
         }
-
         public Person LoginBankAcount(string username, string password)
         {
             foreach (Person p in Clients)
@@ -126,6 +122,19 @@ namespace Game.Core.Endpoints
         public int GetBankBalance(Person p)
         {
             return p.BankBalance;
+        }
+
+        internal override void AdminSystemCheck()
+        {
+            base.AdminSystemCheck();
+
+            #region transferlogs
+            //Trim Logs to 20 entries.
+            while (this.CreditTransferLogs.Count > 20)
+            {
+                this.CreditTransferLogs.RemoveAt(this.CreditTransferLogs.Count - 1);
+            }
+            #endregion transferlogs
         }
     }
 }

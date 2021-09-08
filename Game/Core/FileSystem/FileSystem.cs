@@ -12,12 +12,12 @@ namespace Game.Core.FileSystem
 
         public Folder CurrentFolder;
 
-        public Endpoint ParrentEndpoint { protected set; get; }
+        public Endpoint ParentEndpoint { protected set; get; }
         public List<Folder> AllFolders { protected set; get; } = new List<Folder>();
 
         public FileSystem(Endpoint endpoint) : base("root")
         {
-            this.ParrentEndpoint = endpoint;
+            this.ParentEndpoint = endpoint;
             this.Parent = this;
             this.CurrentFolder = this;
             this.ParentFileSystem = this;
@@ -45,7 +45,7 @@ namespace Game.Core.FileSystem
             GetFolderFromPath(@"root\users\shared").AddProgram(new MBanking());
         }
 
-        internal string CopyFileToFonder(string folderPath, Program p, string user)
+        internal string CopyFileToFonder(string folderPath, Program p, string user, bool o = false)
         {
             Folder f = null;
             if (folderPath == null)
@@ -63,7 +63,7 @@ namespace Game.Core.FileSystem
             //Debug.WriteLine("Checking if user has acces: " + user);
             if (CheckUserAcces(user, f))
             {
-                AddFileToFolder(p.Copy(), f, false);
+                AddFileToFolder(p.Copy(), f, o);
                 return "Done";
             }
             AccesLevelException(f);
@@ -235,7 +235,11 @@ namespace Game.Core.FileSystem
             }
             if (f.Programs.ContainsKey(p.Name) && !o)
             {
-                throw new Exception("This file already exists");
+                throw new Exception("This file already exists.");
+            }
+            if (f.Programs.ContainsKey(p.Name) && o && this.ParentEndpoint.ActivePrograms.Contains(p))
+            {
+                throw new Exception("Cannot override active program.");
             }
             //if(!CheckUserAcces(user, f))
             //{
@@ -320,12 +324,12 @@ namespace Game.Core.FileSystem
                 tempFolder = GetFolderFromPath(string.Join("\\", splitPath[0..(splitPath.Length - 1)]));
                 if (tempFolder.Programs.TryGetValue(splitPath[splitPath.Length - 1], out Program p))
                 {
-                    return p.RunProgram(this.ParrentEndpoint);
+                    return p.RunProgram(this.ParentEndpoint);
                 }
             }
             if (CurrentFolder.Programs.TryGetValue(path, out Program q))
             {
-                return q.RunProgram(this.ParrentEndpoint);
+                return q.RunProgram(this.ParentEndpoint);
             }
             return "Program \"" + path + "\" not found.";
         }
@@ -334,7 +338,7 @@ namespace Game.Core.FileSystem
         {
             foreach (Program p in GetFolderFromPath(@"root\system\autostart").Programs.Values)
             {
-                p.RunProgram(this.ParrentEndpoint);
+                p.RunProgram(this.ParentEndpoint);
             }
         }
 

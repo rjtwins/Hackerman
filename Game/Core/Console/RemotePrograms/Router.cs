@@ -13,7 +13,7 @@ namespace Game.Core.Console.RemotePrograms
     {
         public Router() : base("BOUNCE_RPI.exe", true)
         {
-
+            this.IsMalicious = true;
         }
 
         public override string RunProgram(Endpoint ranOn)
@@ -25,14 +25,15 @@ namespace Game.Core.Console.RemotePrograms
                 Debug.WriteLine("BOUNCE COULD NOT BREACH FIREWALL");
                 return "BOUNCE startup error, blocked by firewall.";
             }
-            Global.BounceNetwork.Add(ranOn);
+            
+            Global.BounceNetwork.AddAndNotify(ranOn);
             return "BOUNCE routing point setup completed.";
         }
 
         public override void StopProgram(bool ranOnRemote = false)
         {
             base.StopProgram();
-            Global.BounceNetwork.Remove(RanOn);
+            Global.BounceNetwork.RemoveAndNotify(RanOn);
         }
     }
 }

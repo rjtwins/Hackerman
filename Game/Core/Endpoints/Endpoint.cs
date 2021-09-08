@@ -12,8 +12,8 @@ namespace Game.Core.Endpoints
         private string IconType = "";
 
         public Person Owner;
-        public EndpointMonitor Monitor = EndpointMonitor.NONE;
-        public EndpointFirewall Firewall = EndpointFirewall.NONE;
+        public SoftwareLevel Monitor = SoftwareLevel.LVL0;
+        public SoftwareLevel Firewall = SoftwareLevel.LVL0;
         public EndpointHashing MemoryHashing = EndpointHashing.NONE;
         public EndpointState State = EndpointState.ONLINE;
         public EndpointType EndpointType = EndpointType.PERSONAL;
