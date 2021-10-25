@@ -1,26 +1,71 @@
 ﻿using Game.Core.Endpoints;
 using Game.Core.UIPrograms;
+using Game.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Game.Core.FileSystem
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class FileSystem : Folder
     {
         public AccessLevel UserAccessLevel = AccessLevel.USER;
 
-        public Folder CurrentFolder;
+        [JsonProperty]
+        private Guid currentFolder;
 
-        public Endpoint ParentEndpoint { protected set; get; }
-        public List<Folder> AllFolders { protected set; get; } = new List<Folder>();
+        public Folder CurrentFolder
+        {
+            get
+            {
+                return Global.AllFoldersDict[currentFolder];
+            }
+            set
+            {
+                currentFolder = value.Id;
+            }
+        }
+
+        [JsonProperty]
+        private Guid parentEndpoint;
+
+        public Endpoint ParentEndpoint
+        {
+            get
+            {
+                return Global.AllEndpointsDict[parentEndpoint];
+            }
+            set
+            {
+                parentEndpoint = value.Id;
+            }
+        }
+
+        [JsonProperty]
+        public ReferenceList<Folder> AllFolders { get; set; } = new ReferenceList<Folder>(Global.AllFoldersDict, "AllFoldersDict");
+
+        [JsonConstructor]
+        public FileSystem() : base("root")
+        {
+
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext streamingContext)
+        {
+            AllFolders.SetReferenceDict(Global.AllFoldersDict);
+        }
 
         public FileSystem(Endpoint endpoint) : base("root")
         {
+            
             this.ParentEndpoint = endpoint;
             this.Parent = this;
             this.CurrentFolder = this;
-            this.ParentFileSystem = this;
+            this.ParentFileSystem = null;
             this.AllFolders.Add(this);
             GenerateStandardFolderStructure();
         }
@@ -60,11 +105,9 @@ namespace Game.Core.FileSystem
             {
                 f = GetFolderFromPath(folderPath, CurrentFolder);
             }
-            //Debug.WriteLine("Checking if user has acces: " + user);
             if (CheckUserAcces(user, f))
             {
-                AddFileToFolder(p.Copy(), f, o);
-                return "Done";
+                return AddFileToFolder(p.Copy(), f, o);
             }
             AccesLevelException(f);
             return "ERROR";
@@ -118,6 +161,47 @@ namespace Game.Core.FileSystem
             return "File not found.";
         }
 
+        internal Program GetFileFromPath(string path, string user = null)
+        {
+            string folderPath = string.Empty;
+            string fileName = path;
+            //Ugly else if chain but gwatever
+            string[] splitPath = path.Split("\\");
+            if(splitPath.Length > 1)
+            {
+                folderPath = string.Join("\\", splitPath[0..(splitPath.Length - 2)]);
+                fileName = splitPath[splitPath.Length - 1];
+            }
+
+            Folder f = null;
+            if (folderPath == string.Empty)
+            {
+                f = this.CurrentFolder;
+            }
+            else if (this.Folders.Count == 0)
+            {
+                f = this.CurrentFolder;
+            }
+            else if (folderPath.Contains("root"))
+            {
+                f = GetFolderFromPath(folderPath);
+            }
+            else
+            {
+                f = GetFolderFromPath(folderPath, this.CurrentFolder);
+            }
+            if (!CheckUserAcces(user, f))
+            {
+                AccesLevelException(f);
+            }
+
+            if (!f.Programs.TryGetValue(fileName, out Program p))
+            {
+                return null;
+            }
+            return p;
+        }
+
         internal Program GetFileFromPath(string folderPath, string fileName, string user = null)
         {
             //Ugly else if chain but gwatever
@@ -169,7 +253,10 @@ namespace Game.Core.FileSystem
             {
                 AccesLevelException(f);
             }
-
+            if (this.ParentEndpoint.ActivePrograms.Contains(p))
+            {
+                return "File is currently being used by another process.";
+            }
             f.RemoveProgram(p);
             return "Done";
         }
@@ -227,7 +314,7 @@ namespace Game.Core.FileSystem
         /// <param name="f"></param>
         /// <param name="o"></param>
         /// <param name="user"></param>
-        private void AddFileToFolder(Program p, Folder f, bool o)
+        private string AddFileToFolder(Program p, Folder f, bool o)
         {
             if (!this.AllFolders.Contains(f) && this.AllFolders.Count != 0)
             {
@@ -241,12 +328,8 @@ namespace Game.Core.FileSystem
             {
                 throw new Exception("Cannot override active program.");
             }
-            //if(!CheckUserAcces(user, f))
-            //{
-            //    AccesLevelException(f);
-            //}
-
             f.AddProgram(p);
+            return "Done";
         }
 
         public Folder MakeFolderFromPath(string path)
@@ -344,11 +427,6 @@ namespace Game.Core.FileSystem
 
         public Folder GetFolderFromPath(string path, Folder start)
         {
-            if (start.ParentFileSystem != this)
-            {
-                throw new Exception("A folder from a different filesystem was passed this should never happen!");
-            }
-
             if (path == "..")
             {
                 return CurrentFolder.Parent;

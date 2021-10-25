@@ -1,11 +1,21 @@
 ﻿using Game.Model;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Game.Core.FileSystem
 {
     internal class TrafficFile : Program
     {
-        public List<Traffic> Traffic { get; private set; } = new();
+        [JsonProperty]
+        private List<Traffic> traffic = new();
+        [JsonIgnore]
+        public List<Traffic> Traffic { get => traffic; set => traffic = value; }
+
+        [JsonConstructor]
+        public TrafficFile()
+        {
+
+        }
 
         public TrafficFile(string fileName) : base(fileName, false)
         {

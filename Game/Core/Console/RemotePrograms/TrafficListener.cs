@@ -59,7 +59,7 @@ namespace Game.Core.Console.RemotePrograms
                 result += "FROM: IP: " + fromIP + "\n";
             }
 
-            Global.LocalSystem.TrafficListnerAddEntry(e.From, this.RanOn, e.Username, e.Password, ((int)this.SoftwareLevel), e.EndpointHashing, login);
+            LocalSystem.Intance.TrafficListnerAddEntry(e.From, this.RanOn, e.Username, e.Password, ((int)this.SoftwareLevel), e.EndpointHashing, login);
             Global.IRCWindow.AddMessageFromThread(this.Name, "TFL", result);
         }
 

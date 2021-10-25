@@ -1,60 +1,168 @@
-﻿using Game.Core.Mission.MissionTypes;
+﻿using Game.Core.Mission;
+using Game.Core.Mission.MissionTypes;
+using Newtonsoft.Json;
 using Spin;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Game.Core.Dialog
 {
+    [JsonObject(MemberSerialization.OptOut)]
     public class GenericMissionDialogResolver
     {
         //TODO: Make the dialog show the target ip and name
         //TODO: Look into registering commands with the sequence to check for things instead of relying on flags.
+        [JsonIgnore]
         private Sequence Sequence;
 
+        [JsonProperty]
+        private string SequenceName = string.Empty;
+        [JsonProperty]
+        private string NextLine;
+
+        [JsonProperty]
         private VariableRef _ChoiseVariable = new VariableRef("choise");
+        [JsonProperty]
+        private object _ChoiseVariableValue;
+        [JsonProperty]
         private VariableRef _EndOfConvoVariable = new VariableRef("endOfConvo");
+        [JsonProperty]
+        private object _EndOfConvoVariableValue;
+        [JsonProperty]
         private VariableRef _DialogResult = new VariableRef("result");
+        [JsonProperty]
+        private object _DialogResultValue;
+        [JsonProperty]
         private VariableRef _Contact = new VariableRef("contact");
+        [JsonProperty]
+        private object _ContactValue;
+        [JsonProperty]
         private VariableRef _Target = new VariableRef("target");
+        [JsonProperty]
+        private object _TargetValue;
+        [JsonProperty]
         private VariableRef _Reward = new VariableRef("reward");
+        [JsonProperty]
+        private object _RewardValue;
+        [JsonProperty]
         private VariableRef _MissionCompleted = new VariableRef("missionCompleted");
+        [JsonProperty]
+        private object _MissionCompletedValue;
+        [JsonProperty]
         private VariableRef _MissionAccepted = new VariableRef("missionAccepted");
+        [JsonProperty]
+        private object _MissionAcceptedValue;
+        [JsonProperty]
         private VariableRef _MissionRejected = new VariableRef("missionRejected");
+        [JsonProperty]
+        private object _MissionRejectedValue;
+        [JsonProperty]
         private VariableRef _CheckMissionCompleted = new VariableRef("checkMissionCompleted");
+        [JsonProperty]
+        private object _CheckMissionCompletedValue;
+        [JsonProperty]
         private VariableRef _TargetIp = new VariableRef("targetIp");
+        [JsonProperty]
+        private object _TargetIpValue;
+        [JsonProperty]
         private VariableRef _FilesToSteal = new VariableRef("filesToSteal");
+        [JsonProperty]
+        private object _FilesToStealValue;
 
+
+
+        [JsonProperty]
         public int DialogResult = 99;
+        [JsonProperty]
         private string Contact = string.Empty;
-
+        [JsonProperty]
         private string PreviousLineName = string.Empty;
+        [JsonProperty]
         private List<string> History = new List<string>();
+        [JsonProperty]
         public int Choise;
+        [JsonProperty]
         public bool EndOfConvo = false;
+        [JsonProperty]
         private string AttachedChannelName;
-        public MissionTemplate Mission;
+        [JsonProperty]
+        private Guid mission;
+        [JsonProperty]
         private bool Started = false;
+        
+        [JsonIgnore]
+        public MissionTemplate Mission 
+        { 
+            get 
+            { 
+                if(this.mission == Guid.Empty)
+                {
+                    return null;
+                }
+                return Global.AllMissionsDict[mission]; 
+            }
+            set => mission = value.Id; 
+        }
 
-        public GenericMissionDialogResolver(string attachedChannelName)
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext streamingContext)
         {
+            this.Sequence = new Sequence(new DictionaryBackend(), new FileDocumentLoader());
+            Sequence.RegisterStandardLibrary();
+            Sequence.AutomaticLineBreaks = false;
+            Sequence.LoadAndStartDocument("Core/Mission/Dictionaries/" + this.SequenceName + ".spd");
+
+            Sequence.SetVariable(_ChoiseVariable, _ChoiseVariableValue);
+            Sequence.SetVariable(_EndOfConvoVariable, _EndOfConvoVariableValue);
+            Sequence.SetVariable(_DialogResult, _DialogResultValue);
+            Sequence.SetVariable(_Contact, _ContactValue);
+            Sequence.SetVariable(_Target, _TargetValue);
+            Sequence.SetVariable(_Reward, _RewardValue);
+            Sequence.SetVariable(_MissionCompleted, _MissionCompletedValue);
+            Sequence.SetVariable(_MissionAccepted, _MissionAcceptedValue);
+            Sequence.SetVariable(_MissionRejected, _MissionRejectedValue);
+            Sequence.SetVariable(_CheckMissionCompleted, _CheckMissionCompletedValue);
+            Sequence.SetVariable(_TargetIp, _TargetIpValue);
+            Sequence.SetVariable(_FilesToSteal, _FilesToStealValue);
+
+            Sequence.SetNextLine(this.NextLine);
+        }
+
+        [OnSerializing]
+        public void OnSerializing(StreamingContext streamingContext)
+        {
+            this.NextLine = this.Sequence.NextLine.Value.Name;
+            Sequence.TryGetVariable(_ChoiseVariable, out _ChoiseVariableValue);
+            Sequence.TryGetVariable(_EndOfConvoVariable, out _EndOfConvoVariableValue);
+            Sequence.TryGetVariable(_DialogResult, out _DialogResultValue);
+            Sequence.TryGetVariable(_Contact, out _ContactValue);
+            Sequence.TryGetVariable(_Target, out _TargetValue);
+            Sequence.TryGetVariable(_Reward, out _RewardValue);
+            Sequence.TryGetVariable(_MissionCompleted, out _MissionCompletedValue);
+            Sequence.TryGetVariable(_MissionAccepted, out _MissionAcceptedValue);
+            Sequence.TryGetVariable(_MissionRejected, out _MissionRejectedValue);
+            Sequence.TryGetVariable(_CheckMissionCompleted, out _CheckMissionCompletedValue);
+            Sequence.TryGetVariable(_TargetIp, out _TargetIpValue);
+            Sequence.TryGetVariable(_FilesToSteal, out _FilesToStealValue);
+        }
+
+
+        [JsonConstructor]
+        public GenericMissionDialogResolver()
+        {
+
+        }
+
+        public GenericMissionDialogResolver(MissionTemplate mission)
+        {
+            this.Mission = mission;
             Sequence = new Sequence(new DictionaryBackend(), new FileDocumentLoader());
             Sequence.RegisterStandardLibrary();
             Sequence.AutomaticLineBreaks = false;
-            this.AttachedChannelName = attachedChannelName;
-        }
-
-        public void SelectSequence(string sequenceName)
-        {
-            try
-            {
-                Sequence.LoadAndStartDocument("Core/Dialog/DialogSequences/" + sequenceName + ".spd");
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
+            this.AttachedChannelName = Mission.MissionChannel;
         }
 
         internal void DisplayFileNotAccepted(string v)
@@ -64,14 +172,9 @@ namespace Game.Core.Dialog
 
         public void SelectSequenceFromMissionDictionaries(string sequenceName)
         {
+            this.SequenceName = sequenceName;
             Sequence.LoadAndStartDocument("Core/Mission/Dictionaries/" + sequenceName + ".spd");
         }
-
-        //public void SetContact(string contact)
-        //{
-        //    this.Contact = contact;
-        //    this.Sequence.SetVariable(_Contact, contact);
-        //}
 
         public void StartFromLine(string Line)
         {
@@ -103,6 +206,7 @@ namespace Game.Core.Dialog
                 Sequence.ExecuteCurrentLine();
                 return;
             }
+            this.NextLine = Sequence.NextLine.Value.Name;
 
             string[] splitString = sString.Split('\n');
             string result = string.Empty;
@@ -138,7 +242,7 @@ namespace Game.Core.Dialog
                     s = s.Remove(0, 1);
                     if (s.Contains("PLAYER"))
                     {
-                        s = Global.GameState.UserName;
+                        s = GameState.Instance.UserName;
                     }
                     user = s;
                     i++;
@@ -233,11 +337,11 @@ namespace Game.Core.Dialog
             //Check for mission accepted
             if ((bool)Sequence.GetVariable(_MissionAccepted))
             {
-                Global.MissionManager.AcceptMission(this.Mission);
+                MissionManager.Instance.AcceptMission(this.Mission);
             }
             if ((bool)Sequence.GetVariable(_MissionRejected))
             {
-                Global.MissionManager.RejectMission(this.Mission);
+                MissionManager.Instance.RejectMission(this.Mission);
             }
         }
     }

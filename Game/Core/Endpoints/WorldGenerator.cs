@@ -12,7 +12,6 @@ namespace Game.Core.Endpoints
         public static int XMax = 4984;
         public static int YMax = 2576;
         public static int EndpointBaseSize = 6;
-        private double[,] EndpointCoordinates;
         private Random Rand = new Random();
 
         /// <summary>
@@ -49,10 +48,8 @@ namespace Game.Core.Endpoints
             return e;
         }
 
-        public List<Endpoint> GenerateEndpoints()
+        public void GenerateEndpoints()
         {
-            this.EndpointCoordinates = UTILS.getBoolBitmap(Resources.WorldMapDensity);
-
             List<Endpoint> EndpointList = new List<Endpoint>();
             List<Endpoint> AvailableEmployes = new();
 
@@ -91,7 +88,7 @@ namespace Game.Core.Endpoints
                 e.AddEmployes(employes);
                 e.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
                 (e.x, e.y) = GenerateCoordinate();
-                e.isHidden = false;
+                e.IsHidden = false;
                 Global.BankEndpoints.Add(e);
                 EndpointList.Add(e);
             }
@@ -104,16 +101,12 @@ namespace Game.Core.Endpoints
                 b.Clients.Add(e.Owner);
                 e.Owner.BankBalance = Global.Rand.Next(100, 1000000); //For testing;
             }
-
-            EndpointList.Add(GenerateStartEndpoint());
-
-            return EndpointList;
         }
         private void GeneatePersonalEndpoint(List<Endpoint> EndpointList, List<Endpoint> AvailableEmployes)
         {
             Person Person = UTILS.PickRandomPerson();
             Endpoint e = new Endpoint(Person, EndpointType.PERSONAL);
-            e.isHidden = true;
+            e.IsHidden = true;
             (e.x, e.y) = GenerateCoordinate();
             e.AddUser(Person, Person.PersonalPassword, AccessLevel.ROOT);
             Person.PersonalComputer = e;
@@ -188,8 +181,8 @@ namespace Game.Core.Endpoints
             //For testing
             if (!hidden)
             {
-                Admin.isHidden = false;
-                employes.ToList().ForEach(x => x.isHidden = false);
+                Admin.IsHidden = false;
+                employes.ToList().ForEach(x => x.IsHidden = false);
             }
 
             Global.EmployeEndpoints.Add(Admin);
@@ -197,10 +190,10 @@ namespace Game.Core.Endpoints
 
             Person Person = UTILS.PickRandomCompany();
             Endpoint external = new Endpoint(Person, EndpointType.EXTERNALACCES);
-            external.isHidden = hidden;
+            external.IsHidden = hidden;
             external.MemoryHashing = MemoryHashing;
             external.Firewall = Firewall;
-            external.Monitor = Monitor;
+            external.SetMonitorLevel(Monitor);
             (external.x, external.y) = GenerateCoordinate();
             external.AddEmployes(employes);
             external.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
@@ -209,10 +202,10 @@ namespace Game.Core.Endpoints
 
             Endpoint inter = new Endpoint(Person, EndpointType.INTERNAL);
             (inter.x, inter.y) = GenerateCoordinate();
-            inter.isHidden = hidden;
+            inter.IsHidden = hidden;
             inter.MemoryHashing = MemoryHashing;
             inter.Firewall = Firewall;
-            inter.Monitor = Monitor;
+            inter.SetMonitorLevel(Monitor);
             inter.AddEmployes(employes);
             inter.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
             EndpointList.Add(inter);
@@ -220,10 +213,10 @@ namespace Game.Core.Endpoints
 
             WebServerEndpoint web = new WebServerEndpoint(Person, EndpointType.WEB);
             (web.x, web.y) = GenerateCoordinate();
-            web.isHidden = hidden;
+            web.IsHidden = hidden;
             web.MemoryHashing = MemoryHashing;
             web.Firewall = Firewall;
-            web.Monitor = Monitor;
+            web.SetMonitorLevel(Monitor);
             web.AddEmployes(employes);
             web.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
             EndpointList.Add(web);
@@ -232,10 +225,10 @@ namespace Game.Core.Endpoints
 
             Endpoint database = new Endpoint(Person, EndpointType.DATABASE);
             (database.x, database.y) = GenerateCoordinate();
-            database.isHidden = hidden;
+            database.IsHidden = hidden;
             database.MemoryHashing = MemoryHashing;
             database.Firewall = Firewall;
-            database.Monitor = Monitor;
+            database.SetMonitorLevel(Monitor);
             database.AddEmployes(employes);
             database.AddUser(Admin.Owner, Admin.Owner.WorkPassword, AccessLevel.ADMIN);
             EndpointList.Add(database);
@@ -257,19 +250,20 @@ namespace Game.Core.Endpoints
             }
             return randomEmployes;
         }
+        
         private (int, int) GenerateCoordinate()
         {
             int d = 50;
             int x = Rand.Next(0, XMax);
             int y = Rand.Next(0, YMax);
 
-            double prop = EndpointCoordinates[x, y];
-
             //water check
-            if (prop == 0)
+            if (Global.ByteMap[x, y] == 0)
             {
                 return GenerateCoordinate();
             }
+
+            double prop = Math.Max((double)Global.ByteMap[x, y]/255d, 1d);
 
             double roll = Global.Rand.NextDouble();
 
@@ -292,7 +286,7 @@ namespace Game.Core.Endpoints
                     {
                         continue;
                     }
-                    if (EndpointCoordinates[xmin, ymin] == 1)
+                    if (Global.ByteMap[x, y] == 0)
                     {
                         reject = true;
                         break;
@@ -310,7 +304,7 @@ namespace Game.Core.Endpoints
                 return GenerateCoordinate();
             }
 
-            EndpointCoordinates[x, y] = 1;
+            Global.ByteMap[x, y] = 0;
             return (x, y);
         }
     }

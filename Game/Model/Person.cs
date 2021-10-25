@@ -1,39 +1,94 @@
 ﻿using Game.Core.Endpoints;
+using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Game.Model
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Person
     {
-        public Guid Guid;
+        [JsonProperty]
+        public Guid Id { get; set; }
+        [JsonProperty]
         public string Gender;
+        [JsonProperty]
         public string Name;
+        [JsonProperty]
         public string Surname;
+        [JsonProperty]
         public string Email;
+        [JsonProperty]
         public string Username;
+        [JsonProperty]
         public string PersonalPassword;
+        [JsonProperty]
         public string WorkPassword;
+        [JsonProperty]
         public string BankPassword;
+        [JsonProperty]
         public int BankBalance;
+        [JsonProperty]
         public string Birthday;
+        [JsonProperty]
         public string Age;
+        [JsonProperty]
         public string CCType;
+        [JsonProperty]
         public string CCNumber;
+        [JsonProperty]
         public string CCExpire;
+        [JsonProperty]
         public string NationalID;
+        [JsonProperty]
         public string Occupation;
+        [JsonProperty]
         public string BloodType;
+        [JsonProperty]
         public string Kilograms;
+        [JsonProperty]
         public string Centimiters;
+        [JsonProperty]
         public string Description;
+        [JsonProperty]
         public string TagLine;
-        public Endpoint PersonalComputer;
+        [JsonProperty]
+        public Guid personalComputer;
+
+        [JsonIgnore]
+        public Endpoint PersonalComputer 
+        { 
+            get 
+            {
+                return Global.AllEndpointsDict[personalComputer];
+            }
+            set
+            {
+                personalComputer = value.Id;
+            }
+        }
+
+        [JsonConstructor]
+        public Person(object o = null)
+        {
+
+        }
+
+        public Person()
+        {
+            if (Global.SerializingDictionaries)
+            {
+                return;
+            }
+            this.Id = Guid.NewGuid();
+            Global.AllPersonsDict[Id] = this;
+        }
 
         public static Person FromCSV(string csvLine)
         {
             string[] values = csvLine.Split(',');
             Person person = new Person();
-            person.Guid = Guid.NewGuid();
             person.Gender = values[0];
             person.Name = values[1];
             person.Surname = values[2];

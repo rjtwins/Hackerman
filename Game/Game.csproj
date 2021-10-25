@@ -46,22 +46,25 @@
     <None Remove="Icons\OtherIcons\side-menu.png" />
     <None Remove="Icons\OtherIcons\time-management.png" />
     <None Remove="Icons\OtherIcons\wall-clock.png" />
-    <None Remove="Icons\UIPixels\BlackBlackConer.png" />
-    <None Remove="Icons\UIPixels\BlackWhiteCorner.jpg" />
-    <None Remove="Icons\UIPixels\MapBlackBorder.png" />
-    <None Remove="Icons\UIPixels\MapWhiteBorder.png" />
-    <None Remove="Icons\UIPixels\SideBorder.PNG" />
-    <None Remove="Icons\UIPixels\TaskBarClickedBackground.png" />
-    <None Remove="Icons\UIPixels\WhiteWhiteCorner.png" />
-    <None Remove="Icons\UIPixels\WindowBorder.PNG" />
-    <None Remove="Icons\UIPixels\WindowBorder.svg" />
+    <None Remove="Icons\Win98Icons\BounceIcon.png" />
+    <None Remove="Icons\Win98Icons\CommandPromptIcon.png" />
+    <None Remove="Icons\Win98Icons\Computer.png" />
+    <None Remove="Icons\Win98Icons\CPU1.png" />
+    <None Remove="Icons\Win98Icons\HardDrive.png" />
+    <None Remove="Icons\Win98Icons\Modum.png" />
+    <None Remove="Icons\Win98Icons\Ram1.png" />
+    <None Remove="Icons\Win98Icons\SystemTimeIcon.png" />
     <None Remove="Icons\WorldMapDensity.png" />
     <None Remove="Icons\WorldMapPixelHighRes.png" />
     <None Remove="Icons\WorldMapPixels.jpg" />
     <None Remove="Misc\banks.txt" />
+    <None Remove="Misc\CPU.JSON" />
     <None Remove="Misc\faux_id_fake_companies.csv" />
+    <None Remove="Misc\HDD.JSON" />
+    <None Remove="Misc\MODEM.JSON" />
     <None Remove="Misc\names.txt" />
     <None Remove="Misc\persons.csv" />
+    <None Remove="Misc\RAM.JSON" />
     <None Remove="Misc\top100000.txt" />
     <None Remove="Resources\boop.wav" />
   </ItemGroup>
@@ -84,7 +87,19 @@
     <Content Include="Misc\banks.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Misc\CPU.JSON">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Misc\HDD.JSON">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Misc\MODEM.JSON">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Misc\persons.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Misc\RAM.JSON">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Fonts\Perfect DOS VGA 437 Win.ttf" />
@@ -111,17 +126,14 @@
     <Resource Include="Icons\OtherIcons\014-programing-1.png" />
     <Resource Include="Icons\OtherIcons\015-configuration.png" />
     <Resource Include="Icons\OtherIcons\side-menu.png" />
-    <Resource Include="Icons\UIPixels\BlackBlackConer.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Icons\UIPixels\BlackWhiteCorner.jpg" />
-    <Resource Include="Icons\UIPixels\MapBlackBorder.png" />
-    <Resource Include="Icons\UIPixels\MapWhiteBorder.png" />
-    <Resource Include="Icons\UIPixels\SideBorder.PNG" />
-    <Resource Include="Icons\UIPixels\TaskBarClickedBackground.png" />
-    <Resource Include="Icons\UIPixels\WhiteWhiteCorner.png" />
-    <Resource Include="Icons\UIPixels\WindowBorder.PNG" />
-    <Resource Include="Icons\UIPixels\WindowBorder.svg" />
+    <Resource Include="Icons\Win98Icons\BounceIcon.png" />
+    <Resource Include="Icons\Win98Icons\CommandPromptIcon.png" />
+    <Resource Include="Icons\Win98Icons\Computer.png" />
+    <Resource Include="Icons\Win98Icons\CPU1.png" />
+    <Resource Include="Icons\Win98Icons\HardDrive.png" />
+    <Resource Include="Icons\Win98Icons\Modum.png" />
+    <Resource Include="Icons\Win98Icons\Ram1.png" />
+    <Resource Include="Icons\Win98Icons\SystemTimeIcon.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\WorldMapDensity.png" />
@@ -134,6 +146,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="xbloom.Spin" Version="0.1.1-beta7" />
   </ItemGroup>
   <ItemGroup>

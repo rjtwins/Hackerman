@@ -2,7 +2,9 @@
 using Game.Core;
 using Game.Core.Console;
 using Game.Core.Endpoints;
+using Game.Core.FileSystem;
 using Game.Core.Mission;
+using Game.Core.Mission.MissionTypes;
 using Game.Core.World;
 using Game.Model;
 using Game.UI;
@@ -16,11 +18,41 @@ namespace Game
 {
     public static class Global
     {
+        public static bool CanSave
+        {
+            get
+            {
+                if (
+                    ActiveTraceTracker.Instance.Tracing ||
+                    Global.RemoteSystem != null
+                    )
+                {
+                    return false;
+                }
+                return true;
+            }
+            private set
+            {
+
+            }
+        }
+
+        //Dicts for reference
+        public static Dictionary<Guid, MissionTemplate> AllMissionsDict { get; set; } = new();
+        public static Dictionary<Guid, IRCChannel> AllIRCChannelsDict { get; set; } = new();
+        public static Dictionary<Guid, Person> AllPersonsDict { get; set; } = new();
+        public static Dictionary<Guid, Endpoint> AllEndpointsDict { get; set; } = new();
+        public static Dictionary<Guid, Folder> AllFoldersDict { get; internal set; } = new();
+        public static Dictionary<Guid, Program> AllProgramsDict { get; set; } = new();
+
+        //Map:
+        public static byte[,] ByteMap { get; set; }
+
+
         //TODO revert to singelton and public statics
         public static Random Rand = new Random();
 
         public static App App;
-        public static GameState GameState;
 
         public static SplashPage SplashPage;
         public static SplashPage2 SplashPage2;
@@ -32,22 +64,31 @@ namespace Game
         public static IRC IRCWindow;
         public static SystemTime SystemTime;
 
-        public static MissionManager MissionManager;
-
         public static WorldGenerator EndpointGenerator;
         public static GameTicker EventTicker;
         public static BouncePathManager Bounce;
 
-        public static List<Endpoint> AllEndpoints = new();
-        public static List<Endpoint> CompanyEndpoints = new();
-        public static List<Endpoint> EmployeEndpoints = new();
-        public static List<Endpoint> PersonalEndpoints = new();
-        public static List<WebServerEndpoint> WebServerEndpoints = new();
-        public static List<BankEndpoint> BankEndpoints { get; set; } = new();
+        public static ReferenceList<Endpoint> AllEndpoints { get; set; } = new(AllEndpointsDict, "AllEndpointsDict");
+        public static ReferenceList<Endpoint> CompanyEndpoints { get; set; } = new(AllEndpointsDict, "AllEndpointsDict");
+        public static ReferenceList<Endpoint> EmployeEndpoints { get; set; } = new(AllEndpointsDict, "AllEndpointsDict");
+        public static ReferenceList<Endpoint> PersonalEndpoints { get; set; } = new(AllEndpointsDict, "AllEndpointsDict");
+        public static ReferenceList<Endpoint> WebServerEndpoints { get; set; } = new(AllEndpointsDict, "AllEndpointsDict");
+        public static ReferenceList<Endpoint> BankEndpoints { get; set; } = new(AllEndpointsDict, "AllEndpointsDict");
 
-        public static Person LocalPerson;
-        public static LocalSystem LocalSystem;
-        public static LocalEndpoint LocalEndpoint;
+        private static Guid localPerson;
+        public static Person LocalPerson
+        {
+            get
+            {
+                return Global.AllPersonsDict[localPerson];
+            }
+            set
+            {
+                localPerson = value.Id;
+            }
+        }
+        public static LocalEndpoint LocalEndpoint { get; set; }
+
         private static Endpoint _remoteSystem;
         public static Endpoint RemoteSystem
         {
@@ -65,11 +106,9 @@ namespace Game
         public static DateTime GameTime;
         public static bool GamePaused;
 
-        public static ActiveTraceTracker ActiveTraceTracker;
-        public static PassiveTraceTracker PassiveTraceTracker;
-
         public static bool StopCurrentProgram { get; internal set; }
         public static NotifyingList<Endpoint> BounceNetwork { get; set; } = new();
+        public static bool SerializingDictionaries { get; internal set; }
     }
 
     public enum EndpointState { ONLINE, SHUTTINGDOWN, STARTING, CRASHED, DESTROYED1, DESTROYED2, DESTROYED3 };

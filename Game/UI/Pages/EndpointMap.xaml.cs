@@ -54,6 +54,7 @@ namespace Game.UI.Pages
             Polyline.Stroke = System.Windows.Media.Brushes.Red;
             Polyline.StrokeDashArray = new DoubleCollection(new double[] { 2, 3, 2 });
             this.HasClose = false;
+            this.Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/Icons/Win98Icons/BounceIcon.png"));
         }
         private void EndpointMap_Loaded(object sender, RoutedEventArgs e)
         {
@@ -67,7 +68,7 @@ namespace Game.UI.Pages
             {
                 case NotifyingListAddOrRemove.ADD:
                     ColorEndpoint(e.Item, Brushes.Purple);
-                    e.Item.isHidden = false;
+                    e.Item.IsHidden = false;
                     RedrawEndpoints();
                     break;
                 case NotifyingListAddOrRemove.REMOVE:
@@ -101,7 +102,7 @@ namespace Game.UI.Pages
             {
                 if (e.IsLocalEndpoint)
                 {
-                    e.isHidden = false;
+                    e.IsHidden = false;
                     continue;
                 }
                 if (e.IPAddress.ToLower().Contains(filterString.ToLower()) || (e.IPAddress.ToLower() == filterString.ToLower()))
@@ -134,7 +135,7 @@ namespace Game.UI.Pages
                         TextBlockDict[e.Id].Visibility = Visibility.Hidden;
                         continue;
                     }
-                    if (e.isHidden)
+                    if (e.IsHidden)
                     {
                         ButtonDict[e.Id].Visibility = Visibility.Hidden;
                         TextBlockDict[e.Id].Visibility = Visibility.Hidden;
@@ -207,7 +208,7 @@ namespace Game.UI.Pages
                 Canvas.SetTop(txb, y - 6);
                 Canvas.SetZIndex(txb, int.MinValue);
                 Map.Children.Add(txb);
-                if (e.isHidden)
+                if (e.IsHidden)
                 {
                     btn.Visibility = Visibility.Hidden;
                     txb.Visibility = Visibility.Hidden;

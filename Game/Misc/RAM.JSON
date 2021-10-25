@@ -1,0 +1,38 @@
+﻿[
+  {
+    "hardwareType": 0,
+    "shortName": "RAM1",
+    "name": "RAM1",
+    "desc": "RAM LVL1",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 64
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "RAM2",
+    "name": "RAM2",
+    "desc": "RAM LVL2",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 128
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "RAM3",
+    "name": "RAM3",
+    "desc": "RAM LVL3",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 256
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "RAM4",
+    "name": "RAM4",
+    "desc": "RAM LVL5",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 512
+  }
+]

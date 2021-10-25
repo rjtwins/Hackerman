@@ -1,15 +1,31 @@
 ﻿using Game.Core.FileSystem;
+using Game.Model;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Game.Core.Mission.MissionTypes
 {
+    [JsonObject(MemberSerialization.OptIn)]
     internal class UploadMission : MissionTemplate
     {
-        private List<Program> FilesToUpload = new List<Program>();
-        private string FilePathForUpload = string.Empty;
-        private bool FilesGoten = false;
+        [JsonProperty]
+        private ReferenceList<Program> filesToUpload = new (Global.AllProgramsDict, "AllProgramsDict");
+        [JsonProperty]
+        private string filePathForUpload = string.Empty;
+        [JsonProperty]
+        private bool filesGoten = false;
 
-        public UploadMission(int nrOfFiles)
+        public ReferenceList<Program> FilesToUpload { get => filesToUpload; set => filesToUpload = value; }
+        public string FilePathForUpload { get => filePathForUpload; set => filePathForUpload = value; }
+        public bool FilesGoten { get => filesGoten; set => filesGoten = value; }
+        
+        [JsonConstructor]
+        public UploadMission()
+        {
+
+        }
+
+        public UploadMission(int nrOfFiles) : base()
         {
             //TODO: Base file path for upload on dificulty
             FilePathForUpload = "root";

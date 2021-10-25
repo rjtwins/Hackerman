@@ -30,6 +30,7 @@ namespace Game.UI
             ConsoleContent.AttachCommandParser(CommandParser);
             ConsoleContent.ConsoleOutput.Add("Remote Console [Version 11.0.19042.1110]");
             ConsoleContent.ConsoleOutput.Add("(c) TracON LLC. All Rights Reserved\n");
+            this.Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/Icons/Win98Icons/CommandPromptIcon.png"));
             this.HasClose = false;
         }
 

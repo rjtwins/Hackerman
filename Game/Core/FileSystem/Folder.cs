@@ -1,24 +1,86 @@
-﻿using System.Collections.Generic;
+﻿using Game.Model;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Game.Core.FileSystem
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Folder
     {
-        public AccessLevel AccessLevel = AccessLevel.USER;
-        public string Name { protected set; get; }
-        public FileSystem ParentFileSystem { protected set; get; }
-        public Folder Parent { protected set; get; }
+        [JsonProperty]
+        public Guid Id { private set; get; }
 
+        public AccessLevel AccessLevel = AccessLevel.USER;
+
+        [JsonProperty]
+        public string Name { protected set; get; }
+        [JsonProperty]
+        private Guid parentFileSystem;
+        [JsonProperty]
+        private Guid parent;
+        [JsonProperty]
         public string Owner { set; get; } = string.Empty;
-        public Dictionary<string, Folder> Folders { protected set; get; } = new Dictionary<string, Folder>();
-        public Dictionary<string, Program> Programs { private set; get; } = new Dictionary<string, Program>();
+        [JsonProperty]
+        public ReferenceDictionary<string, Folder> Folders { protected set; get; } = new(Global.AllFoldersDict, "AllFoldersDict");
+        [JsonProperty]
+        public ReferenceDictionary<string, Program> Programs { private set; get; } = new(Global.AllProgramsDict, "AllProgramsDict");
+
+        public Folder Parent
+        {
+            get
+            {
+                return Global.AllFoldersDict[parent];
+            }
+            set
+            {
+                parent = value.Id;
+            }
+        }
+        public FileSystem ParentFileSystem 
+        { 
+            get 
+            {
+                Folder toReturn = null;
+                Global.AllFoldersDict.TryGetValue(parentFileSystem, out toReturn);
+                return (FileSystem)toReturn;
+            }
+            set 
+            {
+                if(value == null)
+                {
+                    return;
+                }
+                parentFileSystem = value.Id;
+            }
+        }
+
+        [JsonConstructor]
+        public Folder()
+        {
+
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext streamingContext)
+        {
+            Programs.SetReferenceDict(Global.AllProgramsDict);
+            Folders.SetReferenceDict(Global.AllFoldersDict);
+        }
 
         public Folder(Folder parent, string name)
         {
+            this.Id = Guid.NewGuid();
+            Global.AllFoldersDict[Id] = this;
             this.Name = name;
             this.Parent = parent;
-            this.ParentFileSystem = parent.ParentFileSystem;
-            this.ParentFileSystem.AllFolders.Add(this);
+
+            if(this.ParentFileSystem != null)
+            {
+                this.ParentFileSystem = parent.ParentFileSystem;
+                this.ParentFileSystem.AllFolders.Add(this);
+            }
         }
 
         public bool IsPerson(string Person)
@@ -35,6 +97,7 @@ namespace Game.Core.FileSystem
 
         public Folder(string name)
         {
+            this.Id = Guid.NewGuid();
             this.Name = name;
         }
 

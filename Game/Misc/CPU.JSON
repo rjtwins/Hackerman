@@ -1,0 +1,37 @@
+﻿[
+  {
+    "hardwareType": 0,
+    "shortName": "CPU1",
+    "name": "CPU1",
+    "desc": "CPU LVL1",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 120
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "CPU2",
+    "name": "CPU2",
+    "desc": "CPU LVL2",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 240
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "CPU3",
+    "name": "CPU3",
+    "desc": "CPU LVL3",
+    "imageSource": "Computer.png",
+    "spec": 480
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "CPU4",
+    "name": "CPU4",
+    "desc": "CPU LVL5",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 960
+  }
+]

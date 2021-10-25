@@ -32,7 +32,7 @@ namespace Game.Core.Console.LocalPrograms
             {
                 return result;
             }
-            if (!Global.LocalSystem.RemoveBounceList(commandBody))
+            if (!LocalSystem.Intance.RemoveBounceList(commandBody))
             {
                 return "KEY " + "\"" + commandBody + "\"" + " NOT FOUND";
             }
@@ -52,7 +52,7 @@ namespace Game.Core.Console.LocalPrograms
             Endpoint[] bounceLict = null;
             try
             {
-                bounceLict = Global.LocalSystem.LoadBounceList(commandBody);
+                bounceLict = LocalSystem.Intance.LoadBounceList(commandBody);
             }
             catch (Exception ex)
             {
@@ -69,7 +69,7 @@ namespace Game.Core.Console.LocalPrograms
         private string ListSavedBounceLists(string arg)
         {
             string result = "KEY:\t\t\tNODES:\n";
-            Dictionary<string, Endpoint[]> BounceLists = Global.LocalSystem.GetSavedBouncelists();
+            Dictionary<string, Endpoint[]> BounceLists = LocalSystem.Intance.GetSavedBouncelists();
             foreach (KeyValuePair<string, Endpoint[]> entry in BounceLists)
             {
                 result += entry.Key + "\t\t\t" + entry.Value.Length + "\n";
@@ -129,13 +129,13 @@ namespace Game.Core.Console.LocalPrograms
             {
                 return result;
             }
-            Global.LocalSystem.SaveCurrentBounceListsAs(commandBody);
+            LocalSystem.Intance.SaveCurrentBounceListsAs(commandBody);
             return "SAVED: " + commandBody;
         }
 
         private string LoadBounceList(string commandBody)
         {
-            Endpoint[] bounceLict = Global.LocalSystem.LoadBounceList(commandBody);
+            Endpoint[] bounceLict = LocalSystem.Intance.LoadBounceList(commandBody);
             Global.Bounce.BounceList.Clear();
             Global.Bounce.BounceList.AddRange(bounceLict);
             Global.EndPointMap.DrawBouncePath();

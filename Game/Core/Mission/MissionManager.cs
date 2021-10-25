@@ -1,20 +1,54 @@
 ﻿using Game.Core.Events;
 using Game.Core.Mission.MissionTypes;
+using Game.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Game.Core.Mission
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class MissionManager
     {
-        public List<MissionTemplate> ActiveListings = new List<MissionTemplate>();
-        public List<MissionTemplate> AcceptedMissions = new List<MissionTemplate>();
+        private static MissionManager instance;
+        public static MissionManager Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    instance = new MissionManager();
+                }
+                return instance;
+            }
+            private set
+            {
+                
+            }
+        }
+
+        [JsonProperty]
+        public ReferenceList<MissionTemplate> ActiveListings = new (Global.AllMissionsDict, "AllMissionsDict");
+        [JsonProperty]
+        public ReferenceList<MissionTemplate> AcceptedMissions = new (Global.AllMissionsDict, "AllMissionsDict");
+        
         private readonly Random Rand = new Random();
 
+        [JsonConstructor]
         public MissionManager()
         {
+
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext streamingContext)
+        {
+            MissionManager.instance = this;
+            ActiveListings.SetReferenceDict(Global.AllMissionsDict);
+            AcceptedMissions.SetReferenceDict(Global.AllMissionsDict);
         }
 
         public void AcceptMission(MissionTemplate mission)
@@ -22,6 +56,11 @@ namespace Game.Core.Mission
             this.ActiveListings.Remove(mission);
             this.AcceptedMissions.Add(mission);
             mission.Status = MissionTemplate.MissionStatus.ACCEPTED;
+        }
+
+        public static void StaticEvaluateMissionListings(params Object[] args)
+        {
+            MissionManager.Instance.EvaluateMissionListings();
         }
 
         public void EvaluateMissionListings()
@@ -38,22 +77,23 @@ namespace Game.Core.Mission
                     });
                 }
             }
-            ActiveListings = ActiveListings.Except(toRemove).ToList();
+            toRemove.ForEach(x => ActiveListings.Remove(x));
+
 
             if (ActiveListings.Count < 5)
             {
-                //We must do this on the UI thread sinse we are eding UI elements,
-                Global.App.Dispatcher.Invoke((Action)delegate
+                //We must do this on the UI thread since we are editing UI elements,
+                Global.App.Dispatcher.Invoke(() =>
                 {
-                    this.ActiveListings.Add(MissionGenerator.GenerateMission(this.Rand.Next(Math.Max(Global.GameState.Reputation - 2, 0), Global.GameState.Reputation)));
-                    this.ActiveListings.Add(MissionGenerator.GenerateMission(this.Rand.Next(Math.Max(Global.GameState.Reputation - 2, 0), Global.GameState.Reputation)));
+                    this.ActiveListings.Add(MissionGenerator.GenerateMission(this.Rand.Next(Math.Max(GameState.Instance.Reputation - 2, 0), GameState.Instance.Reputation)));
+                    this.ActiveListings.Add(MissionGenerator.GenerateMission(this.Rand.Next(Math.Max(GameState.Instance.Reputation - 2, 0), GameState.Instance.Reputation)));
                 });
             }
 
             EventBuilder.BuildEvent("MissionListingEval")
                 .EventInterval(3600)
-                .EventVoid(this.EvaluateMissionListings)
-                .RegisterWithVoid();
+                .EventAction(MissionManager.StaticEvaluateMissionListings, new object[] { })
+                .RegisterWithAction();
         }
 
         private static bool Mission48HoursOld(MissionTemplate m)

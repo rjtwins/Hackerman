@@ -10,7 +10,6 @@ namespace Game.Core.World
     internal class TrafficSimulator
     {
         private static readonly TrafficSimulator instance = new TrafficSimulator();
-
         public static TrafficSimulator Instance
         {
             get
@@ -33,7 +32,7 @@ namespace Game.Core.World
         {
             stop = false;
             //Start the simulator on another thread.
-            Task.Factory.StartNew(() => { Simulating(); });
+            Task.Factory.StartNew(() => { Simulating(new object[] { }); });
         }
 
         public void Stop()
@@ -41,9 +40,9 @@ namespace Game.Core.World
             stop = true;
         }
 
-        private void Simulating()
+        public static void Simulating(object[] args)
         {
-            if (stop)
+            if (TrafficSimulator.Instance.stop)
             {
                 return;
             }
@@ -53,12 +52,12 @@ namespace Game.Core.World
             }
 
             //Number of traffics to simulate each run
-            SimulateTraffic();
+            TrafficSimulator.Instance.SimulateTraffic();
 
             EventBuilder.BuildEvent("TrafficSimulatorRun")
                 .EventInterval(200)
-                .EventVoid(this.Simulating)
-                .RegisterWithVoid();
+                .EventAction(TrafficSimulator.Simulating, new object[] { })
+                .RegisterWithAction();
         }
 
         private void SimulateTraffic()

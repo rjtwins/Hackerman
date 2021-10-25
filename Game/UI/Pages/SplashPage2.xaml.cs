@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Game.Core.Console;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,9 +18,9 @@ namespace Game.UI
 
         private void SplashPage2_Loaded(object sender, RoutedEventArgs e)
         {
-            this.CPUTypeTextBlock.Text += Global.LocalSystem.ProcessorNameShort;
-            this.CPUClockTextBlock.Text += Global.LocalSystem.ProcessorSpeed + "MHz";
-            this.PrimaryDiskTextBlock.Text += Global.LocalSystem.MemoryDiskName;
+            this.CPUTypeTextBlock.Text += LocalSystem.Intance.ProcessorNameShort;
+            this.CPUClockTextBlock.Text += LocalSystem.Intance.ProcessorSpeed + "MHz";
+            this.PrimaryDiskTextBlock.Text += LocalSystem.Intance.MemoryDiskName;
             PlayStartUp();
         }
 

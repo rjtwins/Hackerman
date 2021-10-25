@@ -360,9 +360,6 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContentControl}">
                         <Grid>
-                            <Grid.Background>
-                                <ImageBrush TileMode="Tile" ImageSource="/Icons/UIPixels/TaskBarClickedBackground.png" />
-                            </Grid.Background>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1" />
                                 <ColumnDefinition Width="1" />

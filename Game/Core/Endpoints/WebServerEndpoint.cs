@@ -1,4 +1,5 @@
 ﻿using Game.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,22 @@ namespace Game.Core.Endpoints
     public class WebServerEndpoint : Endpoint
     {
         #region Backing fields
-        private List<(string, Endpoint)> visitorLog = new();
+        [JsonProperty]
+        private List<(string, Guid)> visitorLog = new();
         #endregion
         #region Properties
-        public List<(string, Endpoint)> VisitorLog
+        public List<(string, Guid)> VisitorLog
         {
             get { return visitorLog; }
             set { visitorLog = value; }
         }
         #endregion
+
+        [JsonConstructor]
+        public WebServerEndpoint()
+        {
+
+        }
 
         public WebServerEndpoint(Person person, EndpointType endpointType) : base(person, endpointType)
         {
@@ -26,7 +34,7 @@ namespace Game.Core.Endpoints
 
         public void VisitedBy(Endpoint visitor)
         {
-            this.VisitorLog.Add((Global.GameTime.ToString(), visitor));
+            this.VisitorLog.Add((Global.GameTime.ToString(), visitor.Id));
             if(OnVisit != null)
             {
                 OnVisit(this, new WebEndpointVisitEventArgs(visitor));

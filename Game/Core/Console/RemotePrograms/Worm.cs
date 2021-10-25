@@ -56,7 +56,7 @@ namespace Game.Core.Console.RemotePrograms
             {
                 return true;
             }
-            if (!ranOn.ActivePrograms.TrueForAll(x => x.Id != this.Id))
+            if (!ranOn.ActivePrograms.ToList().TrueForAll(x => x.Id != this.Id))
             {
                 return true;
             }

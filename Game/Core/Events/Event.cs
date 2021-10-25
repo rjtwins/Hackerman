@@ -1,96 +1,111 @@
 ﻿using Core;
+using Newtonsoft.Json;
 using System;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace Game.Core.Events
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Event
     {
-        public Guid Id { get; protected set; } //Event ID
-        public string Name { get; protected set; } //Event Name
-        public double Interval { get; protected set; } //Time until firing of event in time units
-        public DateTime StartTime { get; protected set; } //Time when to fire event in time units
+        #region backing fields
+        [JsonProperty]
+        private Guid id; //Event ID
+        [JsonProperty]
+        private string name; //Event Name
+        [JsonProperty]
+        private double interval;//Time until firing of event in time units
+        [JsonProperty]
+        private DateTime startTime; //Time when to fire event in time units
+        [JsonProperty]
+        private string methodName = string.Empty;
+        [JsonProperty]
+        private string methodClass = string.Empty;
+        [JsonProperty]
+        private bool canceled = false;
+        #endregion
 
-        public bool Canceled = false;
-
-        private Func<object[], object[]> FunctionToRun;
-        private Action<object[]> ActionWithParameter;
-        private Action ActionToRun;
+        #region properties
+        private Delegate Action { get; set; }
+        private MethodInfo MethodInfo { get; set; }
+        private Type MethodClassType { get; set; }
         private object[] MethodArguments;
+        private enum MethodType { VOID, ACTION, FUNC, NOTHING };
+        private MethodType mType = MethodType.VOID;
+        public Guid Id { get => id; set => id = value; }
+        public string Name { get => name; set => name = value; }
+        public double Interval { get => interval; set => interval = value; }
+        public DateTime StartTime { get => startTime; set => startTime = value; }
+        public string MethodName { get => methodName; set => methodName = value; }
+        public string MethodClass { get => methodClass; set => methodClass = value; }
+        public bool Canceled { get => canceled; set => canceled = value; }
+        private MethodType MType1 { get => mType; set => mType = value; }
+        #endregion
 
-        private enum MethodType
-        { VOID, ACTION, FUNC, NOTHING };
 
-        private MethodType MType = MethodType.VOID;
+        [JsonConstructor]
+        public Event()
+        {
+
+        }
+
+        [OnDeserialized]
+        public void OnJsonDeSerialize(StreamingContext streamingContext)
+        {
+            this.MethodClassType = Type.GetType(MethodClass);
+            this.MethodInfo = MethodClassType.GetMethod(MethodName);
+        }
 
         public Event(string v)
         {
-            MType = MethodType.NOTHING;
+            MType1 = MethodType.NOTHING;
             this.Id = Guid.NewGuid();
         }
 
-        public Event(string name, double startInSecondes, Func<object[], object[]> methodToRun, object[] methodArguments)
+        public Event(string name, double startInSecondes, Delegate methodToRun, object[] methodArguments)
         {
             this.Id = Guid.NewGuid();
-            this.MType = MethodType.FUNC;
+            this.MType1 = MethodType.ACTION;
             this.Name = name;
             SetStartInterval(startInSecondes);
-            this.FunctionToRun = methodToRun;
+            this.Action = methodToRun;
             this.MethodArguments = methodArguments;
             Register();
-        }
-
-        public Event(string name, double startInSecondes, Action<object[]> methodToRun, object[] methodArguments)
-        {
-            this.Id = Guid.NewGuid();
-            this.MType = MethodType.ACTION;
-            this.Name = name;
-            SetStartInterval(startInSecondes);
-            this.ActionWithParameter = methodToRun;
-            this.MethodArguments = methodArguments;
-            Register();
-        }
-
-        public Event(string name, double startInSecondes, Action methodToRun)
-        {
-            this.Id = Guid.NewGuid();
-            this.MType = MethodType.VOID;
-            this.Name = name;
-            SetStartInterval(startInSecondes);
-            this.ActionToRun = methodToRun;
-            Register();
-        }
+        }        
 
         private void Register()
         {
+
+            this.MethodInfo = Action.Method;
+            this.MethodName = Action.Method.Name;
+            this.MethodClass = Action.Method.DeclaringType.FullName;
+            this.MethodClassType = Type.GetType(MethodClass);
+
+            if (!MethodInfo.IsStatic)
+            {
+                throw new Exception($"Delegate {methodName} is not static.\nOnly static methods can be registered at events");
+            }
+
+            if (Global.EventTicker == null)
+            {
+                return;
+            }
             Global.EventTicker.RegisterEvent(this);
         }
 
-        public virtual object[] StartEvent()
+        public virtual void StartEvent()
         {
             if (this.Canceled)
             {
-                return new object[0];
+                return;
             }
             LogEvent();
-            switch (this.MType)
+            if(this.MethodClassType == null)
             {
-                case MethodType.NOTHING:
-                    return new object[0];
-
-                case MethodType.VOID:
-                    ActionToRun();
-                    return new object[0];
-
-                case MethodType.ACTION:
-                    ActionWithParameter(MethodArguments);
-                    return new object[0];
-
-                case MethodType.FUNC:
-                    return FunctionToRun(MethodArguments);
-
-                default:
-                    return new object[0];
+                this.MethodClassType = Type.GetType(MethodClass);
             }
+            this.MethodClassType.GetMethod(MethodName).Invoke(null, new object[] { this.MethodArguments });
         }
 
         public virtual void LogEvent()

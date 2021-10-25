@@ -26,6 +26,7 @@ namespace Game.UI
             ConsoleContent.ConsoleOutput.Add("M-Soft Apature [Version 10.3]");
             ConsoleContent.ConsoleOutput.Add("(c) M-Soft LLC. All Rights Reserved\n");
             this.HasClose = false;
+            this.Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/Icons/Win98Icons/CommandPromptIcon.png"));
         }
 
         private void ConsolePageLoaded(object sender, RoutedEventArgs e)

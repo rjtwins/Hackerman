@@ -1,9 +1,38 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Game.Core
 {
     public class GameState
     {
+        private static GameState instance;
+        public static GameState Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    instance = new();
+                }
+                return instance;
+            }
+            private set
+            {
+
+            }
+        }
+
+        private GameState()
+        {
+
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext streamingContext)
+        {
+            GameState.instance = this;
+        }
+
         public string UserName { private set; get; }
         public int Reputation { private set; get; }
         public int Money { private set; get; }

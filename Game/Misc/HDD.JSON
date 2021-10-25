@@ -1,0 +1,38 @@
+﻿[
+  {
+    "hardwareType": 0,
+    "shortName": "HDD1",
+    "name": "HDD1",
+    "desc": "HDD LVL1",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec" : 256
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "HDD2",
+    "name": "HDD2",
+    "desc": "HDD LVL2",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 512
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "HDD3",
+    "name": "HDD3",
+    "desc": "HDD LVL3",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 1024
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "HDD4",
+    "name": "HDD4",
+    "desc": "HDD LVL5",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 2048
+  }
+]

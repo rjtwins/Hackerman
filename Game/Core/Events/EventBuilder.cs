@@ -6,16 +6,12 @@ namespace Game.Core.Events
         IEventName,
         IEventInterval,
         IEventStartTime,
-        IEventVoid,
-        IEventAction,
-        IEventFunction
+        IEventAction
     {
         private string _EventName;
         private double _EventInterval;
         private DateTime _EventStartTime;
-        private Action _EventVoid;
-        private Action<object[]> _EventAction;
-        private Func<object[], object[]> _EventFunc;
+        private Delegate _EventAction;
         private object[] _Arguments;
 
         private EventBuilder(string EventName)
@@ -28,22 +24,9 @@ namespace Game.Core.Events
             return new EventBuilder(EventName);
         }
 
-        public IEventVoid EventVoid(Action VoidToRun)
-        {
-            this._EventVoid = VoidToRun;
-            return this;
-        }
-
         public IEventAction EventAction(Action<object[]> ActionToRun, object[] Arguments)
         {
             this._EventAction = ActionToRun;
-            this._Arguments = Arguments;
-            return this;
-        }
-
-        public IEventFunction EventFunction(Func<object[], object[]> FuncToRun, object[] Arguments)
-        {
-            this._EventFunc = FuncToRun;
             this._Arguments = Arguments;
             return this;
         }
@@ -66,16 +49,6 @@ namespace Game.Core.Events
         {
             new Event(this._EventName, this._EventInterval, _EventAction, _Arguments);
         }
-
-        public void RegisterWithFunc()
-        {
-            new Event(this._EventName, this._EventInterval, _EventFunc, _Arguments);
-        }
-
-        public void RegisterWithVoid()
-        {
-            new Event(this._EventName, this._EventInterval, _EventVoid);
-        }
     }
 
     public interface IEventName
@@ -87,34 +60,18 @@ namespace Game.Core.Events
 
     public interface IEventInterval
     {
-        public IEventVoid EventVoid(Action VoidToRun);
-
         public IEventAction EventAction(Action<object[]> ActionToRun, object[] Arguments);
 
-        public IEventFunction EventFunction(Func<object[], object[]> FuncToRun, object[] Arguments);
     }
 
     public interface IEventStartTime
     {
-        public IEventVoid EventVoid(Action VoidToRun);
-
         public IEventAction EventAction(Action<object[]> ActionToRun, object[] Arguments);
 
-        public IEventFunction EventFunction(Func<object[], object[]> FuncToRun, object[] Arguments);
-    }
-
-    public interface IEventVoid
-    {
-        public void RegisterWithVoid();
     }
 
     public interface IEventAction
     {
         public void RegisterWithAction();
-    }
-
-    public interface IEventFunction
-    {
-        public void RegisterWithFunc();
     }
 }

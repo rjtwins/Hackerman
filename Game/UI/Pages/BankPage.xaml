@@ -35,7 +35,7 @@
                         <TextBlock Text="Select bank: " Grid.Column="0" Grid.Row="0" Height="20" Margin="0,0,0,0" />
                         <ContentControl Style="{StaticResource InlayedBorder}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,5">
                             <ComboBox x:Name="BankSelectionComboBox" Background="White" BorderBrush="White"
-                                      ItemsSource="{Binding Source={x:Static e:Global.BankEndpoints}}"
+                                      ItemsSource="{Binding Path=BankEndpoints}"
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="Name"
                                       SelectedValue="{Binding Path=SelectedBank, UpdateSourceTrigger=PropertyChanged}" />

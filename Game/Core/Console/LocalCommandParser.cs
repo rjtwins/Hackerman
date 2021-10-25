@@ -74,7 +74,7 @@ namespace Game.Core.Console
 
         private void ParseBounceCommand(string commandBody)
         {
-            ConsoleContent.ConsoleOutput.Add(Global.LocalSystem.Bouncer.ParseCommand(commandBody));
+            ConsoleContent.ConsoleOutput.Add(LocalSystem.Intance.Bouncer.ParseCommand(commandBody));
         }
 
         private void Download(string commandBody)

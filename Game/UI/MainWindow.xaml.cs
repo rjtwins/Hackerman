@@ -50,6 +50,7 @@ namespace Game.UI
             new ProgramWindow(Global.IRCWindow);
             new ProgramWindow(Global.LocalConsole);
             new ProgramWindow(Global.RemoteConsole);
+            new ProgramWindow(new HardwareWebStore());
         }
 
         public void SkipPlaySetup()
@@ -271,6 +272,26 @@ namespace Game.UI
                 SkipPlaySetup();
             }
             e.Handled = false;
+        }
+
+        private void SystemOverviewButton_Click(object sender, RoutedEventArgs e)
+        {
+            new ProgramWindow(new SystemOverview());
+        }
+
+        private void ManageSoftwareButton_Click(object sender, RoutedEventArgs e)
+        {
+            new ProgramWindow(new SoftwareOverview());
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Global.CanSave)
+            {
+                new PopUpWindow("Unable to save", "You are not able to save during an active trace or while connected to another system.", this.StartMenu);
+                return;
+            }
+            SaveLoad.Instance.Save();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Game.Core.Console;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,7 +11,7 @@ namespace Game.UI
     public partial class SplashPage : Page
     {
         //TODO supply total memory and compoments
-        public long Memory = Global.LocalSystem.GetDiskMemory();
+        public long Memory = LocalSystem.Intance.GetDiskMemory();
 
         public SplashPage()
         {
@@ -20,8 +21,8 @@ namespace Game.UI
 
         private void SplashPage_Loaded(object sender, RoutedEventArgs e)
         {
-            this.CPUTextBlock1.Text = Global.LocalSystem.ProcessorName + this.CPUTextBlock1.Text;
-            this.CPUTextBlock2.Text = Global.LocalSystem.ProcessorNameShort + " at " + Global.LocalSystem.ProcessorSpeed + "MHz";
+            this.CPUTextBlock1.Text = LocalSystem.Intance.ProcessorName + this.CPUTextBlock1.Text;
+            this.CPUTextBlock2.Text = LocalSystem.Intance.ProcessorNameShort + " at " + LocalSystem.Intance.ProcessorSpeed + "MHz";
             PlayStartUp();
         }
 

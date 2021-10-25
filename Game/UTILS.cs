@@ -1,5 +1,6 @@
 ﻿using Game.Core.Endpoints;
 using Game.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,9 +19,14 @@ namespace Game
     {
         private readonly static Random Rand = new();
         public static List<string> PasswordList = new();
-        public static List<Person> PersonList = new();
-        public static List<Company> Companies = new();
-        public static List<Company> BankList = new();
+        public static ReferenceList<Person> PersonList = new(Global.AllPersonsDict, "AllPersonsDict");
+        public static ReferenceList<Person> Companies = new(Global.AllPersonsDict, "AllPersonsDict");
+        public static ReferenceList<Person> BankList = new(Global.AllPersonsDict, "AllPersonsDict");
+
+        public static List<Hardware> CPU = new();
+        public static List<Hardware> RAM = new();
+        public static List<Hardware> MODEM = new();
+        public static List<Hardware> HDD = new();
 
         public static Color[] GlobalExcludedColors = new Color[]
         {
@@ -30,16 +36,16 @@ namespace Game
             Color.DarkSlateGray
         };
 
-        public static double[,] getBoolBitmap(Bitmap b)
+        public static byte[,] getBoolBitmap(Bitmap b)
         {
-            double[,] ar = new double[b.Width, b.Height];
+            byte[,] ar = new byte[b.Width, b.Height];
             for (int y = 0; y < b.Height; y++)
             {
                 for (int x = 0; x < b.Width; x++)
                 {
                     if (b.GetPixel(x, y).A >= 200)
                     {
-                        ar[x, y] = Math.Max((double)b.GetPixel(x, y).R, 1d) / 255d;
+                        ar[x, y] = b.GetPixel(x, y).R;
                     }
                     else
                     {
@@ -60,7 +66,7 @@ namespace Game
 
             if (e.EndpointType == EndpointType.INTERNAL || e.EndpointType == EndpointType.DATABASE)
             {
-                return (randomUser.Name, randomUser.WorkPassword, e.AllowedConnections[0]);
+                return (randomUser.Name, randomUser.WorkPassword, e.AllowedConnections.Get(0));
             }
 
             return (randomUser.Name, randomUser.WorkPassword, randomUser.PersonalComputer);
@@ -87,8 +93,9 @@ namespace Game
         /// <returns>Endpoint randomEndpoint</returns>
         internal static Endpoint PickRandomCompanyEdnpoint()
         {
-            var companyAndBankEndpoints = Global.CompanyEndpoints.Concat(Global.BankEndpoints).ToArray();
-            int randomIndex = Rand.Next(companyAndBankEndpoints.Length);
+            var companyAndBankEndpoints = Global.CompanyEndpoints.ToList();
+            companyAndBankEndpoints.AddRange(Global.BankEndpoints.ToList());
+            int randomIndex = Rand.Next(companyAndBankEndpoints.Count);
             var temp = companyAndBankEndpoints[randomIndex];
 
             if (temp.Id == Global.LocalEndpoint.Id)
@@ -144,7 +151,7 @@ namespace Game
 
         internal static BankEndpoint PickRandomBankEndpoint()
         {
-            return Global.BankEndpoints[UTILS.Rand.Next(Global.BankEndpoints.Count)];
+            return (BankEndpoint)Global.BankEndpoints[UTILS.Rand.Next(Global.BankEndpoints.Count)];
         }
 
         internal static string GetPasswordByIndex(int index)
@@ -183,7 +190,7 @@ namespace Game
 
         internal static WebServerEndpoint PickRandomWebServerEndpoint()
         {
-            return Global.WebServerEndpoints[Rand.Next(Global.WebServerEndpoints.Count)];
+            return (WebServerEndpoint)Global.WebServerEndpoints[Rand.Next(Global.WebServerEndpoints.Count)];
         }
 
         public static string GenerateRandomString(int n)
@@ -207,11 +214,25 @@ namespace Game
 
         public static Company PickRandomCompany()
         {
-            return Companies[UTILS.Rand.Next(Companies.Count)];
+            return (Company)Companies[UTILS.Rand.Next(Companies.Count)];
         }
 
-        public static void LoadExternalLists()
+        public static void LoadExternalLists(bool onlyLoadHardware = false)
         {
+            #region JSON
+            // read file into a string and deserialize JSON to a type
+            UTILS.CPU = JsonConvert.DeserializeObject<List<Hardware>>(File.ReadAllText(Environment.CurrentDirectory + "\\Misc\\CPU.json"));
+            UTILS.RAM = JsonConvert.DeserializeObject<List<Hardware>>(File.ReadAllText(Environment.CurrentDirectory + "\\Misc\\RAM.json"));
+            UTILS.MODEM = JsonConvert.DeserializeObject<List<Hardware>>(File.ReadAllText(Environment.CurrentDirectory + "\\Misc\\MODEM.json"));
+            UTILS.HDD = JsonConvert.DeserializeObject<List<Hardware>>(File.ReadAllText(Environment.CurrentDirectory + "\\Misc\\HDD.json"));
+            #endregion
+
+            if (onlyLoadHardware)
+            {
+                return;
+            }
+
+            #region Line and comma stuff
             //Passwords
             using (FileStream fs = File.Open(Environment.CurrentDirectory + "\\Misc\\top100000.txt", FileMode.Open))
             using (BufferedStream bs = new BufferedStream(fs))
@@ -259,6 +280,7 @@ namespace Game
                     UTILS.Companies.Add(Company.FromCSV(s));
                 }
             }
+            #endregion
         }
 
         /// <summary>

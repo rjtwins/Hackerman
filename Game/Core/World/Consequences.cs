@@ -15,7 +15,12 @@
             }
         }
 
-        public void ActiveTraceCaught(params object[] arguments)
+        public static void StaticActiveTraceCaught(object[] args)
+        {
+            Consequences.Instance.ActiveTraceCaught(args);
+        }
+
+        public void ActiveTraceCaught(object[] args)
         {
             System.Media.SystemSounds.Asterisk.Play();
         }

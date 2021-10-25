@@ -1,12 +1,26 @@
 ﻿using Game.Core.FileSystem;
+using Game.Model;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Game.Core.Mission.MissionTypes
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class StealMission : MissionTemplate
     {
-        private List<Program> FilesToSteal = new List<Program>();
-        private string AllFilesString = string.Empty;
+        [JsonProperty]
+        private ReferenceList<Program> filesToSteal = new (Global.AllProgramsDict, "AllProgramsDict");
+        [JsonProperty]
+        private string allFilesString = string.Empty;
+
+        public ReferenceList<Program> FilesToSteal { get => filesToSteal; set => filesToSteal = value; }
+        public string AllFilesString { get => allFilesString; set => allFilesString = value; }
+
+        [JsonConstructor]
+        public StealMission()
+        {
+
+        }
 
         public StealMission(int nrOfFiles) : base()
         {

@@ -3,6 +3,7 @@ using Game.Core.FileSystem;
 using Game.Core.UIPrograms;
 using Game.Model;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -28,6 +29,7 @@ namespace Game.UI.Pages
         private string receiver = string.Empty;
         private BankEndpoint bankLoggedInto;
         private string receiverBank;
+        private List<BankEndpoint> bankEndpoints = new();
         #endregion
 
         #region Properties
@@ -128,6 +130,19 @@ namespace Game.UI.Pages
             {
                 receiverBank = value;
                 OnPropertyChanged("ReceiverBank");
+            }
+        }
+        public List<BankEndpoint> BankEndpoints
+        {
+            get
+            {
+                this.bankEndpoints.Clear();
+                Global.BankEndpoints.ToList().ForEach(x => this.bankEndpoints.Add((BankEndpoint)x));
+                return bankEndpoints;
+            }
+            private set
+            {
+                bankEndpoints = value;
             }
         }
         #endregion

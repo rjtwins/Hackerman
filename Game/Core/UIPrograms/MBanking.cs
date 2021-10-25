@@ -13,7 +13,6 @@ namespace Game.Core.UIPrograms
 {
     public class MBanking : Program
     {
-
         private BankPage _bankPage;
         public BankPage BankPage
         {

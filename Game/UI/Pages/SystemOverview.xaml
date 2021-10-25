@@ -5,9 +5,71 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Game.UI.Pages"
       mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="System">
+      Title="System" Background="Silver"
+      TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
 
-    <Grid>
-    </Grid>
+    <Viewbox>
+        <Canvas Width="600" Height="300">
+            <ContentControl x:Uid="System Hardware" Style="{StaticResource ControllBox}" Padding="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <Grid Margin="10,10,10,10" Width="565" Height="265">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Image Source="/Icons/Win98Icons/Computer.png" Width="100" Grid.RowSpan="5" Grid.ColumnSpan="5" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    <!--Pointers-->
+                    <Border Grid.Column="0" Grid.Row="0" BorderThickness="2,0,0,2" BorderBrush="Black" Padding="0,0,0,0" Panel.ZIndex="-1" Margin="66,137,40,15"/>
+                    <Border Grid.Column="1" Grid.Row="0" BorderThickness="0,0,2,2" BorderBrush="Black" Padding="0,0,0,0" Panel.ZIndex="-1" Margin="55,136,91,15"/>
+                    <!--Components-->
+                    <ContentControl x:Name="CPUBox" x:Uid="CPU" Grid.Row="0" Grid.Column="0" Style="{StaticResource ControllBox}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" Padding="0,0,0,0" Width="200">
+                        <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Height="50" Margin="2,2,4,0">
+                            <Image Source="/Icons/Win98Icons/CPU1.png" Margin="0,0,5,0" />
+
+                            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <TextBlock x:Name="CPUNameBox" TextWrapping="Wrap" LineStackingStrategy="MaxHeight" HorizontalAlignment="Stretch" Text="{Binding Path=CPUName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock x:Name="CPUStatsBox" Text="{Binding Path=CPUStats, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ContentControl>
+
+                    <ContentControl x:Name="RAMBox" x:Uid="RAM" Grid.Row="0" Grid.Column="1" Style="{StaticResource ControllBox}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,0,0" Padding="0,0,0,0" Width="200">
+                        <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="50" Margin="2,2,4,0">
+                            <Image Source="/Icons/Win98Icons/Ram1.png" HorizontalAlignment="Center" VerticalAlignment="Stretch" Margin="0,0,5,0" />
+
+                            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <TextBlock x:Name="RAMNameBox" Text="{Binding Path=RAMName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock x:Name="RAMStatsBox" Text="{Binding Path=RAMStats, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ContentControl>
+
+
+                    <ContentControl x:Name="MemoryBox" x:Uid="Storage" Grid.Row="1" Grid.Column="1" Style="{StaticResource ControllBox}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,0,0" Padding="0,0,0,0" Width="200">
+                        <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="50" Margin="2,2,4,0">
+                            <Image Source="/Icons/Win98Icons/HardDrive.png" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,5,5" Width="45" Height="45" />
+
+                            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <TextBlock x:Name="MemoryNameBox" Text="{Binding Path=MemoryName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock x:Name="MemoryStatsBox" Text="{Binding Path=MemoryStats, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ContentControl>
+                    <ContentControl x:Name="ModumBox" x:Uid="Modum" Grid.Row="1" Grid.Column="0" Style="{StaticResource ControllBox}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,0,0,0" Padding="0,0,0,0" Width="200">
+                        <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="50" Margin="2,2,4,0">
+                            <Image Source="/Icons/Win98Icons/Modum.png" HorizontalAlignment="Center" VerticalAlignment="Stretch" Height="47" Width="45" Margin="2,0,5,0" />
+
+                            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <TextBlock x:Name="ModumNameBox" Text="{Binding Path=ModumName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock x:Name="ModumStatsBox" Text="{Binding Path=ModumStats, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ContentControl>
+                </Grid>
+            </ContentControl>
+        </Canvas>
+    </Viewbox>
 </local:DisplayablePage>

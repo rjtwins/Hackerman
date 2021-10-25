@@ -60,8 +60,6 @@ namespace Game.Core.Console.LocalPrograms
             {
                 this.PasswordToGet = PossiblePassword;
             }
-            Global.RemoteSystem.UnderDictHack();
-
             this.Running = true;
 
             Debug.WriteLine("StartinDictHack with Speed mod:" + this.HackSpeed);
@@ -72,7 +70,7 @@ namespace Game.Core.Console.LocalPrograms
 
         private void CalculateHackingSpeed()
         {
-            this.HackSpeed = 1 / (DefaultHackSpeed * (1 + ((Global.LocalSystem.ProcessorSpeed - Global.LocalSystem.StartingProcessorSpeed) / 1000d)));
+            this.HackSpeed = 1 / (DefaultHackSpeed * (1 + ((LocalSystem.Intance.ProcessorSpeed - LocalSystem.Intance.StartingProcessorSpeed) / 1000d)));
         }
 
         private void HackOnRemote(string userName)

@@ -1,0 +1,38 @@
+﻿[
+  {
+    "hardwareType": 0,
+    "shortName": "MODEM1",
+    "name": "MODEM1",
+    "desc": "MODEM LVL1",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 58
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "MODEM2",
+    "name": "MODEM2",
+    "desc": "MODEM LVL2",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 116
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "MODEM3",
+    "name": "MODEM3",
+    "desc": "MODEM LVL3",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 232
+  },
+  {
+    "hardwareType": 0,
+    "shortName": "MODEM4",
+    "name": "MODEM4",
+    "desc": "MODEM LVL5",
+    "imageSource": "Computer.png",
+    "price": 0,
+    "spec": 464
+  }
+]

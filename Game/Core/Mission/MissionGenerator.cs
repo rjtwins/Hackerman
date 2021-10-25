@@ -89,7 +89,7 @@ namespace Game.Core.Mission
             m.RepReward = dificulty;
             m.MissionChannel = UTILS.GenerateRandomString(7);
             m.Status = MissionTemplate.MissionStatus.ONOFFER;
-            GenericMissionDialogResolver dialogResolver = new GenericMissionDialogResolver(m.MissionChannel);
+            GenericMissionDialogResolver dialogResolver = new GenericMissionDialogResolver(m);
             dialogResolver.SelectSequenceFromMissionDictionaries(PickRandomSequeceWithMissionType(missionType));
             IRCChannel iRCChannel = new IRCChannel(m.MissionChannel, dialogResolver);
             iRCChannel.Mission = m;

@@ -1,45 +1,99 @@
 ﻿using Game.Core.Endpoints;
 using Game.UI;
+using Newtonsoft.Json;
 using System;
 
 namespace Game.Core.FileSystem
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Program : ICloneable
     {
-        public Folder Folder { set; get; }
-        public string Name { protected set; get; }
-        public byte[] content { private set; get; }
-        public bool Executable = false;
-        public Guid Id { protected set; get; }
-        public bool IsMalicious = false;
-        protected bool Running = false;
-        protected SoftwareLevel SoftwareLevel = SoftwareLevel.LVL0;
-        public ProgramWindow ProgramWindow { get; protected set; }
-        private bool NeedsConnection { get; set; }
+        private Guid folder;
 
-        private Endpoint _ranOn = null;
-
-        protected bool RunOnRemote { get; set; } = false;
+        [JsonIgnore]
+        public Folder Folder
+        {
+            get
+            {
+                return Global.AllFoldersDict[folder];
+            }
+            set
+            {
+                folder = value.Id;
+            }
+        }
+        [JsonIgnore]
         public Endpoint RanOn
         {
-            get { return _ranOn; }
-            protected set { _ranOn = value; }
+            get { return Global.AllEndpointsDict[ranOn]; }
+            protected set { ranOn = value.Id; }
         }
 
-        public Program(string name, bool executable = false, bool needsConnection = false)
+        public string Name { get => name; set => name = value; }
+        public byte[] Content { get => content; set => content = value; }
+        public bool Executable { get => executable; set => executable = value; }
+        public bool IsWatched { get => isWatched; set => isWatched = value; }
+        public Guid Id { get => id; set => id = value; }
+        public bool IsMalicious { get => isMalicious; set => isMalicious = value; }
+        public bool Running { get => running; set => running = value; }
+        public SoftwareLevel SoftwareLevel { get => softwareLevel; set => softwareLevel = value; }
+        public ProgramWindow ProgramWindow { get => programWindow; set => programWindow = value; }
+        public bool NeedsConnection { get => needsConnection; set => needsConnection = value; }
+        public double AdminDetectionProp { get => adminDetectionProp; set => adminDetectionProp = value; }
+        public bool RunOnRemote { get => runOnRemote; set => runOnRemote = value; }
+
+        [JsonProperty]
+        private string name;
+        [JsonProperty]
+        private byte[] content = null;
+        [JsonProperty]
+        private bool executable = false;
+        [JsonProperty]
+        private bool isWatched = false;
+        [JsonProperty]
+        private Guid id;
+        [JsonProperty]
+        private bool isMalicious = false;
+        [JsonProperty]
+        private bool running = false;
+        [JsonProperty]
+        private SoftwareLevel softwareLevel = SoftwareLevel.LVL0;
+        [JsonProperty]
+        private ProgramWindow programWindow;
+        [JsonProperty]
+        private bool needsConnection;
+        [JsonProperty]
+        private Guid ranOn;
+        [JsonProperty]
+        private double adminDetectionProp = 0;
+        [JsonProperty]
+        private bool runOnRemote = false;
+
+        [JsonConstructor]
+        public Program()
+        {
+
+        }
+
+        public Program(string name, bool executable = false, bool needsConnection = false, bool isWatched = false)
         {
             this.Name = name;
             this.Executable = executable;
             this.Id = Guid.NewGuid();
             this.NeedsConnection = needsConnection;
-            Random rand = new Random();
-            content = new byte[512];
-            rand.NextBytes(content);
+            this.IsWatched = isWatched;
+            Global.AllProgramsDict[Id] = this;
         }
 
         public override string ToString()
         {
-            return System.Text.Encoding.ASCII.GetString(this.content);
+            if(this.Content == null)
+            {
+                Random rand = new Random();
+                Content = new byte[512];
+                rand.NextBytes(Content);
+            }
+            return System.Text.Encoding.ASCII.GetString(this.Content);
         }
 
         public object Clone()

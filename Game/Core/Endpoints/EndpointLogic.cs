@@ -1,10 +1,13 @@
-﻿using Game.Core.FileSystem;
+﻿using Game.Core.Console;
+using Game.Core.FileSystem;
 using Game.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Game.Core.Endpoints
@@ -13,216 +16,222 @@ namespace Game.Core.Endpoints
     /// The endpoint represents a machine that can be connected to.
     /// It has a filesystem to interact with.
     /// </summary>
+    [JsonObject(MemberSerialization.OptIn)]
     public partial class Endpoint
     {
         #region Backing fields
-        private List<Program> _activePrograms = new();
-        private List<LogItem> _systemLog = new();
-        private bool _isLocalEndpoint = false;
-        private bool _connectedToo = false;
-        private EndpointEvents _endpointEvents;
-        private DateTime _nextAdminCheckDate;
-        private DateTime _nextRestartDate;
-        private List<Endpoint> _allowedConnections = new();
-        private List<(string, string)> _LoginHistory = new();
-        private bool _monitorActive = false;
-        private bool _firewallActive = false;
-        private List<Endpoint> _watchedEndpoints = new();
-        private Dictionary<Person, string> _usernamePasswordDict = new();
-        private Dictionary<string, AccessLevel> _usernamePasswordAccesDict = new();
-        private AccessLevel _accesLevel = AccessLevel.USER;
-        private string _currentUsername = string.Empty;
-        private string _currentPassword = string.Empty;
-        private IPAddress _iPAddress;
-        private Guid _id;
-        private bool _softConnection;
-        private FileSystem.FileSystem _fileSystem;
-        private Endpoint _connectedFrom;
-        private HashSet<Endpoint> _loggedInEndpoints = new();
-        private HashSet<string> _loggedInUsernames = new();
+        [JsonProperty]
+        private ReferenceList<Program> activePrograms = new(Global.AllProgramsDict, "AllProgramsDict");
+        [JsonProperty]
+        private List<LogItem> systemLog = new();
+        private bool isLocalEndpoint = false;
+        [JsonProperty]
+        private bool connectedToo = false;
+        [JsonProperty]
+        private EndpointEvents endpointEvents;
+        [JsonProperty]
+        private DateTime nextAdminCheckDate;
+        [JsonProperty]
+        private DateTime nextRestartDate;
+        [JsonProperty]
+        private ReferenceList<Endpoint> allowedConnections = new(Global.AllEndpointsDict, "AllEndpointsDict");
+        [JsonProperty]
+        private List<(string, string)> loginHistory = new();
+        [JsonProperty]
+        private bool firewallActive = false;
+        [JsonProperty]
+        private ReferenceList<Endpoint> watchedEndpoints = new(Global.AllEndpointsDict, "AllEndpointsDict");
+        [JsonProperty]
+        private Dictionary<Guid, string> usernamePasswordDict = new();
+        [JsonProperty]
+        private Dictionary<string, AccessLevel> usernamePasswordAccesDict = new();
+        [JsonProperty]
+        private AccessLevel accesLevel = AccessLevel.USER;
+        [JsonProperty]
+        private string currentUsername = string.Empty;
+        [JsonProperty]
+        private string currentPassword = string.Empty;
+        [JsonProperty]
+        private string iPAddress;
+        [JsonProperty]
+        private Guid id;
+        [JsonProperty]
+        private bool softConnection;
+        [JsonProperty]
+        private FileSystem.FileSystem fileSystem;
+        [JsonProperty]
+        private Endpoint connectedFrom;
+        [JsonProperty]
+        private HashSet<Endpoint> loggedInEndpoints = new();
+        [JsonProperty]
+        private HashSet<string> loggedInUsernames = new();
+        [JsonProperty]
         #endregion
 
         #region Properties
         public bool IsLocalEndpoint
         {
-            get { return _isLocalEndpoint; }
-            set { _isLocalEndpoint = value; }
+            get { return isLocalEndpoint; }
+            set { isLocalEndpoint = value; }
         }
         public bool ConnectedToo
         {
-            get { return _connectedToo; }
-            set { _connectedToo = value; }
+            get { return connectedToo; }
+            set { connectedToo = value; }
         }
         public EndpointEvents EndpointEvents
         {
-            get { return _endpointEvents; }
-            set { _endpointEvents = value; }
+            get { return endpointEvents; }
+            set { endpointEvents = value; }
         }
         public DateTime NextAdminCheckDate
         {
-            get { return _nextAdminCheckDate; }
-            set { _nextAdminCheckDate = value; }
+            get { return nextAdminCheckDate; }
+            set { nextAdminCheckDate = value; }
         }
         public DateTime NextRestartDate
         {
-            get { return _nextRestartDate; }
-            set { _nextRestartDate = value; }
+            get { return nextRestartDate; }
+            set { nextRestartDate = value; }
         }
-        public List<Endpoint> AllowedConnections
+        public ReferenceList<Endpoint> AllowedConnections
         {
-            get { return _allowedConnections; }
-            set { _allowedConnections = value; }
+            get { return allowedConnections; }
+            set { allowedConnections = value; }
         }
         public List<(string,string)> LoginHistory
         {
-            get { return _LoginHistory; }
-            set { _LoginHistory = value; }
+            get { return loginHistory; }
+            set { loginHistory = value; }
         }
         public bool MonitorActive
         {
-            get { return _monitorActive; }
-            set { _monitorActive = value; }
+            get { return this.EndpointMonitor.MonitorActive; }
+            private set { this.EndpointMonitor.MonitorActive = value; }
         }
+        private EndpointMonitor EndpointMonitor { get; set; }
         public bool FirewallActive
         {
-            get { return _firewallActive; }
-            set { _firewallActive = value; }
+            get { return firewallActive; }
+            set { firewallActive = value; }
         }
-        public List<Program> ActivePrograms
+        public ReferenceList<Program> ActivePrograms
         {
-            get { return _activePrograms; }
-            set { _activePrograms = value; }
+            get { return activePrograms; }
+            set { activePrograms = value; }
         }
         public List<LogItem> SystemLog
         {
-            get { return _systemLog; }
-            set { _systemLog = value; }
+            get { return systemLog; }
+            set { systemLog = value; }
         }
-        public List<Endpoint> WatchedEndpoints
+        public ReferenceList<Endpoint> WatchedEndpoints
         {
-            get { return _watchedEndpoints; }
-            set { _watchedEndpoints = value; }
+            get { return watchedEndpoints; }
+            set { watchedEndpoints = value; }
         }
-        public Dictionary<Person, string> UsernamePasswordDict
+        public Dictionary<Guid, string> UsernamePasswordDict
         {
-            get { return _usernamePasswordDict; }
-            set { _usernamePasswordDict = value; }
+            get { return usernamePasswordDict; }
+            set { usernamePasswordDict = value; }
         }
         public Dictionary<string, AccessLevel> UsernamePasswordAccessDict
         {
-            get { return _usernamePasswordAccesDict; }
-            set { _usernamePasswordAccesDict = value; }
+            get { return usernamePasswordAccesDict; }
+            set { usernamePasswordAccesDict = value; }
         }
         public AccessLevel AccessLevel
         {
-            get { return _accesLevel; }
-            set { _accesLevel = value; }
+            get { return accesLevel; }
+            set { accesLevel = value; }
         }
         public string CurrentUsername
         {
-            get { return _currentUsername; }
-            set { _currentUsername = value; }
+            get { return currentUsername; }
+            set { currentUsername = value; }
         }
         public string CurrentPassword
         {
-            get { return _currentPassword; }
-            set { _currentPassword = value; }
+            get { return currentPassword; }
+            set { currentPassword = value; }
         }
         public string IPAddress
         {
             get
             {
-                return _iPAddress.ToString();
+                return iPAddress.ToString();
             }
             protected set
             {
-                this._iPAddress = System.Net.IPAddress.Parse(value);
+                this.iPAddress = value;
             }
         }
         public Guid Id
         {
-            get { return _id; }
-            private set { _id = value; }
+            get { return id; }
+            private set { id = value; }
         }
         public bool SoftConnection
         {
-            get { return _softConnection; }
-            set { _softConnection = value; }
+            get { return softConnection; }
+            set { softConnection = value; }
         }
         public FileSystem.FileSystem FileSystem
         {
-            get { return _fileSystem; }
-            set { _fileSystem = value; }
+            get { return fileSystem; }
+            set { fileSystem = value; }
         }
         public Endpoint ConnectedFrom
         {
-            get { return _connectedFrom; }
-            set { _connectedFrom = value; }
+            get { return connectedFrom; }
+            set { connectedFrom = value; }
         }
         public HashSet<Endpoint> LoggedInEndpoints
         {
-            get { return _loggedInEndpoints; }
-            set { _loggedInEndpoints = value; }
+            get { return loggedInEndpoints; }
+            set { loggedInEndpoints = value; }
         }
         public HashSet<string> LoggedInUsernames
         {
-            get { return _loggedInUsernames; }
-            set { _loggedInUsernames = value; }
+            get { return loggedInUsernames; }
+            set { loggedInUsernames = value; }
         }
         #endregion
-
-        #region Event handlers
-        public delegate void EndpointDisconnectedEventHandler(object sender, EndpointDisconnectedEventArgs e);
-
-        public event EndpointDisconnectedEventHandler OnDisconnected;
-
-        public delegate void EndpointConnectedEventHandler(object sender, EndpointConnectedEventArgs e);
-
-        public event EndpointConnectedEventHandler OnConnected;
-
-        public delegate void EndpointLoginEventHandler(object sender, EndpointLoginEventArgs e);
-
-        /// <summary>
-        /// Fired when this endpoint is logged into by another endpoint
-        /// </summary>
-        public event EndpointLoginEventHandler OnLogin;
-
-        public delegate void EndpointFailedLoginEventHandler(object sender, EndpointLoginEventArgs e);
-
-        /// <summary>
-        /// Fired when this endpoint is logged into by another endpoint
-        /// </summary>
-        public event EndpointFailedLoginEventHandler OnFailedLogin;
-
-        public delegate void EndpointLoggedInEventHandler(object sender, EndpointLoggedInEventArgs e);
-
-        /// <summary>
-        /// Fired when this enpoint logges into another endpoint
-        /// </summary>
-        public event EndpointLoggedInEventHandler OnLoggedIn;
-        #endregion
-
-        /// <summary>
-        /// Under dictionary attack, will always tricker a trace track
-        /// </summary>
-        public void UnderDictHack()
-        {
-            if (((int)this.Monitor) <= ((int)SoftwareLevel.LVL0))
-            {
-                return;
-            }
-            
-        }
-
         //TODO: make it so if you spoof the network it will not block you.
+
+
+        [JsonConstructor]
+        public Endpoint()
+        {
+
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext streamingContext)
+        {
+            AllowedConnections.SetReferenceDict(Global.AllEndpointsDict);
+            ActivePrograms.SetReferenceDict(Global.AllProgramsDict);
+            WatchedEndpoints.SetReferenceDict(Global.AllEndpointsDict);
+        }
+
+        public SoftwareLevel GetMonitorLevel()
+        {
+            return this.EndpointMonitor.Level;
+        }
+
+        public void SetMonitorLevel(SoftwareLevel value)
+        {
+            this.EndpointMonitor.Level = value;
+        }
+
         public bool CanBreachFirewall()
         {
             if (!HasFirewall())
                 return true;
             if (!FirewallActive)
                 return true;
-            if (((int)Global.LocalSystem.FirewallBypass) > ((int)this.Firewall)
-                && Global.LocalSystem.FirewallBypassActive)
+            if (((int)LocalSystem.Intance.FirewallBypass) > ((int)this.Firewall)
+                && LocalSystem.Intance.FirewallBypassActive)
             {
                 return true;
             }
@@ -240,8 +249,6 @@ namespace Game.Core.Endpoints
 
         private void SetupEndpoint()
         {
-            this.Id = Guid.NewGuid();
-
             if (this.IsLocalEndpoint)
             {
                 return;
@@ -251,7 +258,7 @@ namespace Game.Core.Endpoints
             var data = new byte[4];
             new Random(Id.GetHashCode()).NextBytes(data);
             data[0] |= 1;
-            _iPAddress = new IPAddress(data);
+            iPAddress = new IPAddress(data).ToString();
             this.FileSystem = new FileSystem.FileSystem(this);
 
             switch (this.EndpointType)
@@ -281,7 +288,7 @@ namespace Game.Core.Endpoints
 
                 case EndpointType.DATABASE:
                     this.Name = this.Owner.Name + " Storage Server";
-                    this.isHidden = true;
+                    this.IsHidden = true;
                     break;
 
                 case EndpointType.GOVERMENT:
@@ -292,6 +299,7 @@ namespace Game.Core.Endpoints
                     break;
             }
             this.EndpointEvents = new EndpointEvents(this);
+            this.EndpointMonitor = new(this);
         }
 
         internal string PrintSchedule()
@@ -315,7 +323,7 @@ namespace Game.Core.Endpoints
         {
             foreach (var person in UsernamePasswordDict.Keys)
             {
-                if (person.Name != user)
+                if (Global.AllPersonsDict[person].Name != user)
                 {
                     continue;
                 }
@@ -326,7 +334,7 @@ namespace Game.Core.Endpoints
 
         internal string GetPassword(Person user)
         {
-            if (UsernamePasswordDict.TryGetValue(user, out string password))
+            if (UsernamePasswordDict.TryGetValue(user.Id, out string password))
             {
                 return password;
             }
@@ -337,7 +345,7 @@ namespace Game.Core.Endpoints
         {
             int nrUsers = this.UsernamePasswordDict.Keys.Count;
 
-            Person randomUser = UsernamePasswordDict.Keys.ToList()[Global.Rand.Next(nrUsers)];
+            Person randomUser = Global.AllPersonsDict[UsernamePasswordDict.Keys.ToList()[Global.Rand.Next(nrUsers)]];
 
             if (nrUsers == 1)
             {
@@ -364,8 +372,9 @@ namespace Game.Core.Endpoints
         internal string PrintUsers()
         {
             string result = "USER:\t\tTYPE:\n";
-            foreach (Person person in this.UsernamePasswordDict.Keys)
+            foreach (Guid personId in this.UsernamePasswordDict.Keys)
             {
+                Person person = Global.AllPersonsDict[personId];
                 result += person.Name + "\t\t" + this.UsernamePasswordAccessDict[person.Name + person.WorkPassword].ToString() + "\n";
             }
             return result;
@@ -381,7 +390,7 @@ namespace Game.Core.Endpoints
 
         public void AddUser(Person person, string password, AccessLevel accessLevel)
         {
-            this.UsernamePasswordDict[person] = password;
+            this.UsernamePasswordDict[person.Id] = password;
             this.UsernamePasswordAccessDict[person.Name + password] = accessLevel;
             Folder newFolder = FileSystem.MakeFolderFromPath(@"root\users\" + person.Name);
             if (newFolder != null)
@@ -404,17 +413,16 @@ namespace Game.Core.Endpoints
         {
             this.SoftConnection = false;
             Global.RemoteSystem = null;
+            if (OnDisconnected == null)
+            {
+                return;
+            }
+            OnDisconnected(this, new(this.ConnectedFrom));
             LogDisconnected();
             FileSystem.ResetConnection();
             CurrentUsername = string.Empty;
             CurrentPassword = string.Empty;
             this.ConnectedFrom = null;
-            EndpointDisconnectedEventArgs args = new EndpointDisconnectedEventArgs("");
-            if (OnDisconnected == null)
-            {
-                return;
-            }
-            OnDisconnected(this, args);
         }
 
         internal string CurrentPath()
@@ -438,7 +446,12 @@ namespace Game.Core.Endpoints
 
         internal Program GetFile(string folderPath, string fileName)
         {
-            return this.FileSystem.GetFileFromPath(folderPath, fileName, CurrentUsername);
+            Program p = this.FileSystem.GetFileFromPath(folderPath, fileName, CurrentUsername);
+            if (this.OnFileGet != null)
+            {
+                this.OnFileGet(this, new(this.ConnectedFrom, p));
+            }
+            return p;
         }
 
         internal string TryPrintFile(string command)
@@ -449,13 +462,17 @@ namespace Game.Core.Endpoints
         internal string RunProgram(string path)
         {
             this.LogFileRan(path);
+            if(this.OnFileRun != null)
+            {
+                OnFileRun(this, new(this.ConnectedFrom, FileSystem.GetFileFromPath(path)));
+            }
             return FileSystem.TryRunFile(path);
         }
 
         internal string PrintActivePrograms()
         {
             string result = string.Empty;
-            this.ActivePrograms.ForEach(x => result += x.Name);
+            this.ActivePrograms.ForEach(x => result += Global.AllEndpointsDict[x].Name);
             return result;
         }
 
@@ -468,7 +485,11 @@ namespace Game.Core.Endpoints
         internal string UploadFileToo(string path, Program p, bool log = true, bool o = false)
         {
             string result = this.FileSystem.CopyFileToFonder(path, p, CurrentUsername, o);
-            if (result == "Done" && log && !this.IsLocalEndpoint)
+            if (result != "Done") 
+            {
+                return result;
+            }
+            if(log && !this.IsLocalEndpoint)
             {
                 this.SystemLog.Add(LogItemBuilder
                     .Builder()
@@ -478,13 +499,21 @@ namespace Game.Core.Endpoints
                     .AccesLevel(this.AccessLevel)
                     .TimeStamp(Global.GameTime));
             }
+            if(this.OnFileAdd != null)
+            {
+                this.OnFileAdd(this, new(ConnectedFrom, p));
+            }
             return result;
         }
 
         internal string RemoveFileFrom(string path, Program p, bool log = true)
         {
             string result = this.FileSystem.RemoveFileFromFolder(path, p, CurrentUsername);
-            if (result == "Done" && log)
+            if (result != "Done") 
+            {
+                return result;
+            }
+            if (log)
             {
                 this.SystemLog.Add(LogItemBuilder
                     .Builder()
@@ -493,6 +522,10 @@ namespace Game.Core.Endpoints
                     .User(this.CurrentUsername)
                     .AccesLevel(this.AccessLevel)
                     .TimeStamp(Global.GameTime));
+            }
+            if(this.OnFileRemove != null)
+            {
+                this.OnFileRemove(this, new(ConnectedFrom, p));
             }
             throw new NotImplementedException();
         }
@@ -792,7 +825,7 @@ namespace Game.Core.Endpoints
             FileSystem.ResetConnection();
             CurrentUsername = string.Empty;
             CurrentPassword = string.Empty;
-            this.FileSystem.AllFolders.ForEach(folder => folder.Programs.Values.ToList().ForEach(program => program.StopProgram()));
+            this.FileSystem.AllFolders.ToList().ForEach(folder => folder.Programs.Values.ToList().ForEach(program => program.StopProgram()));
 
             if (Global.RemoteSystem == null)
             {
@@ -841,11 +874,11 @@ namespace Game.Core.Endpoints
 
             this.EndpointEvents.ScheduleNextAdminCheck();
 
-            void LoginIfAdmin(KeyValuePair<Person, string> x)
+            void LoginIfAdmin(KeyValuePair<Guid, string> x)
             {
-                if (UsernamePasswordAccessDict[x.Key.Name + x.Value] == AccessLevel.ADMIN)
+                if (UsernamePasswordAccessDict[Global.AllPersonsDict[x.Key].Name + x.Value] == AccessLevel.ADMIN)
                 {
-                    this.MockLocalLogInToo(x.Key.Name, x.Value);
+                    this.MockLocalLogInToo(Global.AllPersonsDict[x.Key].Name, x.Value);
                 }
             }
         }
@@ -913,58 +946,6 @@ namespace Game.Core.Endpoints
         public List<LogItem> GetSystemLogs()
         {
             return this.SystemLog;
-        }
-    }
-
-    public class EndpointConnectedEventArgs : EventArgs
-    {
-        public string Status { get; private set; }
-
-        public EndpointConnectedEventArgs(string status)
-        {
-            Status = status;
-        }
-    }
-
-    public class EndpointDisconnectedEventArgs : EventArgs
-    {
-        public string Status { get; private set; }
-
-        public EndpointDisconnectedEventArgs(string status)
-        {
-            Status = status;
-        }
-    }
-
-    public class EndpointLoginEventArgs : EventArgs
-    {
-        public Endpoint From;
-        public string Username;
-        public string Password;
-        public EndpointHashing EndpointHashing;
-
-        public EndpointLoginEventArgs(Endpoint from, string username, string password, EndpointHashing endpointHashing)
-        {
-            From = from;
-            Username = username;
-            Password = password;
-            EndpointHashing = endpointHashing;
-        }
-    }
-
-    public class EndpointLoggedInEventArgs : EventArgs
-    {
-        public Endpoint Too;
-        public string Username;
-        public string Password;
-        public EndpointHashing EndpointHashing;
-
-        public EndpointLoggedInEventArgs(Endpoint too, string username, string password, EndpointHashing endpointHashing)
-        {
-            Too = too;
-            Username = username;
-            Password = password;
-            EndpointHashing = endpointHashing;
         }
     }
 }

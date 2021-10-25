@@ -1,15 +1,51 @@
 ﻿using Game.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Game.Core.Endpoints
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class BankEndpoint : Endpoint
     {
-        public HashSet<Person> Clients { get; set; } = new();
+        //MODEl
+        private enum TransferType { RECEIVED, SEND };
 
-        private enum TransferType { RECEIVED, SEND};
-        private List<(TransferType, LogItem)> CreditTransferLogs { get; set; } = new();
+        #region backing fiels
+        [JsonProperty]
+        private ReferenceList<Person> clients = new(Global.AllPersonsDict, "AllPersonsDict");
+        [JsonProperty]
+        private List<(TransferType, LogItem)> creditTransferLogs = new();
+        #endregion
+
+        #region Properties
+        public ReferenceList<Person> Clients { get 
+            {
+                clients.SetReferenceDict(Global.AllPersonsDict);
+                return clients; 
+            }
+            set 
+            {
+                clients.SetReferenceDict(Global.AllPersonsDict);
+                clients = value;
+            }
+        }
+        private List<(TransferType, LogItem)> CreditTransferLogs { get => creditTransferLogs; set => creditTransferLogs = value; }
+        #endregion
+
+        [JsonConstructor]
+        public BankEndpoint()
+        {
+
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext streamingContext)
+        {
+            clients.SetReferenceDict(Global.AllPersonsDict);
+        }
+
         public BankEndpoint(Person person, EndpointType endpointType) : base(person, endpointType)
         {
         }
@@ -75,6 +111,7 @@ namespace Game.Core.Endpoints
         {
             this.CreditTransferLogs.Add((TransferType.RECEIVED, transferLog));
         }
+
         public Person LoginBankAcount(string username, string password)
         {
             foreach (Person p in Clients)

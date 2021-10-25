@@ -42,6 +42,7 @@ namespace Game.UI.Pages
             this.HasMin = false;
             this.HasMax = false;
             this.HasClose = false;
+            this.Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/Icons/Win98Icons/SystemTimeIcon.png"));
         }
 
         private void GameSpeedButton_Checked(object sender, RoutedEventArgs e)

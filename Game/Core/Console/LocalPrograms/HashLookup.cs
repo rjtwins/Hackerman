@@ -58,7 +58,7 @@ namespace Game.Core.Console.LocalPrograms
         /// <returns>string result</returns>
         public string DecodeTraffic(TrafficFile t)
         {
-            int decodedLines = t.TryCrack(((int)Global.LocalSystem.HashLookup));
+            int decodedLines = t.TryCrack(((int)LocalSystem.Intance.HashLookup));
             return decodedLines.ToString() + " lines decoded.";
         }
     }

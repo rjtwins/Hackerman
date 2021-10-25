@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Game" xmlns:s="clr-namespace:Game.UI" xmlns:Sys="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
-        Title="Hackerman" d:Height="600" d:Width="900" WindowState="Maximized" WindowStyle="None" Visibility="Visible" Background="#FF30363D" Foreground="#FFD6DFE9" FontFamily="pack://application:,,,/Fonts/#W95FA" WindowStartupLocation="CenterScreen" PreviewMouseUp="Window_PreviewMouseUp" PreviewKeyDown="Window_PreviewKeyDown">
+        Title="Hackerman" d:Height="1080" d:Width="1920" WindowState="Maximized" WindowStyle="None" Visibility="Visible" Background="#FF30363D" Foreground="#FFD6DFE9" FontFamily="pack://application:,,,/Fonts/#W95FA" WindowStartupLocation="CenterScreen" PreviewMouseUp="Window_PreviewMouseUp" PreviewKeyDown="Window_PreviewKeyDown">
     <Grid Background="Teal" TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
@@ -21,16 +21,16 @@
 
         <ContentControl x:Name="StartMenuMenu"  Style="{StaticResource TaskBarButtonBox}" Grid.Column="0" Grid.Row="1"
                          MinWidth="150" Panel.ZIndex="1" Margin="0,0,0,-6"
-                        Visibility="Visible" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="300">
+                        Visibility="Visible" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="599.6" Width="250">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="55" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="APERTURE 2000" Panel.ZIndex="99" HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch" Foreground="White" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                        UseLayoutRounding="True"
-                       TextWrapping="Wrap" Margin="0,0,0,0" Padding="4,0,0,0" FontWeight="Bold" FontStyle="Normal" TextDecorations="{x:Null}" FontSize="17">
+                       TextWrapping="Wrap" Margin="0,0,0,0" Padding="4,0,0,0" FontWeight="Bold" FontStyle="Normal" TextDecorations="{x:Null}" FontSize="48">
                     <TextBlock.Background>
                         <LinearGradientBrush EndPoint="0,0" StartPoint="1,1">
                             <GradientStop Color="Blue" />
@@ -42,16 +42,21 @@
                         <RotateTransform Angle="-90"></RotateTransform>
                     </TextBlock.LayoutTransform>
                 </TextBlock>
-                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="1,0,0,0">
-                    <StackPanel x:Name="StartMenuButtons">
-                        
+                <StackPanel TextElement.FontSize="22" Grid.Column="1" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="1,0,0,0">
+                    <StackPanel x:Name="StartMenuButtons" HorizontalAlignment="Left" Margin="0,0,0,3">
+                        <Button x:Name="ManageSoftwareButton" HorizontalAlignment="Left" Click="ManageSoftwareButton_Click">
+                            Software Manager
+                        </Button>
+                        <Button x:Name="SystemOverviewButton" Click="SystemOverviewButton_Click" HorizontalAlignment="Left">
+                            Hardware Overview
+                        </Button>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
                         <ContentControl Style="{StaticResource DividerBorderHorizontal}"/>
-                        <Button BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Margin="0,0,0,0">
+                        <Button x:Name="SaveButton" BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Margin="0,0,0,0" Click="SaveButton_Click">
                             Save...
                         </Button>
-                        <Button BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left">
+                        <Button x:Name="ShutdownButton"  BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left">
                             Shut Down...
                         </Button>
                     </StackPanel>
@@ -59,12 +64,12 @@
             </Grid>
         </ContentControl>
 
-        <Border Grid.Row="2" BorderBrush="#FF0C0B0B" Background="Silver" BorderThickness="0,0,0,0" Margin="0,0,0,0" Padding="0,0,0,0" Height="30" Grid.ColumnSpan="2"
-                TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA">
+        <Border Grid.Row="2" BorderBrush="#FF0C0B0B" Background="Silver" BorderThickness="0,0,0,0" Margin="0,0,0,0" Padding="0,0,0,0" Height="40" Grid.ColumnSpan="2"
+                TextElement.FontFamily="pack://application:,,,/Fonts/#W95FA"
+                TextElement.FontSize="20">
             <Grid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Column="1"
-                            TextElement.FontSize="15"
-                            Margin="0,0,0,0" Height="30">
+                            Margin="0,0,0,0" Height="40">
 
                     <ContentControl x:Name="StartMenu"  Style="{StaticResource TaskBarButtonBox}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3,2,0,2">
                         <ToggleButton x:Name="StarMenuToggleButton" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{x:Null}" Foreground="Black" Background="Silver" Click="MenuButtonClick" Padding="1,1,1,1" Margin="0,0,0,0">
@@ -73,24 +78,24 @@
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Source="/Icons/OtherIcons/side-menu.png" Width="18" Height="17" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,-1" />
+                                <Image Grid.Column="0" Source="/Icons/OtherIcons/side-menu.png" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,-1" Panel.ZIndex="8" />
                                 <TextBlock Grid.Column="1" Text="Menu" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Padding="0,0,0,0" />
                             </Grid>
                         </ToggleButton>
                     </ContentControl>
                     <ContentControl Style="{StaticResource DividerBorder}" Padding="0,0,0,0" Margin="4,3,4,3" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" />
-                    <StackPanel x:Name="TaskBar" TextElement.FontSize="15" Orientation="Horizontal">
+                    <StackPanel x:Name="TaskBar"  Orientation="Horizontal">
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Name="Tray" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="2">
                     <ContentControl Style="{StaticResource DividerBorder}" Margin="0,3,0,3" />
 
-                    <ContentControl Style="{StaticResource ClockInlay}" Height="35" Margin="0,-2,0,0">
-                        <StackPanel Margin="0,0,0,0" Orientation="Horizontal">
-                            <TextBlock x:Name="GameTimeHHMMTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,4,0" Foreground="#FF060000" FontSize="12" FlowDirection="LeftToRight" Padding="0,3,0,4" Width="32">
+                    <ContentControl Style="{StaticResource ClockInlay}" Height="45" Margin="0,-2,0,0">
+                        <StackPanel Margin="1,0,1,0" Orientation="Horizontal">
+                            <TextBlock x:Name="GameTimeHHMMTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,4,0" Foreground="#FF060000" FlowDirection="LeftToRight" Padding="0,3,0,4" Width="52">
                             hh:mm
                             </TextBlock>
-                            <TextBlock x:Name="GameTimeDDMMYYextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,2,0" Foreground="#FF060000" FontSize="12" FlowDirection="LeftToRight" Padding="0,3,0,4" Width="51">
+                            <TextBlock x:Name="GameTimeDDMMYYextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,2,0" Foreground="#FF060000" FlowDirection="LeftToRight" Padding="0,3,0,4" Width="90">
                             dd-mm-yy
                             </TextBlock>
                         </StackPanel>

@@ -1,4 +1,5 @@
-﻿using Game.Core.Mission.MissionTypes;
+﻿using Game.Core;
+using Game.Core.Mission.MissionTypes;
 using Game.Model;
 using Game.UI.Pages;
 using System;
@@ -95,7 +96,7 @@ namespace Game.UI.Pages
             AddHiddenChannel("Lobby");
             SetChannel("Lobby");
 
-            this.IRCPrefix = Global.GameState.UserName;
+            this.IRCPrefix = GameState.Instance.UserName;
             InputBlock.KeyDown += IRC_KeyDown;
             InputBlock.Focus();
 
@@ -135,6 +136,10 @@ namespace Game.UI.Pages
             TextBlock timeStampBlock = new TextBlock();
             TextBlock nameBlock = new TextBlock();
             TextBlock messageBlock = new TextBlock();
+            timeStampBlock.Name = "timeStampBlock";
+            nameBlock.Name = "nameBlock";
+            messageBlock.Name = "messageBlock";
+
             messageBlock.TextWrapping = TextWrapping.Wrap;
             messageBlock.Text = message;
             messageBlock.Background = Brushes.Black;
@@ -164,7 +169,6 @@ namespace Game.UI.Pages
             stp.HorizontalAlignment = HorizontalAlignment.Stretch;
             stp.Orientation = Orientation.Horizontal;
             System.Drawing.Color senderColor;
-
             if (!NameChannelDict.TryGetValue(channelName, out IRCChannel toWriteTo))
             {
                 return stp;
@@ -226,6 +230,8 @@ namespace Game.UI.Pages
                     StackPanel stp = new StackPanel();
                     TextBlock nameBlock = new TextBlock();
                     TextBlock messageBlock = new TextBlock();
+                    nameBlock.Name = "nameBlock";
+                    messageBlock.Name = "messageBlock";
                     messageBlock.TextWrapping = TextWrapping.Wrap;
                     nameBlock.Width = 0;
                     nameBlock.TextWrapping = TextWrapping.Wrap;
@@ -240,8 +246,8 @@ namespace Game.UI.Pages
                     stp.Children.Add(messageBlock);
                     stp.VerticalAlignment = VerticalAlignment.Stretch;
                     stp.HorizontalAlignment = HorizontalAlignment.Stretch;
-
                     this.IRCOutput.Children.Add(stp);
+                    stp.Tag = result;
                 }
                 this.InputBlock.Text = string.Empty;
                 InputBlock.Focus();
@@ -347,7 +353,7 @@ namespace Game.UI.Pages
         public void RemoveJobListing(MissionTemplate mission)
         {
             this.RemoveChannel(mission.MissionChannel);
-            this.NameChannelDict["jobs"].Messages.Remove(this.GuidJobListingDict[mission.id]);
+            this.NameChannelDict["jobs"].Messages.Remove(this.GuidJobListingDict[mission.Id]);
         }
 
         public void AddJobListing(MissionTemplate mission)
@@ -356,7 +362,7 @@ namespace Game.UI.Pages
             string listingMessage = mission.DialogResolver.SetInfoGetListing(mission.Contact, mission.Target, mission.Reward) +
                 "\nJoin " + mission.MissionChannel + " for more info.\n";
             mission.DialogResolver.SetupDialog();
-            GuidJobListingDict[mission.id] = this.AddMessage("jobs", mission.Contact, listingMessage);
+            GuidJobListingDict[mission.Id] = this.AddMessage("jobs", mission.Contact, listingMessage);
         }
 
         public string LeaveChannel(string input)

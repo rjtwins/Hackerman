@@ -19,7 +19,7 @@ namespace Game.UI
         public double WindowedHeight = 0;
         public double WindowedLeft = 0;
         public double WindowedTop = 0;
-
+        private bool PageIsLoaded = false;
         private int isActive = 0;
 
         public int IsActive
@@ -97,8 +97,9 @@ namespace Game.UI
             this.title.Text = pageToDisplay.Title;
             this.icon = new Image();
             this.icon.Source = pageToDisplay.Icon;
-            this.icon.Width = 16;
-            this.icon.Height = 16;
+            this.icon.Width = 25;
+            this.icon.Height = 25;
+            this.icon.Margin = new Thickness(-2, 1, 0, -1);
 
             this.HasMin = pageToDisplay.HasMin;
             this.HasMax = pageToDisplay.HasMax;
@@ -140,6 +141,8 @@ namespace Game.UI
             this.MinWidth = this.ActualWidth;
 
             this.MoveThumb.MouseDoubleClick += MoveThumb_MouseDoubleClick;
+
+            PageIsLoaded = true;
         }
 
         private void WindofyIfMaxed()
@@ -190,9 +193,9 @@ namespace Game.UI
             TaskBarButton.Style = (Style)FindResource("TaskBarButtonBoxInverted");
             TaskBarButton.VerticalAlignment = VerticalAlignment.Center;
             TaskBarButton.HorizontalAlignment = HorizontalAlignment.Left;
-            TaskBarButton.Margin = new Thickness(0, 2, 1, 2);
+            TaskBarButton.Margin = new Thickness(1.5, 2, 5, 1.5);
             TaskBarButton.Padding = new Thickness(0, 2, 0, 2);
-            TaskBarButton.Height = 27;
+            TaskBarButton.Height = 37;
 
             TaskBarToggleButton = new ToggleButton();
             TaskBarToggleButton.VerticalAlignment = VerticalAlignment.Stretch;
@@ -207,17 +210,21 @@ namespace Game.UI
             StackPanel stackPanel = new StackPanel();
             stackPanel.HorizontalAlignment = HorizontalAlignment.Stretch;
             stackPanel.Orientation = Orientation.Horizontal;
+            stackPanel.Width = 180;
 
             Image image = new Image();
             image.Source = this.icon.Source;
-            image.Width = 20;
-            image.Height = 20;
+            image.Width = 30;
+            image.Height = 30;
             image.VerticalAlignment = VerticalAlignment.Center;
             image.HorizontalAlignment = HorizontalAlignment.Center;
+            image.Margin = new Thickness(2, 0, 5, 0);
 
             TextBlock textBlock = new TextBlock();
             textBlock.Text = this.title.Text;
-            textBlock.Margin = new Thickness(0, 0, 5, 0);
+            textBlock.Margin = new Thickness(0, 0, 10, 0);
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.HorizontalAlignment = HorizontalAlignment.Left;
 
             stackPanel.Children.Add(image);
             stackPanel.Children.Add(textBlock);
@@ -255,6 +262,10 @@ namespace Game.UI
 
         public void SetActive()
         {
+            if (!PageIsLoaded)
+            {
+                return;
+            }
             Global.MainWindow.SetOntop(this);
             this.Focus();
             this.IsActive = 1;
